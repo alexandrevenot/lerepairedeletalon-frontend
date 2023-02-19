@@ -1,0 +1,9 @@
+{
+  "defaultSeverity": "error",
+  "extends": ["tslint:recommended", "tslint-angular", "tslint-config-prettier"],
+  "rulesDirectory": ["node_modules/codelyzer"],
+  "rules": {
+
+  }
+
+}
