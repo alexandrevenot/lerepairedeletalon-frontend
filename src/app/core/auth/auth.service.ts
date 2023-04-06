@@ -1,0 +1,48 @@
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpErrorResponse, HttpRequest, HttpHandler } from '@angular/common/http';
+import { catchError, switchMap, throwError } from 'rxjs';
+
+export interface refreshData {
+    accessToken: string;
+    refreshToken: string;
+  }
+
+@Injectable()
+export class AuthService {
+    constructor(private http: HttpClient) { }
+
+    getToken(type: string) {
+        let value: string | null = localStorage.getItem(`${type}Token`);
+        if (value === null) {
+            return "";
+        } else {
+            return `Bearer ${value}`;
+        }
+    }
+
+    setToken(type: string, value: string) {
+        localStorage.setItem(`${type}Token`, value);
+    }
+
+    handle401InvalidToken(req: HttpRequest<any>, next: HttpHandler) {
+        return this.http.post<refreshData>(
+            "http://localhost:3001/auth/refresh-token",
+            {
+                token: this.getToken("refresh")
+            }
+        ).pipe(
+            switchMap((data: refreshData) => {
+                this.setToken("access", data.accessToken);
+                this.setToken("refresh", data.refreshToken);
+                // Attach the new accessToken and try again
+                const newAuthReq = req.clone({
+                  headers: req.headers.set('Authorization', this.getToken("access"))
+                });
+                return next.handle(newAuthReq);
+              }),
+            catchError((err: HttpErrorResponse) => {
+                return throwError(() => err);
+            })
+        )
+    }
+}

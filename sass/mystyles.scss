@@ -1,0 +1,24 @@
+@charset "utf-8";
+
+// Set your brand colors
+$green: #3B7C35;
+
+// Update Bulma's global variables
+$primary: $green;
+
+$navbar-item-img-max-height: 56px;
+$navbar-background-color: #3B3E3A;
+$navbar-item-color: #ffffff;
+$navbar-item-hover-color: #ffffff;
+$navbar-item-hover-background-color: #3B3E3A;
+
+// Import only what you need from Bulma
+@import "../node_modules/bulma/sass/utilities/_all.sass";
+@import "../node_modules/bulma/sass/base/_all.sass";
+@import "../node_modules/bulma/sass/elements/button.sass";
+@import "../node_modules/bulma/sass/elements/container.sass";
+@import "../node_modules/bulma/sass/elements/title.sass";
+@import "../node_modules/bulma/sass/form/_all.sass";
+@import "../node_modules/bulma/sass/components/navbar.sass";
+@import "../node_modules/bulma/sass/layout/hero.sass";
+@import "../node_modules/bulma/sass/layout/section.sass";
