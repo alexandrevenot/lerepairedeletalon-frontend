@@ -1,0 +1,47 @@
+<div class="columns">
+    <div class="column is-one-third is-offset-one-third">
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          <h5 class="title is-5"><strong>Identification de l'étalon</strong></h5>
+  
+          <div class="field">
+              <label class="label">Nom de l'étalon</label>
+              <div class="control">
+              <input class="input" type="text" placeholder="" formControlName="nsire">
+              </div>
+          </div>
+  
+          <div class="field">
+              <label class="label">Race</label>
+              <div class="control">
+                <div class="select">
+                  <select>
+                    <option>Sélectionner</option>
+                    <option>Selle Français</option>
+                  </select>
+                </div>
+              </div>
+          </div>
+  
+          <div class="field">
+              <label class="label">N° SIRE</label>
+              <div class="control">
+              <input class="input" type="text" placeholder="" formControlName="nsire">
+              </div>
+          </div>
+  
+          <div class="file is-small">
+            <label class="file-label">
+              <input class="file-input" type="file" name="resume">
+              <span class="file-cta">
+                <span class="file-icon">
+                  <i class="fas fa-upload"></i>
+                </span>
+                <span class="file-label">
+                  Small file…
+                </span>
+              </span>
+            </label>
+          </div>
+      </form>
+    </div>
+  </div>

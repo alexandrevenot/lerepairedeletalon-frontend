@@ -16,10 +16,10 @@ export class RegisterService {
     return throwError(() => new Error());
   }
 
-  postRegister(email: any, password: any, message: any, buttonIsClicked: any) {
+  postRegister(firstname: any, lastname: any, email: any, password: any, message: any, buttonIsClicked: any) {
     return this.http.post(
       "http://localhost:3001/auth/register",
-      {email: email, password: password}
+      {firstname: firstname, lastname: lastname, email: email, password: password}
       ).pipe(
         catchError((error: HttpErrorResponse) => {
             buttonIsClicked.status = false; 

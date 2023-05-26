@@ -26,7 +26,8 @@
             ],
             "styles": [
               "node_modules/bulma/css/bulma.min.css",
-              "css/mystyles.css"
+              "css/mystyles.css",
+              "src/app/styles/fontawesome-free-6.4.0-web/css/all.css"
             ],
             "scripts": []
           },

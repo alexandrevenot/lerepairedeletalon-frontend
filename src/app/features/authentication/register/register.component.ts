@@ -19,6 +19,8 @@ export class RegisterComponent {
 
 
   registerForm = new FormGroup({
+    firstname: new FormControl('', Validators.required),
+    lastname: new FormControl('', Validators.required),
     email: new FormControl('', Validators.required),
     password: new FormControl('', Validators.required),
   });
@@ -27,9 +29,11 @@ export class RegisterComponent {
   buttonIsClicked = {status: false};
 
   sendRegisterData() {
+    let firstname = this.registerForm.value.firstname;
+    let lastname = this.registerForm.value.lastname;
     let email = this.registerForm.value.email;
     let password = this.registerForm.value.password;
-    return this.registerService.postRegister(email, password, this.message, this.buttonIsClicked)
+    return this.registerService.postRegister(firstname, lastname, email, password, this.message, this.buttonIsClicked)
   }
 
   onSubmit() {
