@@ -31,7 +31,7 @@ export class AuthInterceptor implements HttpInterceptor {
       // Execute the request with the accessToken attached
       return next.handle(authReq).pipe(
         catchError((err: HttpErrorResponse) => {
-          if (err && err.status === 401 && err.error.message === 'invalid token') {
+          if (err && err.status === 401 && err.error.detail === 'invalid token') {
             return this.authService.handle401InvalidToken(req, next)
           } else {
             return throwError(() => err);

@@ -1,0 +1,26 @@
+<app-navbar></app-navbar>
+<div class="columns">
+    <div class="column is-3 is-offset-1">
+        <h1 class="title is-1">Tableau de bord</h1>
+
+        <div class="block">
+            <div class="column is-3">
+                <button (click)="selectedItem='stallions'" class="button is-large is-white">Mes étalons</button>
+            </div>
+        </div>
+
+        <div class="block">
+            <div class="column is-3">
+                <button (click)="selectedItem='settings'" class="button is-large is-white">Paramètres</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="column is-7" *ngIf="selectedItem === 'stallions'">
+        <app-my-stallions></app-my-stallions>
+    </div>
+
+    <div class="column is-7" *ngIf="selectedItem === 'settings'">
+        <app-settings></app-settings>
+    </div>
+</div>
