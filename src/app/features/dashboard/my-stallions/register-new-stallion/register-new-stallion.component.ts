@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Output, OnInit  } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { RegisterNewStallionService } from './register-new-stallion.service';
-import { registerNewStallionData } from './register-new-stallion.service';
 
 @Component({
   selector: 'app-register-new-stallion',
@@ -35,7 +34,7 @@ export class RegisterNewStallionComponent implements OnInit {
       name: ['', Validators.required],
       nSIRE: ['', Validators.required],
       mainDesc: [''],
-      birthDate: ['', Validators.required],
+      birthdate: ['', Validators.required],
       height: ['', Validators.required],
       offspring: [''],
       performance: [''],
@@ -56,6 +55,7 @@ export class RegisterNewStallionComponent implements OnInit {
       pedigreePO: [''],
       comments: [''],
       price: ['', Validators.required],
+      location: ['', Validators.required]
     })
   
     this.breed = "Sélectionner";
@@ -100,7 +100,7 @@ export class RegisterNewStallionComponent implements OnInit {
       this.rTypes,
       this.submitted,
       this.message
-      ).subscribe((data: registerNewStallionData) => {
+      ).subscribe(() => {
         this.submitted['status'] = false;
         this.message.setValue('Étalon ajouté avec succès.');
       })

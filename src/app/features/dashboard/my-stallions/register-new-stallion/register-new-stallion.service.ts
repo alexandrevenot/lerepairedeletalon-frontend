@@ -4,10 +4,6 @@ import { FormControl} from '@angular/forms';
 import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-export interface registerNewStallionData {
-    message: string;
-  }
-
 @Injectable()
 export class RegisterNewStallionService {
   constructor(private http: HttpClient) { }
@@ -35,10 +31,9 @@ export class RegisterNewStallionService {
     formData.append('breed', breed);
     formData.append('color', color);
     photos.forEach((file) => { formData.append('photos', file); });
-    console.log(formData);
     formData.append('c_saillies', cSaillies);
 
-    const r_types = Object.values(rTypes).join(',');
+    const r_types = Object.keys(rTypes).filter(key => rTypes[key]).join(',');
     formData.append('r_types', r_types);
 
     const pedigreeL: string[] = [];
@@ -46,24 +41,25 @@ export class RegisterNewStallionService {
     const key = `p${i}`;
     pedigreeL.push(form[key]);
     }
-    const pedigree = pedigreeL.join(',');
+    const pedigree = pedigreeL.join('~');
     formData.append('pedigree', pedigree);
 
     formData.append('name', form["name"]);
     formData.append('n_sire', form["nSIRE"]);
     formData.append('main_desc', form["mainDesc"]);
-    formData.append('birth_date', form["birthDate"]);
+    formData.append('birthdate', form["birthdate"]);
     formData.append('height', form["height"]);
     formData.append('offspring', form["offspring"]);
     formData.append('performance', form["performance"]);
     formData.append('pedigree_po', form["pedigreePO"]);
     formData.append('comments', form["comments"]);
     formData.append('price', form["price"]);
+    formData.append('location', form["location"])
 
     let headers = new HttpHeaders();
     headers.append('Content-Type', 'multipart/form-data');
 
-    return this.http.post<registerNewStallionData>(
+    return this.http.post(
       "http://localhost:3001/stallions/register-new-stallion",
       formData,
       {headers}

@@ -1,0 +1,147 @@
+<div class="container">
+    <h3 class="title is-3 mb-3">{{ name }}</h3>
+    <h4 class="title is-4 mb-5 has-text-grey-light">{{ breed }}</h4>
+
+    <figure class="image mb-6">
+        <img [src]="photos[0]">
+    </figure>
+
+    <div class="content">
+        <h4 class="title is-4">Description</h4>
+        <p>{{ mainDesc }}</p>
+    </div>
+
+    <div class="columns">
+        <div class="column">
+            <div class="content">
+                <h4 class="title is-4">Robe</h4>
+                <p>{{ color }}</p>
+            </div>
+        </div>
+
+        <div class="column">
+            <div class="content">
+                <h4 class="title is-4">Âge</h4>
+                <p>{{ birthdate }}</p>
+            </div>
+        </div>
+
+        <div class="column">
+            <div class="content">
+                <h4 class="title is-4">Taille</h4>
+                <p>{{ height }}</p>
+            </div>
+        </div>
+    </div>
+
+    <h4 class="title is-4">Pedigree</h4>
+    <div class="columns">
+        <div class="column">
+            <div class="box" *ngFor="let i of getNumberArray(2)">
+                {{pedigree[i]}}
+            </div>
+        </div>
+
+        <div class="column">
+            <div class="box" *ngFor="let i of getNumberArray(4)">
+                {{pedigree[i+2]}}
+            </div>
+        </div>
+
+        <div class="column">
+            <div class="box" *ngFor="let i of getNumberArray(8)">
+                {{pedigree[i+6]}}
+            </div>
+        </div>
+    </div>
+
+    <div class="content">
+        <h4 class="title is-4" *ngIf="pedigreePO">Performances et produits du pedigree</h4>
+        <p>{{ pedigreePO }}</p>
+    </div>
+
+    <div class="content">
+        <h4 class="title is-4" *ngIf="offspring">Produits de l'étalon</h4>
+        <p>{{ offspring }}</p>
+    </div>
+
+    <div class="content">
+        <h4 class="title is-4" *ngIf="performance">Performances de l'étalon</h4>
+        <p>{{ performance }}</p>
+    </div>
+
+    <div class="content">
+        <h4 class="title is-4" *ngIf="comments">Informations additionnelles</h4>
+        <p>{{ comments }}</p>
+    </div>
+
+    <div class="content">
+        <h4 class="title is-4">Types de monte disponibles</h4>
+        <div class="tags are-medium">
+            <span class="tag" *ngFor="let rtype of rTypes">
+                {{ rtype }}
+            </span>
+        </div>
+    </div>
+
+    <div class="content">
+        <h4 class="title is-4">Prix</h4>
+        <p>{{ price }}€</p>
+    </div>
+
+    <figure class="image mb-6" *ngFor="let i of getNumberArray(getNbOfPhotos() - 1)">
+        <img [src]="photos[i+1]">
+    </figure>
+
+    <div class="buttons">
+        <button class="button is-primary" (click)="onClick()">
+            Demander une saillie
+        </button>
+
+        <button class="button">
+            Retour
+        </button>
+    </div>
+
+    <form [formGroup]="askForMatingForm" *ngIf="askForMatingIsClicked">
+        <h4 class="title is-4">Demande de saillie</h4>
+        <div class="field">
+            <label class="label">Nom de la jument</label>
+            <div class="control">
+            <input class="input" type="text" placeholder="" formControlName="mare_name">
+            </div>
+        </div>
+
+        <div class="field">
+            <label class="label">N° SIRE de la jument</label>
+            <div class="control">
+            <input class="input" type="text" placeholder="" formControlName="mare_nSIRE">
+            </div>
+        </div>
+
+        <div class="field">
+            <label class="label">Numéro de téléphone</label>
+            <div class="control">
+            <input class="input" type="text" placeholder="" formControlName="buyer_number">
+            </div>
+        </div>
+
+        <div class="field">
+            <label class="label">Message</label>
+            <div class="control">
+              <textarea class="textarea" placeholder="Laissez un message au vendeur, décrivant votre projet et toute information que vous jugerez utile..." formControlName="message"></textarea>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button class="button is-primary" (click)="sendDemandClick()">
+                Envoyer la demande
+            </button>
+    
+            <button class="button" (click)="cancelAskClick()">
+                Annuler
+            </button>
+        </div>
+    </form>
+
+</div>
