@@ -36,11 +36,11 @@ export function getNumberArray(n: number): number[] {
     }
   }
 
-  export const availableRTypes: {[key: string]: string} = {
+export const availableRTypes: {[key: string]: string} = {
     "lib": "Liberté / Main",
     "iai": "IAI: Insémination artificielle immédiate",
     "iarp": "IARP: Insémination artificielle réfrigérée sur place",
     "iac": "IART IAC: Insémination artificielle congelée",
     "iate": "TE IATE: Insémination artificielle et transfert d'embryon",
     "icsi": "ICSI: Intro-cytoplasmic sperm injection"
-  }
+}

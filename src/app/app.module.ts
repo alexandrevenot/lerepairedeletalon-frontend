@@ -9,7 +9,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './features/authentication/login/login.component';
 import { httpInterceptorProviders } from './core/http-interceptors/index';
 import { AuthService } from './core/auth/auth.service';
-import { ProtectedRessourceComponent } from './features/protected-ressource/protected-ressource.component';
 import { NavbarComponent } from './layout/navbar/navbar.component';
 import { RegisterNewStallionComponent } from './features/dashboard/my-stallions/register-new-stallion/register-new-stallion.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
@@ -28,7 +27,6 @@ import { StallionProfileComponent } from './features/search/stallion-profile/sta
     AppComponent,
     RegisterComponent,
     LoginComponent,
-    ProtectedRessourceComponent,
     NavbarComponent,
     RegisterNewStallionComponent,
     DashboardComponent,

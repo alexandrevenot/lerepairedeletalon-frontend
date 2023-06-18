@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { catchError, throwError } from 'rxjs';
 import { updateFilterData } from '../filters/filters.component'
+import { getStallionPhoto } from '../../../../environments/httpCommonMethods'
 
 interface returnedItem {
     id: string;
@@ -17,6 +18,8 @@ export interface searchData {
 
 @Injectable()
 export class StallionPanelService {
+  public getStallionPhoto = getStallionPhoto;
+
   constructor(private http: HttpClient) { }
 
   handleError(error: HttpErrorResponse) {
@@ -71,16 +74,6 @@ export class StallionPanelService {
   }
 
   getProfilePicture(photoId: string) {
-    let params = new HttpParams()
-    .set('id', photoId);
-
-    return this.http.get(
-      "http://localhost:3001/stallions/get-stallion-photo",
-      {params, responseType: 'blob'}
-    ).pipe(
-      catchError((error: HttpErrorResponse) => {
-        return this.handleError(error);
-    })
-    )
+    return this.getStallionPhoto(this.http, photoId)
   }
 }

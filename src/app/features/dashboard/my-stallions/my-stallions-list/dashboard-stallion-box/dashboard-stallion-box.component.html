@@ -1,45 +1,43 @@
-<div class="box has-text-centered">
-    <div class="columns is-vcentered">
-        <div class="column">
-            <h4 class="title is-4">Telecaster</h4>
-            <div class="block has-text-grey">
-                Pur-sang anglais
-            </div>
+<div class="columns is-vcentered">
+    <div class="column">
+        <h4 class="title is-4">{{ item.name }}</h4>
+        <div class="block has-text-grey">
+            {{ item.breed }}
         </div>
-        <div class="column">
-            <div>
-                <button class="button is-outlined mb-3">
-                    <span class="icon">
-                        <i class="far fa-pen-to-square"></i>
-                    </span>
-                    <span>
-                        Éditer le profil
-                    </span>
-                </button>
-            </div>
-            <div class="block has-text-grey is-size-7">
-                Dernière modification le 14/04/2023 à 16h10
-            </div>
-        </div>
-        <div class="column">
-            <figure class="image is-16by9">
-                <img src="https://www.woopets.fr/assets/races/000/444/og-image/pur-sang-anglais_2.jpg" alt="Image">
-              </figure>                        
-        </div>
-        <div class="column">
-            <div class="block has-text-grey mb-2">
-                Statut:
-            </div>
-            <div class="block">
-                <span class="tag is-medium is-success">En ligne</span>
-            </div>
-        </div>
-        <div class="column is-1">
-            <button class="button is-white mb-6">
+    </div>
+    <div class="column">
+        <div>
+            <button class="button is-outlined mb-3">
                 <span class="icon">
-                    <i class="fas fa-ellipsis-vertical"></i>
+                    <i class="far fa-pen-to-square"></i>
+                </span>
+                <span>
+                    Éditer le profil
                 </span>
             </button>
         </div>
+        <div class="block has-text-grey is-size-7">
+            Dernière modification le 14/04/2023 à 16h10
+        </div>
+    </div>
+    <div class="column">
+        <figure class="image is-16by9">
+            <img [src]="item.profilePicture" alt="Image">
+            </figure>                        
+    </div>
+    <div class="column">
+        <div class="block has-text-grey mb-2">
+            Statut:
+        </div>
+        <div class="block">
+            <span class="tag is-medium is-success">En ligne</span>
+        </div>
+    </div>
+    <div class="column is-1">
+        <button class="button is-white mb-6">
+            <span class="icon">
+                <i class="fas fa-ellipsis-vertical"></i>
+            </span>
+        </button>
     </div>
 </div>
