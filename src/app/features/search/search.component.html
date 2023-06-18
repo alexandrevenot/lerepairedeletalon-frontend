@@ -1,0 +1,23 @@
+<app-navbar></app-navbar>
+<div class="columns" *ngIf="clickedProfileStallionId === null">
+    <div class="column is-offset-1">
+        <h3 class="title is-3 mb-6">Étalons disponibles à la saillie</h3>
+    </div>
+</div>
+
+<div class="columns">
+    <div class="column is-4" style="height:90vh; position: sticky; top: 4rem;" *ngIf="clickedProfileStallionId === null">
+        <app-filters [loadingStatus]="filtersAreLoading" (updateFiltersEvent)="handleNewFilters($event)"></app-filters>
+    </div>
+
+    <div class="column">
+        <app-stallion-panel
+        [filters]="currentFilters"
+        (loadingEndingEvent)="handleLoadingEnding()"
+        (clickedOnProfileEvent)="handleClickOnProfile($event)"
+        *ngIf="clickedProfileStallionId === null"
+        ></app-stallion-panel>
+
+        <app-stallion-profile [itemId]="clickedProfileStallionId" *ngIf="clickedProfileStallionId !== null"></app-stallion-profile>
+    </div>
+</div>

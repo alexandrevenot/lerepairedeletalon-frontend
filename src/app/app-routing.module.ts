@@ -5,13 +5,14 @@ import { LoginComponent } from './features/authentication/login/login.component'
 import { ProtectedRessourceComponent } from './features/protected-ressource/protected-ressource.component'
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { RegisterNewStallionComponent } from './features/dashboard/my-stallions/register-new-stallion/register-new-stallion.component';
+import { SearchComponent } from './features/search/search.component';
 
 const routes: Routes = [
   {path: 'register', component: RegisterComponent},
   {path: 'login', component: LoginComponent},
   {path: 'protected', component: ProtectedRessourceComponent},
   {path: 'dashboard', component: DashboardComponent},
-  {path: 'temp', component: RegisterNewStallionComponent},
+  {path: 'search', component: SearchComponent},
 ];
 
 @NgModule({

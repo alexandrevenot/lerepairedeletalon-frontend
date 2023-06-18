@@ -17,6 +17,11 @@ import { MyStallionsComponent } from './features/dashboard/my-stallions/my-stall
 import { SettingsComponent } from './features/dashboard/settings/settings.component';
 import { DashboardStallionBoxComponent } from './features/dashboard/my-stallions/my-stallions-list/dashboard-stallion-box/dashboard-stallion-box.component';
 import { MyStallionsListComponent } from './features/dashboard/my-stallions/my-stallions-list/my-stallions-list.component';
+import { SearchComponent } from './features/search/search.component';
+import { StallionPanelComponent } from './features/search/stallion-panel/stallion-panel.component';
+import { FiltersComponent } from './features/search/filters/filters.component';
+import { StallionPanelItemComponent } from './features/search/stallion-panel/stallion-panel-item/stallion-panel-item.component';
+import { StallionProfileComponent } from './features/search/stallion-profile/stallion-profile.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +35,12 @@ import { MyStallionsListComponent } from './features/dashboard/my-stallions/my-s
     MyStallionsComponent,
     SettingsComponent,
     DashboardStallionBoxComponent,
-    MyStallionsListComponent
+    MyStallionsListComponent,
+    SearchComponent,
+    StallionPanelComponent,
+    FiltersComponent,
+    StallionPanelItemComponent,
+    StallionProfileComponent
   ],
   imports: [
     BrowserModule,

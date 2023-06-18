@@ -54,7 +54,7 @@
           <div class="file is-boxed">
             <label class="file-label">
               <div class="control">
-                <input class="file-input" type="file" name="resume" (change)="fetchCSaillies($event)" accept=".png,.pdf,.jpeg">
+                <input class="file-input" type="file" name="resume" (change)="fetchCSaillies($event)" accept=".png,.pdf,.jpeg,.jpg">
               </div>
               <span class="file-cta">
                 <span class="file-icon">
@@ -72,7 +72,7 @@
           <h5 class="title is-5"><strong>Photos</strong></h5>
           <div class="file is-boxed">
             <label class="file-label">
-              <input class="file-input" type="file" name="resume" (change)="fetchPhotos($event)" accept=".png,.pdf,.jpeg">
+              <input class="file-input" type="file" name="resume" (change)="fetchPhotos($event)" accept=".png,.pdf,.jpeg,.jpg">
               <span class="file-cta">
                 <span class="file-icon">
                   <i class="fas fa-plus"></i>
@@ -119,7 +119,7 @@
           <div class="field">
             <label class="label">Date de naissance</label>
             <div class="control">
-            <input class="input" type="text" placeholder="" formControlName="birthDate">
+            <input class="input" type="text" placeholder="" formControlName="birthdate">
             </div>
           </div>
         </div>
@@ -190,7 +190,7 @@
       </div>
 
       <div class="field">
-        <h5 class="title is-5"><strong>Type de monte</strong></h5>
+        <h5 class="title is-5"><strong>Type et lieu de monte</strong></h5>
         <label class="label">Indiquez quels types de monte sont proposées pour votre étalon.</label>
         <div class="columns">
           <div class="column">
@@ -238,6 +238,14 @@
             </div>
           </div>
         </div>
+
+        <div class="field">
+          <label class="label">Lieu de monte</label>
+          <div class="control">
+            <input class="input" type="text" placeholder="" formControlName="location">
+          </div>
+        </div>
+
       </div>
 
       <div class="field">

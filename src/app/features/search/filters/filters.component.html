@@ -1,0 +1,90 @@
+<div class="columns">
+    <div class="column is-offset-1">
+        <span class="icon-text">
+            <h4 class="title is-4">FILTRES</h4>
+            <span class="icon">
+              <i class="fa fa-filter"></i>
+            </span>
+        </span>
+
+        <hr>
+        
+        <form [formGroup]="filterForm">
+            <div class="field">
+                <span class="icon-text is-clickable" (click)="swapFilter('breed')">
+                    <h5 class="title is-5">Race</h5>
+                    <span class="icon">
+                        <i class="fa fa-chevron-up" [ngClass]="filterIsSelected['breed'] ? 'fa-rotate-180' : 'fa-rotate-90'"></i>
+                    </span>
+                </span>
+
+                <div *ngIf="filterIsSelected['breed']">
+                    <div class="columns" *ngFor="let row of getNumberArrayF(availableBreeds.length/3)">
+                        <div class="column" *ngFor="let col of [0,1,2]">
+                            <label class="checkbox">
+                                <input type="checkbox" id={{availableBreeds[row*3+col]}} (change)="updateCheckbox('breed', $event)">
+                                {{ availableBreeds[row*3+col] }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field">
+                <span class="icon-text is-clickable" (click)="swapFilter('color')">
+                    <h5 class="title is-5">Robe</h5>
+                    <span class="icon">
+                        <i class="fa fa-chevron-up" [ngClass]="filterIsSelected['color'] ? 'fa-rotate-180' : 'fa-rotate-90'"></i>
+                    </span>
+                </span>
+
+                <div *ngIf="filterIsSelected['color']">
+                    <div class="columns" *ngFor="let row of getNumberArrayF(availableColors.length/3)">
+                        <div class="column" *ngFor="let col of [0,1,2]">
+                            <label class="checkbox">
+                                <input type="checkbox" id={{availableColors[row*3+col]}} (change)="updateCheckbox('color', $event)">
+                                {{ availableColors[row*3+col] }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field">
+                <span class="icon-text is-clickable" (click)="swapFilter('price')">
+                    <h5 class="title is-5">Prix</h5>
+                    <span class="icon">
+                    <i class="fa fa-chevron-up" [ngClass]="filterIsSelected['price'] ? 'fa-rotate-180' : 'fa-rotate-90'"></i>
+                    </span>
+                </span>
+
+                <div class="columns" *ngIf="filterIsSelected['price']">
+                    <div class="column">
+                        <p class="control has-icons-right">
+                            <input class="input" type="text" placeholder="Min." formControlName="lowest_price">
+                            <span class="icon is-small is-right">
+                                <i class="fas fa-euro"></i>
+                            </span>
+                        </p>
+                    </div>
+
+                    <div class="column">
+                        <p class="control has-icons-right">
+                            <input class="input" type="text" placeholder="Max." formControlName="highest_price">
+                            <span class="icon is-small is-right">
+                                <i class="fas fa-euro"></i>
+                            </span>
+                        </p>
+                    </div>
+                
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                  <button class="button is-primary" type="button" (click)="onSubmit()" [ngClass]="loadingStatus ? 'is-loading' : ''">Appliquer les filtres</button>
+                </div>
+              </div>
+        </form>
+    </div>
+</div>
