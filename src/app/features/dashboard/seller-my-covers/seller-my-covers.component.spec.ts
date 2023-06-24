@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SettingsComponent } from './settings.component';
+import { SellerMyCoversComponent } from './seller-my-covers.component';
 
-describe('SettingsComponent', () => {
-  let component: SettingsComponent;
-  let fixture: ComponentFixture<SettingsComponent>;
+describe('SellerMyCoversComponent', () => {
+  let component: SellerMyCoversComponent;
+  let fixture: ComponentFixture<SellerMyCoversComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SettingsComponent ]
+      declarations: [ SellerMyCoversComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(SettingsComponent);
+    fixture = TestBed.createComponent(SellerMyCoversComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

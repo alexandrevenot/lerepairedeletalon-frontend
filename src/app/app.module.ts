@@ -13,7 +13,6 @@ import { NavbarComponent } from './layout/navbar/navbar.component';
 import { RegisterNewStallionComponent } from './features/dashboard/my-stallions/register-new-stallion/register-new-stallion.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { MyStallionsComponent } from './features/dashboard/my-stallions/my-stallions.component';
-import { SettingsComponent } from './features/dashboard/settings/settings.component';
 import { DashboardStallionBoxComponent } from './features/dashboard/my-stallions/my-stallions-list/dashboard-stallion-box/dashboard-stallion-box.component';
 import { MyStallionsListComponent } from './features/dashboard/my-stallions/my-stallions-list/my-stallions-list.component';
 import { SearchComponent } from './features/search/search.component';
@@ -21,6 +20,7 @@ import { StallionPanelComponent } from './features/search/stallion-panel/stallio
 import { FiltersComponent } from './features/search/filters/filters.component';
 import { StallionPanelItemComponent } from './features/search/stallion-panel/stallion-panel-item/stallion-panel-item.component';
 import { StallionProfileComponent } from './features/search/stallion-profile/stallion-profile.component';
+import { SellerMyCoversComponent } from './features/dashboard/seller-my-covers/seller-my-covers.component';
 
 @NgModule({
   declarations: [
@@ -31,14 +31,14 @@ import { StallionProfileComponent } from './features/search/stallion-profile/sta
     RegisterNewStallionComponent,
     DashboardComponent,
     MyStallionsComponent,
-    SettingsComponent,
     DashboardStallionBoxComponent,
     MyStallionsListComponent,
     SearchComponent,
     StallionPanelComponent,
     FiltersComponent,
     StallionPanelItemComponent,
-    StallionProfileComponent
+    StallionProfileComponent,
+    SellerMyCoversComponent
   ],
   imports: [
     BrowserModule,

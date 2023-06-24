@@ -7,24 +7,47 @@
 
 <div class="columns">
     <div class="column is-3 is-offset-1">
-        <div class="block">
-            <div class="column is-3">
-                <button (click)="selectedItem='stallions'" class="button is-large is-white">Mes étalons</button>
-            </div>
-        </div>
-
-        <div class="block">
-            <div class="column is-3">
-                <button (click)="selectedItem='settings'" class="button is-large is-white">Paramètres</button>
-            </div>
-        </div>
+        <aside class="menu">
+            <p class="menu-label">
+                Partie acheteur
+            </p>
+            <ul class="menu-list">
+                <li><a>Mes saillies</a></li>
+                <li><a>Mes favoris</a></li>
+                <li><a>Mes avis donnés</a></li>
+            </ul>
+            <p class="menu-label">
+                Partie vendeur
+            </p>
+            <ul class="menu-list">
+                <li><a [ngClass]="isHighlighted('myStallionsComponent')? 'is-active' : ''" (click)="onClick('myStallionsComponent', null)">Mes étalons</a></li>
+                <li><a [ngClass]="isHighlighted('sellerMyCoversComponent')? 'is-active' : ''" (click)="onClick('sellerMyCoversComponent', null)">Mes saillies</a>
+                    <ul *ngIf="isExpanded['sellerMyCoversComponent']">
+                        <li><a [ngClass]="isHighlighted('pending')? 'is-active' : ''" (click)="onClick('pending', 'sellerMyCoversComponent')">Mes demandes de saillies</a></li>
+                        <li><a [ngClass]="isHighlighted('onGoing')? 'is-active' : ''" (click)="onClick('onGoing', 'sellerMyCoversComponent')">Mes saillies en cours</a></li>
+                        <li><a [ngClass]="isHighlighted('done')? 'is-active' : ''" (click)="onClick('done', 'sellerMyCoversComponent')">Mes saillies terminées</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <p class="menu-label">
+                Paramètres
+            </p>
+            <ul class="menu-list">
+                <li><a>Informations du profil</a></li>
+                <li><a>RIB</a></li>
+            </ul>
+          </aside>
     </div>
 
-    <div class="column is-7" *ngIf="selectedItem === 'stallions'">
-        <app-my-stallions></app-my-stallions>
-    </div>
-
-    <div class="column is-7" *ngIf="selectedItem === 'settings'">
-        <app-settings></app-settings>
+    <div class="column is-7">
+        <div [ngSwitch]="selectedComponentKey">
+            <ng-container *ngSwitchCase="'myStallionsComponent'">
+              <app-my-stallions></app-my-stallions>
+            </ng-container>
+            <ng-container *ngSwitchCase="'sellerMyCoversComponent'">
+              <app-seller-my-covers [coverType]="highlightedLabel"></app-seller-my-covers>
+            </ng-container>
+          </div>
+          
     </div>
 </div>
