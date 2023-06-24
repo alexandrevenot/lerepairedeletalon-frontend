@@ -37,8 +37,19 @@ export class AuthInterceptor implements HttpInterceptor {
             return throwError(() => err);
           }
       }));
-    } else {
-      return next.handle(req);
+    } else { // If a protected route is trying to be accessed without a token in the local storage
+      return next.handle(req).pipe(
+        catchError((err: HttpErrorResponse) => {
+          if (err && err.status === 401 && err.error.detail === 'token not found in the request') {
+            if (!req.url.includes('get-user')) {
+              this.router.navigate(['/login']);
+            }
+            return throwError(() => err);
+          } else {
+            return throwError(() => err);
+          }
+        })
+      )
     }
   }
 }

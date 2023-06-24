@@ -1,25 +1,46 @@
-<nav class="navbar mb-6" role="navigation" aria-label="main navigation" >
+<section class="section">
+  <nav class="navbar is-fixed-top px-5" role="navigation" aria-label="main navigation" >
     <div class="navbar-brand">
-      <a class="navbar-item">
-        <img src="./assets/logo/logo-white.png" width="226" height="56">
+      <a class="navbar-item" routerLink="/search">
+        <img src="./assets/logo/logo-black.png" width="280" height="70">
       </a>
 
     </div>
-  
+
     <div class="navbar-menu">
       <div class="navbar-start">
-        <a class="navbar-item">
-          Accueil
+        <a class="navbar-item is-size-6" routerLink="/search">
+          Rechercher un étalon
+        </a>
+        <a class="navbar-item is-size-6" routerLink="/dashboard">
+          Tableau de bord
         </a>
       </div>
-  
-      <div class="navbar-end">
-        <a class="navbar-item">
-          Proposer mon étalon
-        </a>
-        <a class="navbar-item">
-          Contact
-        </a>
+
+      <div class="navbar-end" *ngIf="userIsLoggedIn">
+        <div class="navbar-item has-dropdown is-hoverable is-size-5">
+          <a class="navbar-link is-arrowless">
+            <span class="icon-text">
+              <span class="icon">
+                <i class="fas fa-bars"></i>
+              </span>
+              <span>Mon compte</span>
+            </span>
+          </a>
+
+          <div class="navbar-dropdown">
+            <a class="navbar-item">
+              Contact
+            </a>
+            <a class="navbar-item">
+              Se déconnecter
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="navbar-end" *ngIf="!userIsLoggedIn">
         <div class="navbar-item">
           <div class="buttons">
             <a class="button is-primary" routerLink="/register">
@@ -31,5 +52,7 @@
           </div>
         </div>
       </div>
+
     </div>
   </nav>
+</section>

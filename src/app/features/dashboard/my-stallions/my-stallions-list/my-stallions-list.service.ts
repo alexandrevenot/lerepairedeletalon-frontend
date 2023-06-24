@@ -21,9 +21,8 @@ export class MyStallionsListService {
     constructor(private http: HttpClient) { }
 
     handleError(error: HttpErrorResponse) {
-        console.log(error);
         return throwError(() => new Error());
-      }
+    }
 
     getStallionsList() {
         return this.http.get<getStallionsListArray>(

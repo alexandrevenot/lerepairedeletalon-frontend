@@ -6,11 +6,12 @@ $green: #3B7C35;
 // Update Bulma's global variables
 $primary: $green;
 
-$navbar-item-img-max-height: 56px;
-$navbar-background-color: #3B3E3A;
-$navbar-item-color: #ffffff;
-$navbar-item-hover-color: #ffffff;
-$navbar-item-hover-background-color: #3B3E3A;
+$navbar-item-img-max-height: 100px;
+// $navbar-background-color: #3B3E3A;
+$navbar-background-color: #ffffff;
+$navbar-item-color: #000000;
+$navbar-item-hover-color: #000000;
+$navbar-item-hover-background-color: #ffffff;
 
 // Import only what you need from Bulma
 @import "../node_modules/bulma/sass/utilities/_all.sass";
