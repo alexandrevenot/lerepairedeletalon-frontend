@@ -21,6 +21,7 @@ import { FiltersComponent } from './features/search/filters/filters.component';
 import { StallionPanelItemComponent } from './features/search/stallion-panel/stallion-panel-item/stallion-panel-item.component';
 import { StallionProfileComponent } from './features/search/stallion-profile/stallion-profile.component';
 import { SellerMyCoversComponent } from './features/dashboard/seller-my-covers/seller-my-covers.component';
+import { SellerCoverBoxComponent } from './features/dashboard/seller-my-covers/seller-cover-box/seller-cover-box.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { SellerMyCoversComponent } from './features/dashboard/seller-my-covers/s
     FiltersComponent,
     StallionPanelItemComponent,
     StallionProfileComponent,
-    SellerMyCoversComponent
+    SellerMyCoversComponent,
+    SellerCoverBoxComponent
   ],
   imports: [
     BrowserModule,

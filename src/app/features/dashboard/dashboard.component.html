@@ -45,7 +45,9 @@
               <app-my-stallions></app-my-stallions>
             </ng-container>
             <ng-container *ngSwitchCase="'sellerMyCoversComponent'">
-              <app-seller-my-covers [coverType]="highlightedLabel"></app-seller-my-covers>
+              <app-seller-my-covers [coverType]="'pending'" *ngIf="highlightedLabel === 'pending'"></app-seller-my-covers>
+              <app-seller-my-covers [coverType]="'onGoing'" *ngIf="highlightedLabel === 'onGoing'"></app-seller-my-covers>
+              <app-seller-my-covers [coverType]="'done'" *ngIf="highlightedLabel === 'done'"></app-seller-my-covers>
             </ng-container>
           </div>
           

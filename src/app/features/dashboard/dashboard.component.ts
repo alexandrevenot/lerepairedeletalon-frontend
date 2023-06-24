@@ -1,6 +1,4 @@
 import { Component } from '@angular/core';
-import { MyStallionsComponent } from './my-stallions/my-stallions.component';
-import { SellerMyCoversComponent } from './seller-my-covers/seller-my-covers.component';
 
 @Component({
   selector: 'app-dashboard',

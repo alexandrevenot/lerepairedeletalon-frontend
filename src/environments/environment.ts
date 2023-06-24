@@ -44,3 +44,19 @@ export const availableRTypes: {[key: string]: string} = {
     "iate": "TE IATE: Insémination artificielle et transfert d'embryon",
     "icsi": "ICSI: Intro-cytoplasmic sperm injection"
 }
+
+export const statusMapping: {[key: string]: string} = {
+  requested: "En attente d'acceptation",
+  accepted: "Acceptée",
+  bought: "Payée par l'acheteur",
+  declared_done: "Déclarée par vous comme terminée",
+  confirmed_done: "Confirmée par l'acheteur comme terminée"
+}
+
+export const statusHelper: {[key: string]: string} = {
+  "En attente d'acceptation": "is-warning",
+  "Acceptée": "is-success",
+  "Payée par l'acheteur": "is-success",
+  "Déclarée par vous comme terminée": "is-warning",
+  "Confirmée par l'acheteur comme terminée": "is-success"
+}
