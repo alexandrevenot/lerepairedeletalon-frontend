@@ -13,6 +13,9 @@ $navbar-item-hover-color: #000000;
 $navbar-item-hover-background-color: #ffffff;
 $menu-item-active-background-color: $primary;
 
+$file-cta-background-color: #ffffff;
+$file-radius: 6px;
+
 // Import only what you need from Bulma
 @import "../node_modules/bulma/sass/utilities/_all.sass";
 @import "../node_modules/bulma/sass/base/_all.sass";

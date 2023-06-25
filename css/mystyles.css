@@ -1827,12 +1827,12 @@ table th {
   overflow: hidden;
   position: relative; }
   .file-label:hover .file-cta {
-    background-color: #eeeeee;
+    background-color: #f9f9f9;
     color: #363636; }
   .file-label:hover .file-name {
     border-color: #d5d5d5; }
   .file-label:active .file-cta {
-    background-color: #e8e8e8;
+    background-color: #f2f2f2;
     color: #363636; }
   .file-label:active .file-name {
     border-color: #cfcfcf; }
@@ -1856,7 +1856,7 @@ table th {
   white-space: nowrap; }
 
 .file-cta {
-  background-color: whitesmoke;
+  background-color: #ffffff;
   color: #4a4a4a; }
 
 .file-name {

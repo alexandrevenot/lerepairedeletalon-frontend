@@ -8,37 +8,36 @@
     </div>
 
     <div class="navbar-menu">
-      <div class="navbar-start">
+
+      <div class="navbar-end">
         <a class="navbar-item is-size-6" routerLink="/search">
-          Rechercher un étalon
-        </a>
-        <a class="navbar-item is-size-6" routerLink="/dashboard">
-          Tableau de bord
-        </a>
-      </div>
-
-      <div class="navbar-end" *ngIf="userIsLoggedIn">
-        <div class="navbar-item has-dropdown is-hoverable is-size-5">
-          <a class="navbar-link is-arrowless">
-            <span class="icon-text">
-              <span class="icon">
-                <i class="fas fa-bars"></i>
-              </span>
-              <span>Mon compte</span>
+          <span class="icon-text">
+            <span class="icon">
+              <i class="fas fa-search"></i>
             </span>
-          </a>
+            <span>Rechercher un étalon</span>
+          </span>
+        </a>
 
-          <div class="navbar-dropdown">
-            <a class="navbar-item" (click)="disconnectUser()">
-              Se déconnecter
-            </a>
-          </div>
-        </div>
+        <a class="navbar-item is-size-6" routerLink="/dashboard" *ngIf="userIsLoggedIn">
+          <span class="icon-text">
+            <span class="icon">
+              <i class="fas fa-desktop"></i>
+            </span>
+            <span>Tableau de bord</span>
+          </span>
+        </a>
 
-      </div>
-
-      <div class="navbar-end" *ngIf="!userIsLoggedIn">
-        <div class="navbar-item">
+        <a class="navbar-item" *ngIf="userIsLoggedIn">
+          <span class="icon-text has-text-weight-semibold">
+            <span class="icon">
+              <i class="fas fa-user"></i>
+            </span>
+            <span>Bienvenue, {{firstname}} {{lastname}}</span>
+          </span>
+        </a>
+      
+        <div class="navbar-item" *ngIf="!userIsLoggedIn">
           <div class="buttons">
             <a class="button is-primary" routerLink="/register">
               <strong>Créer un compte</strong>
@@ -49,7 +48,6 @@
           </div>
         </div>
       </div>
-
     </div>
   </nav>
 </section>

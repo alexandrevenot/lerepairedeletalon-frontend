@@ -12,7 +12,6 @@ import { AuthService } from './core/auth/auth.service';
 import { NavbarComponent } from './layout/navbar/navbar.component';
 import { RegisterNewStallionComponent } from './features/dashboard/my-stallions/register-new-stallion/register-new-stallion.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
-import { MyStallionsComponent } from './features/dashboard/my-stallions/my-stallions.component';
 import { DashboardStallionBoxComponent } from './features/dashboard/my-stallions/my-stallions-list/dashboard-stallion-box/dashboard-stallion-box.component';
 import { MyStallionsListComponent } from './features/dashboard/my-stallions/my-stallions-list/my-stallions-list.component';
 import { SearchComponent } from './features/search/search.component';
@@ -31,7 +30,6 @@ import { SellerCoverBoxComponent } from './features/dashboard/seller-my-covers/s
     NavbarComponent,
     RegisterNewStallionComponent,
     DashboardComponent,
-    MyStallionsComponent,
     DashboardStallionBoxComponent,
     MyStallionsListComponent,
     SearchComponent,

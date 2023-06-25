@@ -11,12 +11,13 @@ export class DashboardComponent {
   highlightedLabel: string = "";
 
   isExpandable: { [key: string]: boolean } = {
-    myStallionsComponent: false,
+    myStallionsComponent: true,
     sellerMyCoversComponent: true
   };
 
   isExpanded: { [key: string]: boolean } = {
-    sellerMyCoversComponent: false
+    sellerMyCoversComponent: false,
+    myStallionsComponent: false
   };
   
   isHighlighted(key: string) {
@@ -28,9 +29,8 @@ export class DashboardComponent {
     if (parentKey === null) { // label
       if (this.isExpandable[key]) {
         this.isExpanded[key] = !this.isExpanded[key];
-      } else {
-        this.selectedComponentKey = key;
       }
+      this.selectedComponentKey = key;
     } else { // sublabel
       this.selectedComponentKey = parentKey;
     }

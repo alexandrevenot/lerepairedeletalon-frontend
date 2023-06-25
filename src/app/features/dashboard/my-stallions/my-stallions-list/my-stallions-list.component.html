@@ -4,11 +4,5 @@
         <div class="box has-text-centered" *ngFor="let i of getNumberArray(nbOfStallions)">
             <app-dashboard-stallion-box [item]="items[i]"></app-dashboard-stallion-box>
         </div>
-
-        <button class="button is-outlined is-large is-fullwidth" (click)="addNewStallion()">
-            <span class="icon">
-                <i class="far fa-square-plus"></i>
-            </span>
-        </button>
     </div>
 </div>

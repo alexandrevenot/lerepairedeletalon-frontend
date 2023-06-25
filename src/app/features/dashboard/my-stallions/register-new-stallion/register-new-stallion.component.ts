@@ -1,6 +1,8 @@
 import { Component, EventEmitter, Output, OnInit  } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { RegisterNewStallionService } from './register-new-stallion.service';
+import { availableBreeds, availableColors, getNumberArray, photosMaxSizeInBytes } from 'src/environments/environment';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-register-new-stallion',
@@ -12,8 +14,12 @@ export class RegisterNewStallionComponent implements OnInit {
 
   @Output() returnToStallionListEE = new EventEmitter();
 
+  public availableBreeds = availableBreeds;
+  public availableColors = availableColors;
+  public photosMaxSizeInBytes = photosMaxSizeInBytes;
+  public getNumberArray = getNumberArray;
+
   public submitted!: {[key: string]: boolean};
-  public message!: FormControl;
   public registerNewStallionForm!: FormGroup;
   public breed!: string;
   public color!: string;
@@ -21,14 +27,20 @@ export class RegisterNewStallionComponent implements OnInit {
   public photos: File[] = [];
   public rTypes!: { [key: string]: boolean };
 
+  public photosURLs: SafeUrl[] = [];
+  public registerMessage!: FormControl;
+  public photosMessage!: FormControl;
+
   constructor(
     private registerNewStallionService: RegisterNewStallionService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private sanitizer: DomSanitizer
     ) {}
   
   ngOnInit(): void {
     this.submitted = {status: false};
-    this.message = new FormControl('');
+    this.registerMessage = new FormControl('');
+    this.photosMessage = new FormControl('');
   
     this.registerNewStallionForm = this.formBuilder.group({
       name: ['', Validators.required],
@@ -79,10 +91,37 @@ export class RegisterNewStallionComponent implements OnInit {
 
   fetchCSaillies(event: any) {
     this.cSaillies = event.target.files[0];
+    console.log(event.target.files[0])
   }
 
   fetchPhotos(event: any) {
-    this.photos.push(event.target.files[0]);
+    const selectedFile: File = event.target.files[0];
+    if (selectedFile && selectedFile.size > photosMaxSizeInBytes) {
+      this.photosMessage.setValue('La taille de chaque photo doit être inférieure à 4Mo.');
+    } else {
+      this.photos.push(selectedFile);
+  
+      const img = new Image();
+      img.src = URL.createObjectURL(selectedFile);
+  
+      img.onload = () => {
+        const width: number = img.width;
+        const height: number = img.height;
+    
+        URL.revokeObjectURL(img.src);
+        
+        this.photosURLs.push(this.sanitizer.bypassSecurityTrustUrl(img.src));
+        let value = this.photosMessage.value;
+        if (value != "") {
+          this.photosMessage.setValue('');
+        }
+      };
+    }
+  }
+
+  deletePhoto(index: number) {
+    this.photos.splice(index, 1);
+    this.photosURLs.splice(index, 1);
   }
 
   updateRType(event: any) {
@@ -99,10 +138,10 @@ export class RegisterNewStallionComponent implements OnInit {
       this.photos,
       this.rTypes,
       this.submitted,
-      this.message
+      this.registerMessage
       ).subscribe(() => {
         this.submitted['status'] = false;
-        this.message.setValue('Étalon ajouté avec succès.');
+        this.registerMessage.setValue('Étalon ajouté avec succès.');
       })
   }
 

@@ -17,18 +17,12 @@ export interface StallionBoxItem {
 })
 export class MyStallionsListComponent implements OnInit {
 
-  @Output() addNewStallionEE = new EventEmitter();
-
   public nbOfStallions: number = 0;
   public getNumberArray = getNumberArray;
   public items: StallionBoxItem[] = [];
 
   constructor (private myStallionsListService: MyStallionsListService) {
 
-  }
-
-  addNewStallion() {
-    this.addNewStallionEE.emit();
   }
   
   ngOnInit(): void {

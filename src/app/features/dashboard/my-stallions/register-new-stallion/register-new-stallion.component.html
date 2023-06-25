@@ -1,274 +1,267 @@
-<div class="columns mt-6">
-  <div class="column is-1">
-    <button class="button is-medium" (click)="returnToStallionList()">
-      <span class="icon is-large">
-        <i class="fas fa-arrow-left"></i>
-      </span>
-      <span>Retour</span>
-    </button>
-  </div>
-  <div class="column is-11">
-    <h2 class="title is-2 mb-6">Ajout d'un nouvel étalon</h2>
-    <form [formGroup]="registerNewStallionForm" enctype="multipart/form-data">
-        <h5 class="title is-5"><strong>Identification de l'étalon</strong></h5>
+<section class="section">
+  <h3 class="subtitle is-3">Ajouter un nouvel étalon</h3>
+</section>
 
-        <div class="field">
-            <label class="label">Nom de l'étalon</label>
-            <div class="control">
-            <input class="input" type="text" placeholder="" formControlName="name">
-            </div>
-        </div>
+<section class="section">
+  <form [formGroup]="registerNewStallionForm" enctype="multipart/form-data">
+    <h5 class="subtitle is-5 has-text-weight-bold">Identification de l'étalon</h5>
 
-        <div class="field">
-            <label class="label">Race</label>
-            <div class="control">
-              <div class="select">
-                <select (change)="updateSelect('breed', $event)">
-                  <option>Sélectionner</option>
-                  <option>Selle Français</option>
-                  <option>Trotteur Français</option>
-                  <option>Cheval de Mérens</option>
-                  <option>Trait du Nord</option>
-                  <option>Boulonnais</option>
-                  <option>Breton</option>
-                  <option>Ardennais</option>
-                  <option>Percheron</option>
-                  <option>Castillonnais</option>
-                  <option>Landais</option>
-                  <option>Poitevin Mulassier</option>
-                  <option>Corse</option>
-                </select>
-              </div>
-            </div>
-        </div>
-
-        <div class="field">
-            <label class="label">N° SIRE</label>
-            <div class="control">
-            <input class="input" type="text" placeholder="" formControlName="nSIRE">
-            </div>
-        </div>
-
-        <div class="field">
-          <label class="label">Carnet de saillies</label>
-          <div class="file is-boxed">
-            <label class="file-label">
-              <div class="control">
-                <input class="file-input" type="file" name="resume" (change)="fetchCSaillies($event)" accept=".png,.pdf,.jpeg,.jpg">
-              </div>
-              <span class="file-cta">
-                <span class="file-icon">
-                  <i class="fas fa-cloud-upload-alt"></i>
-                </span>
-                <span class="file-label">
-                  Sélectionner un fichier...
-                </span>
-              </span>
-            </label>
-          </div>
-        </div>
-
-        <div class="field">
-          <h5 class="title is-5"><strong>Photos</strong></h5>
-          <div class="file is-boxed">
-            <label class="file-label">
-              <input class="file-input" type="file" name="resume" (change)="fetchPhotos($event)" accept=".png,.pdf,.jpeg,.jpg">
-              <span class="file-cta">
-                <span class="file-icon">
-                  <i class="fas fa-plus"></i>
-                </span>
-              </span>
-            </label>
-          </div>
-      </div>
-
-      <div class="field">
-        <h5 class="title is-5"><strong>Description principale</strong></h5>
-        <div class="control">
-          <textarea class="textarea" placeholder="Décrivez votre étalon en quelques lignes..." formControlName="mainDesc"></textarea>
-        </div>
-      </div>
-      
-      <h5 class="title is-5"><strong>Fiche technique - basique</strong></h5>
+    <div class="field">
       <div class="columns">
-        
-        <div class="column">
-          <div class="field">
-            <label class="label">Robe</label>
-            <div class="select">
-              <select (change)="updateSelect('color', $event)">
-                <option>Sélectionner</option>
-                <option>Bai</option>
-                <option>Alezan</option>
-                <option>Noir</option>
-                <option>Gris</option>
-                <option>Blanc</option>
-                <option>Rouan</option>
-                <option>Palomino</option>
-                <option>Isabelle</option>
-                <option>Pie</option>
-                <option>Appaloosa</option>
-                <option>Alezan brûlé</option>
-                <option>Champagne</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div class="column">
-          <div class="field">
-            <label class="label">Date de naissance</label>
-            <div class="control">
-            <input class="input" type="text" placeholder="" formControlName="birthdate">
-            </div>
-          </div>
-        </div>
-
-        <div class="column">
-
-          <div class="field">
-            <label class="label">Taille</label>
-            <div class="control">
-            <input class="input" type="text" placeholder="" formControlName="height">
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="field">
-        <h5 class="title is-5"><strong>Produits </strong></h5>
-        <div class="control">
-          <textarea class="textarea" placeholder="Ce paragraphe concerne les produits de votre étalon, listez les ainsi que leurs performances..." formControlName="offspring"></textarea>
-        </div>
-      </div>
-
-      <div class="field">
-        <h5 class="title is-5"><strong>Performances</strong></h5>
-        <div class="control">
-          <textarea class="textarea" placeholder="Présentez ici les performances de votre étalon..." formControlName="performance"></textarea>
-        </div>
-      </div>
-
-      <h5 class="title is-5"><strong>Pedigree</strong></h5>
-      <div class="columns">
-        <div class="column">
-          <input type="text" class="input" placeholder="Père" formControlName="p1">
-          <input type="text" class="input" placeholder="Mère" formControlName="p2">
-        </div>
-
-        <div class="column">
-          <input type="text" class="input" placeholder="Père" formControlName="p3">
-          <input type="text" class="input" placeholder="Mère" formControlName="p4">
-          <input type="text" class="input" placeholder="Père" formControlName="p5">
-          <input type="text" class="input" placeholder="Mère" formControlName="p6">
-        </div>
-
-        <div class="column">
-          <input type="text" class="input" placeholder="Père" formControlName="p7">
-          <input type="text" class="input" placeholder="Mère" formControlName="p8">
-          <input type="text" class="input" placeholder="Père" formControlName="p9">
-          <input type="text" class="input" placeholder="Mère" formControlName="p10">
-          <input type="text" class="input" placeholder="Père" formControlName="p11">
-          <input type="text" class="input" placeholder="Mère" formControlName="p12">
-          <input type="text" class="input" placeholder="Père" formControlName="p13">
-          <input type="text" class="input" placeholder="Mère" formControlName="p14">
-        </div>
-      </div>
-
-      <div class="field">
-        <h5 class="title is-5"><strong>Pedigree: performances et produits</strong></h5>
-        <div class="control">
-          <textarea class="textarea" placeholder="Dans ce paragraphe, apportez des informations concernant le pedigree de l'étalon, que ce soit à propos de leurs performances ou bien de leurs produits..." formControlName="pedigreePO"></textarea>
-        </div>
-      </div>
-
-      <div class="field">
-        <h5 class="title is-5"><strong>Commentaires</strong></h5>
-        <div class="control">
-          <textarea class="textarea" placeholder="Ajoutez ici toute information additionnelle que vous jugez utile..." formControlName="comments"></textarea>
-        </div>
-      </div>
-
-      <div class="field">
-        <h5 class="title is-5"><strong>Type et lieu de monte</strong></h5>
-        <label class="label">Indiquez quels types de monte sont proposées pour votre étalon.</label>
-        <div class="columns">
-          <div class="column">
-            <div>
-              <label class="checkbox">
-                <input type="checkbox" id="lib" (change)="updateRType($event)">
-                Liberté / Main
-              </label>
-            </div>
-
-            <div>
-              <label class="checkbox">
-                <input type="checkbox" id="iai" (change)="updateRType($event)">
-                IAI: Insémination artificielle immédiate
-              </label>
-            </div>
-
-            <div>
-              <label class="checkbox">
-                <input type="checkbox" id="iarp" (change)="updateRType($event)">
-                IARP: Insémination artificielle réfrigérée sur place
-              </label>
-            </div>
-          </div>
-          <div class="column">
-            <div>
-              <label class="checkbox">
-                <input type="checkbox" id="iac" (change)="updateRType($event)">
-                IART IAC: Insémination artificielle congelée
-              </label>
-            </div>
-
-            <div>
-              <label class="checkbox">
-                <input type="checkbox" id="iate" (change)="updateRType($event)">
-                TE IATE: Insémination artificielle et transfert d'embryon
-              </label>
-            </div>
-
-            <div>
-              <label class="checkbox">
-                <input type="checkbox" id="icsi" (change)="updateRType($event)">
-                ICSI: Intro-cytoplasmic sperm injection
-              </label>
-            </div>
-          </div>
-        </div>
-
-        <div class="field">
-          <label class="label">Lieu de monte</label>
+        <div class="column is-two-thirds">
+          <label class="label has-text-weight-semibold has-text-grey">Nom de l'étalon</label>
           <div class="control">
-            <input class="input" type="text" placeholder="" formControlName="location">
+            <input class="input" type="text" placeholder="" formControlName="name">
           </div>
         </div>
+      </div>
+    </div>
 
+    <div class="field">
+        <label class="label has-text-weight-semibold has-text-grey">Race</label>
+        <div class="control">
+          <div class="select is-primary">
+            <select (change)="updateSelect('breed', $event)">
+              <option>Sélectionner</option>
+              <option *ngFor="let breed of availableBreeds">{{breed}}</option>
+            </select>
+          </div>
+        </div>
+    </div>
+
+    <div class="field">
+      <div class="columns">
+        <div class="column is-two-thirds">
+          <label class="label has-text-weight-semibold has-text-grey">N° SIRE</label>
+          <div class="control">
+            <input class="input" type="text" placeholder="12345678X" formControlName="nSIRE">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="label has-text-weight-semibold has-text-grey">Carnet de saillies <small>(Formats acceptés: PNG, PDF, JPEG, JPG)</small></label>
+      <div class="file is-primary">
+        <label class="file-label">
+          <div class="control">
+            <input class="file-input" type="file" name="resume" (change)="fetchCSaillies($event)" accept=".png,.pdf,.jpeg,.jpg">
+          </div>
+          <span class="file-cta">
+            <span class="file-icon">
+              <i class="fas fa-cloud-upload-alt"></i>
+            </span>
+            <span class="file-label" *ngIf="!cSaillies">
+              Sélectionner un fichier 
+            </span>
+            <span class="file-label" *ngIf="cSaillies">
+              Fichier sélectionné
+            </span>
+          </span>
+          <span class="file-name" *ngIf="cSaillies">
+            {{cSaillies.name}}
+          </span>
+        </label>
+      </div>
+    </div>
+
+    <div class="field mt-6">
+      <h5 class="subtitle is-5 has-text-weight-bold mb-3">Photos</h5>
+      <label class="label has-text-weight-normal has-text-grey-light">La première photo ajoutée, la plus à gauche de la liste, sera considérée comme la photo principale.</label>
+
+      <div class="photo-container">
+        <figure class="image" *ngFor="let i of getNumberArray(photosURLs.length)">
+          <img [src]="photosURLs[i]" alt="Photo" class="is-fullwidth">
+          <button class="delete is-large" (click)="deletePhoto(i)"></button>
+        </figure>
+
+
+        <span class="file is-large is-boxed">
+          <label class="file-label">
+            <input class="file-input" type="file" name="resume" (change)="fetchPhotos($event)" accept=".png,.pdf,.jpeg,.jpg">
+            <span class="file-cta">
+              <span class="file-icon">
+                <i class="fas fa-plus"></i>
+              </span>
+            </span>
+          </label>
+        </span>
+      </div>
+      <p class="help has-text-danger">{{ photosMessage.value }}</p>
+    </div>
+
+    <div class="field">
+      <h5 class="subtitle is-5 has-text-weight-bold">Description principale</h5>
+      <div class="control">
+        <textarea class="textarea" placeholder="Décrivez votre étalon en quelques lignes..." formControlName="mainDesc"></textarea>
+      </div>
+    </div>
+    
+    <h5 class="subtitle is-5 has-text-weight-bold">Caractéristiques</h5>
+    <div class="columns">
+      <div class="column is-2">
+        <div class="field">
+          <label class="label has-text-weight-semibold has-text-grey">Robe</label>
+          <div class="select is-primary">
+            <select (change)="updateSelect('color', $event)">
+              <option>Sélectionner</option>
+              <option *ngFor="let breed of availableColors">{{breed}}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="column is-3 is-offset-2">
+        <div class="field">
+          <label class="label has-text-weight-semibold has-text-grey">Date de naissance <small>(JJ/MM/AAAA)</small></label>
+          <div class="control">
+          <input class="input" type="text" placeholder="01/01/2000" formControlName="birthdate">
+          </div>
+        </div>
+      </div>
+
+      <div class="column is-3 is-offset-2">
+        <div class="field">
+          <label class="label has-text-weight-semibold has-text-grey">Taille <small>(centimètres)</small></label>
+          <div class="control">
+          <input class="input" type="text" placeholder="180" formControlName="height">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <h5 class="subtitle is-5 has-text-weight-bold">Produits </h5>
+      <div class="control">
+        <textarea class="textarea" placeholder="Ce paragraphe concerne les produits de votre étalon, listez-les et donnez toute information à propos d'eux que vous jugez utile." formControlName="offspring"></textarea>
+      </div>
+    </div>
+
+    <div class="field">
+      <h5 class="subtitle is-5 has-text-weight-bold">Performances</h5>
+      <div class="control">
+        <textarea class="textarea" placeholder="Présentez ici les performances de votre étalon en compétition." formControlName="performance"></textarea>
+      </div>
+    </div>
+
+    <h5 class="subtitle is-5 has-text-weight-bold">Pedigree</h5>
+    <div class="columns">
+      <div class="column">
+        <input type="text" class="input" placeholder="Père" formControlName="p1">
+        <input type="text" class="input" placeholder="Mère" formControlName="p2">
+      </div>
+
+      <div class="column">
+        <input type="text" class="input" placeholder="Père" formControlName="p3">
+        <input type="text" class="input" placeholder="Mère" formControlName="p4">
+        <input type="text" class="input" placeholder="Père" formControlName="p5">
+        <input type="text" class="input" placeholder="Mère" formControlName="p6">
+      </div>
+
+      <div class="column">
+        <input type="text" class="input" placeholder="Père" formControlName="p7">
+        <input type="text" class="input" placeholder="Mère" formControlName="p8">
+        <input type="text" class="input" placeholder="Père" formControlName="p9">
+        <input type="text" class="input" placeholder="Mère" formControlName="p10">
+        <input type="text" class="input" placeholder="Père" formControlName="p11">
+        <input type="text" class="input" placeholder="Mère" formControlName="p12">
+        <input type="text" class="input" placeholder="Père" formControlName="p13">
+        <input type="text" class="input" placeholder="Mère" formControlName="p14">
+      </div>
+    </div>
+
+    <div class="field">
+      <h5 class="subtitle is-5 has-text-weight-bold">Pedigree: performances et produits</h5>
+      <div class="control">
+        <textarea class="textarea" placeholder="Dans ce paragraphe, apportez des informations concernant le pedigree de l'étalon, que ce soit à propos de leurs performances en compétition bien de leurs autres produits." formControlName="pedigreePO"></textarea>
+      </div>
+    </div>
+
+    <div class="field">
+      <h5 class="subtitle is-5 has-text-weight-bold">Commentaires</h5>
+      <div class="control">
+        <textarea class="textarea" placeholder="Ajoutez ici toute information additionnelle que vous jugez utile." formControlName="comments"></textarea>
+      </div>
+    </div>
+
+    <div class="field">
+      <h5 class="subtitle is-5 has-text-weight-bold">Type et lieu de monte</h5>
+      <label class="label has-text-weight-semibold has-text-grey">Indiquez quels types de monte sont proposées pour votre étalon.</label>
+      <div class="columns">
+        <div class="column">
+          <div>
+            <label class="checkbox">
+              <input type="checkbox" id="lib" (change)="updateRType($event)">
+              Liberté / Main
+            </label>
+          </div>
+
+          <div>
+            <label class="checkbox">
+              <input type="checkbox" id="iai" (change)="updateRType($event)">
+              IAI: Insémination artificielle immédiate
+            </label>
+          </div>
+
+          <div>
+            <label class="checkbox">
+              <input type="checkbox" id="iarp" (change)="updateRType($event)">
+              IARP: Insémination artificielle réfrigérée sur place
+            </label>
+          </div>
+        </div>
+        <div class="column">
+          <div>
+            <label class="checkbox">
+              <input type="checkbox" id="iac" (change)="updateRType($event)">
+              IART IAC: Insémination artificielle congelée
+            </label>
+          </div>
+
+          <div>
+            <label class="checkbox">
+              <input type="checkbox" id="iate" (change)="updateRType($event)">
+              TE IATE: Insémination artificielle et transfert d'embryon
+            </label>
+          </div>
+
+          <div>
+            <label class="checkbox">
+              <input type="checkbox" id="icsi" (change)="updateRType($event)">
+              ICSI: Intro-cytoplasmic sperm injection
+            </label>
+          </div>
+        </div>
       </div>
 
       <div class="field">
-        <h5 class="title is-5"><strong>Prix</strong></h5>
-        <label class="label">Indiquez le prix de la saillie.</label>
-        <div class="control has-icons-right">
-          <input class="input" type="text" formControlName="price">
-          <span class="icon is-small is-right">
-            <i class="fas fa-euro"></i>
-          </span>
+        <label class="label has-text-weight-semibold has-text-grey">Lieu de monte</label>
+        <div class="control">
+          <input class="input" type="text" placeholder="" formControlName="location">
         </div>
       </div>
 
-      <div class="field is-grouped">
-        <div class="control">
-          <button class="button is-primary" type="button" (click)="onSubmit()" [ngClass]="submitted['status'] ? 'is-loading' : ''">Enregistrer</button>
-        </div>
-        <div class="control">
-          <button class="button is-light">Annuler</button>
-        </div>
-        <p class="help">{{ message.value }}</p>
-      </div>
+    </div>
 
-    </form>
-  </div>
-</div>
+    <div class="field">
+      <h5 class="subtitle is-5 has-text-weight-bold">Prix</h5>
+      <label class="label has-text-weight-semibold has-text-grey">Indiquez le prix de la saillie.</label>
+      <div class="control has-icons-right">
+        <input class="input" type="text" formControlName="price">
+        <span class="icon is-small is-right">
+          <i class="fas fa-euro"></i>
+        </span>
+      </div>
+    </div>
+
+    <div class="field is-grouped">
+      <div class="control">
+        <button class="button is-primary" type="button" (click)="onSubmit()" [ngClass]="submitted['status'] ? 'is-loading' : ''">Enregistrer</button>
+      </div>
+      <div class="control">
+        <button class="button is-light">Annuler</button>
+      </div>
+      <p class="help">{{ registerMessage.value }}</p>
+    </div>
+  </form>
+</section>

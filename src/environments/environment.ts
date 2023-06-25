@@ -62,3 +62,5 @@ export const statusHelper: {[key: string]: string} = {
   declared_terminated: "is-warning",
   confirmed_terminated: "is-success"
 }
+
+export const photosMaxSizeInBytes: number = 4 * 1024 * 1024; // 4 Mo
