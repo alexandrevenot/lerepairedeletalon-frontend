@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { SellerMyCoversService, coversData, coverItem } from './seller-my-covers.service';
-import { getNumberArray, statusMapping } from '../../../../environments/environment';
+import { getNumberArray } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-seller-my-covers',
@@ -12,7 +12,6 @@ export class SellerMyCoversComponent implements OnInit{
   @Input() coverType!: "pending" | "onGoing" | "done";
 
   public getNumberArrayF = getNumberArray;
-  public statusMappingObject = statusMapping;
 
   covers: coverItem[] = [];
   title = {
@@ -32,7 +31,7 @@ export class SellerMyCoversComponent implements OnInit{
             id: item.id,
             stallion_name: item.stallion_name,
             mare_name: item.mare_name,
-            status: this.statusMappingObject[item.status]
+            status: item.status
           });
         }
       })

@@ -1,10 +1,16 @@
 <div class="columns is-vcentered">
     <div class="column">
         <div class="content has-text-left">
-            <p class="is-size-5 has-text-weight-bold mb-0">{{item.stallion_name}}</p>
-            <p class="is-size-6 has-text-grey has-text-weight-medium">Étalon</p>
-            <p class="is-size-5 has-text-weight-bold mb-0">{{item.mare_name}}</p>
-            <p class="is-size-6 has-text-grey has-text-weight-medium">Jument</p>
+            <p class="is-size-6 has-text-grey has-text-weight-medium mb-0">Étalon</p>
+            <p class="is-size-5 has-text-weight-bold">{{item.stallion_name}}</p>
+            <p class="is-size-6 has-text-grey has-text-weight-medium mb-0">Jument</p>
+            <p class="is-size-5 has-text-weight-bold">{{item.mare_name}}</p>
+        </div>
+    </div>
+    <div class="column is-2">
+        <div class="content has-text-centered">
+            <p class="is-size-6 has-text-grey has-text-weight-medium mb-0">Prix</p>
+            <p class="is-size-5 has-text-weight-bold">{{178}} €</p>
         </div>
     </div>
     <div class="column">
@@ -12,7 +18,38 @@
             Statut:
         </div>
         <div class="block">
-            <span class="tag is-medium" [ngClass]="statusHelperObject[item.status]">{{item.status}}</span>
+            <span class="tag is-medium" [ngClass]="statusHelperObject[item.status]">{{statusMappingObject[item.status]}}</span>
+        </div>
+    </div>
+    <div class="column">
+        <div class="buttons is-centered">
+            <button class="button">
+                <span class="icon">
+                    <i class="fas fa-eye"></i>
+                </span>
+                <span>
+                    Consulter
+                </span>
+            </button>
+        </div>
+        <div class="buttons is-centered">
+            <button class="button is-success" *ngIf="item.status === 'offered'">
+                <span class="icon">
+                    <i class="fas fa-check"></i>
+                </span>
+                <span>
+                    Accepter
+                </span>
+            </button>
+
+            <button class="button is-danger" *ngIf="item.status === 'offered'">
+                <span class="icon">
+                    <i class="fas fa-xmark"></i>
+                </span>
+                <span>
+                    Refuser
+                </span>
+            </button>
         </div>
     </div>
 </div>
