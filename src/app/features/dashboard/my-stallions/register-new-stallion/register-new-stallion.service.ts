@@ -1,8 +1,19 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { FormControl} from '@angular/forms';
 import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+
+export interface getCityItem {
+  city_name: string,
+  postal_code: string,
+  lat: number,
+  lng: number
+}
+
+export interface getCityData {
+  content: Array<getCityItem>
+}
 
 @Injectable()
 export class RegisterNewStallionService {
@@ -17,6 +28,25 @@ export class RegisterNewStallionService {
     return throwError(() => new Error());
   }
 
+  getCity(
+    input: string,
+    success: {[key: string]: boolean},
+    locationMessage: FormControl<any>) {
+    let params = new HttpParams()
+    .set('user_input', input);
+
+    return this.http.get<getCityData>(
+      "http://localhost:3001/geoloc/get-city",
+      { params }
+    ).pipe(
+        catchError(() => {
+            success['status'] = false;
+            locationMessage.setValue("Veuillez vérifier l'orthographe de la ville ou en essayer une plus grande.")
+            return throwError(() => new Error())
+        })
+      );
+  }
+
   postRegisterNewStallion(
     form: { [key: string]: string },
     breed: string,
@@ -25,8 +55,10 @@ export class RegisterNewStallionService {
     photos: File[],
     rTypes: {[key: string]: boolean},
     submitted: {[key: string]: boolean},
-    message: FormControl<any>
+    message: FormControl<any>,
+    triggerEmptyMandatoryFields: {[key: string]: boolean}
     ) {
+
     const formData = new FormData();
     formData.append('breed', breed);
     formData.append('color', color);
@@ -66,6 +98,7 @@ export class RegisterNewStallionService {
       ).pipe(
         catchError((error: HttpErrorResponse) => {
             submitted["status"] = false; 
+            triggerEmptyMandatoryFields['status'] = true;
             return this.handleError(error, message);
         })
       );

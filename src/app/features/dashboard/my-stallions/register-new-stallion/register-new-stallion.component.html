@@ -1,9 +1,11 @@
 <section class="section">
-  <h3 class="subtitle is-3">Ajouter un nouvel étalon</h3>
+  <h3 class="subtitle is-3 has-text-weight-bold">Ajouter un nouvel étalon</h3>
 </section>
 
 <section class="section">
   <form [formGroup]="registerNewStallionForm" enctype="multipart/form-data">
+    <h4 class="subtitle is-4">Première partie: profil de l'étalon</h4>
+
     <h5 class="subtitle is-5 has-text-weight-bold">Identification de l'étalon</h5>
 
     <div class="field">
@@ -11,7 +13,10 @@
         <div class="column is-two-thirds">
           <label class="label has-text-weight-semibold has-text-grey">Nom de l'étalon</label>
           <div class="control">
-            <input class="input" type="text" placeholder="" formControlName="name">
+            <input class="input" [ngClass]="{
+              'is-success': isFilledInForm('name') && triggerEmptyMandatoryFields['status'],
+              'is-danger': !isFilledInForm('name') && triggerEmptyMandatoryFields['status']
+              }" type="text" placeholder="" formControlName="name">
           </div>
         </div>
       </div>
@@ -20,7 +25,10 @@
     <div class="field">
         <label class="label has-text-weight-semibold has-text-grey">Race</label>
         <div class="control">
-          <div class="select is-primary">
+          <div class="select" [ngClass]="{
+            'is-success': dropdownIsSelected('breed') && triggerEmptyMandatoryFields['status'],
+            'is-danger': !dropdownIsSelected('breed') && triggerEmptyMandatoryFields['status']
+            }">
             <select (change)="updateSelect('breed', $event)">
               <option>Sélectionner</option>
               <option *ngFor="let breed of availableBreeds">{{breed}}</option>
@@ -34,7 +42,10 @@
         <div class="column is-two-thirds">
           <label class="label has-text-weight-semibold has-text-grey">N° SIRE</label>
           <div class="control">
-            <input class="input" type="text" placeholder="12345678X" formControlName="nSIRE">
+            <input class="input" [ngClass]="{
+              'is-success': isFilledInForm('nSIRE') && triggerEmptyMandatoryFields['status'],
+              'is-danger': !isFilledInForm('nSIRE') && triggerEmptyMandatoryFields['status']
+              }" type="text" placeholder="12345678X" formControlName="nSIRE">
           </div>
         </div>
       </div>
@@ -63,6 +74,7 @@
           </span>
         </label>
       </div>
+      <p class="help has-text-danger">{{ cSailliesMessage.value }}</p>
     </div>
 
     <div class="field mt-6">
@@ -97,9 +109,9 @@
       </div>
     </div>
     
-    <h5 class="subtitle is-5 has-text-weight-bold">Caractéristiques</h5>
+    <h5 class="subtitle is-5 has-text-weight-bold">Informations basiques</h5>
     <div class="columns">
-      <div class="column is-2">
+      <div class="column">
         <div class="field">
           <label class="label has-text-weight-semibold has-text-grey">Robe</label>
           <div class="select is-primary">
@@ -111,7 +123,16 @@
         </div>
       </div>
 
-      <div class="column is-3 is-offset-2">
+      <div class="column">
+        <div class="field">
+          <label class="label has-text-weight-semibold has-text-grey">Taille au garrot <small>(centimètres)</small></label>
+          <div class="control">
+          <input class="input" type="text" placeholder="180" formControlName="height">
+          </div>
+        </div>
+      </div>
+
+      <div class="column">
         <div class="field">
           <label class="label has-text-weight-semibold has-text-grey">Date de naissance <small>(JJ/MM/AAAA)</small></label>
           <div class="control">
@@ -119,16 +140,39 @@
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="column is-3 is-offset-2">
-        <div class="field">
-          <label class="label has-text-weight-semibold has-text-grey">Taille <small>(centimètres)</small></label>
-          <div class="control">
-          <input class="input" type="text" placeholder="180" formControlName="height">
-          </div>
-        </div>
+    <h5 class="subtitle is-5 has-text-weight-bold">Localisation de l'étalon</h5>
+    <label class="label has-text-weight-semibold has-text-grey">Ville et code postal</label>
+
+    <div class="field is-grouped">
+      <div class="control is-expanded" [ngClass]="locationIsValidated? 'has-icons-right' : ''">
+        <input class="input"[ngClass]="{
+          'is-success': locationIsValidated,
+          'is-danger': !locationIsValidated && isLookingForLocation
+          }" type="text" placeholder="ex: Tourves, Tourves 83 ou Tourves 83170" formControlName="location">
+        <span class="icon is-right" *ngIf="locationIsValidated">
+          <i class="fas fa-check fa-sm"></i>
+        </span>
+      </div>
+      <div class="control" *ngIf="!locationIsValidated">
+        <button class="button is-primary" (click)="findCity()">Trouver une correspondance</button>
+      </div>
+      <div class="control" *ngIf="locationIsValidated">
+        <button class="button is-primary" (click)="resetCity()">
+          <span class="icon">
+            <i class="fas fa-arrows-rotate"></i>
+          </span>
+          <span>Sélectionner une autre ville</span>
+        </button>
       </div>
     </div>
+    
+    <p class="help has-text-danger">{{ locationMessage.value }}</p>
+    <div class="tags" *ngIf="locationSearchSuccess['status'] && isLookingForLocation">
+      <span class="tag is-medium is-clickable" *ngFor="let index of getNumberArray(locationTagValues.length)" (click)="confirmLocationValue(index)">{{locationTagValues[index]}}</span>
+    </div>
+    
 
     <div class="field">
       <h5 class="subtitle is-5 has-text-weight-bold">Produits </h5>
@@ -145,28 +189,68 @@
     </div>
 
     <h5 class="subtitle is-5 has-text-weight-bold">Pedigree</h5>
-    <div class="columns">
+
+    <div class="columns is-flex is-align-items-center">
       <div class="column">
-        <input type="text" class="input" placeholder="Père" formControlName="p1">
-        <input type="text" class="input" placeholder="Mère" formControlName="p2">
+        <div class="control">
+          <input type="text" class="input" placeholder="Père" formControlName="p1">
+        </div>
       </div>
 
       <div class="column">
-        <input type="text" class="input" placeholder="Père" formControlName="p3">
-        <input type="text" class="input" placeholder="Mère" formControlName="p4">
-        <input type="text" class="input" placeholder="Père" formControlName="p5">
-        <input type="text" class="input" placeholder="Mère" formControlName="p6">
+        <div class="control my-3">
+          <input type="text" class="input" placeholder="Grand-père" formControlName="p3">
+        </div>
+        <div class="control my-3">
+          <input type="text" class="input" placeholder="Grand-mère" formControlName="p4">
+        </div>
       </div>
 
       <div class="column">
-        <input type="text" class="input" placeholder="Père" formControlName="p7">
-        <input type="text" class="input" placeholder="Mère" formControlName="p8">
-        <input type="text" class="input" placeholder="Père" formControlName="p9">
-        <input type="text" class="input" placeholder="Mère" formControlName="p10">
-        <input type="text" class="input" placeholder="Père" formControlName="p11">
-        <input type="text" class="input" placeholder="Mère" formControlName="p12">
-        <input type="text" class="input" placeholder="Père" formControlName="p13">
-        <input type="text" class="input" placeholder="Mère" formControlName="p14">
+        <div class="control my-3">
+          <input type="text" class="input" placeholder="Arrière-grand-père" formControlName="p7">
+        </div>
+        <div class="control my-3">
+          <input type="text" class="input" placeholder="Arrière-grand-mère" formControlName="p8">
+        </div>
+        <div class="control my-3">
+          <input type="text" class="input" placeholder="Arrière-grand-père" formControlName="p9">
+        </div>
+        <div class="control my-3">
+          <input type="text" class="input" placeholder="Arrière-grand-mère" formControlName="p10">
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-flex is-align-items-center">
+      <div class="column">
+        <div class="control">
+          <input type="text" class="input" placeholder="Mère" formControlName="p2">
+        </div>
+      </div>
+
+      <div class="column">
+        <div class="control my-3">
+          <input type="text" class="input" placeholder="Grand-père" formControlName="p5">
+        </div>
+        <div class="control my-3">
+          <input type="text" class="input" placeholder="Grand-mère" formControlName="p6">
+        </div>
+      </div>
+
+      <div class="column">
+        <div class="control my-3">
+          <input type="text" class="input" placeholder="Arrière-grand-père" formControlName="p11">
+        </div>
+        <div class="control my-3">
+          <input type="text" class="input" placeholder="Arrière-grand-mère" formControlName="p12">
+        </div>
+          <div class="control my-3">
+          <input type="text" class="input" placeholder="Arrière-grand-père" formControlName="p13">
+        </div>
+          <div class="control my-3">
+          <input type="text" class="input" placeholder="Arrière-grand-mère" formControlName="p14">
+        </div>
       </div>
     </div>
 
@@ -178,15 +262,17 @@
     </div>
 
     <div class="field">
-      <h5 class="subtitle is-5 has-text-weight-bold">Commentaires</h5>
+      <h5 class="subtitle is-5 has-text-weight-bold">Informations additionnelles</h5>
       <div class="control">
-        <textarea class="textarea" placeholder="Ajoutez ici toute information additionnelle que vous jugez utile." formControlName="comments"></textarea>
+        <textarea class="textarea" placeholder="Ajoutez ici toute information que vous jugez utile à propos de votre étalon." formControlName="comments"></textarea>
       </div>
     </div>
 
+    <h4 class="subtitle is-4">Seconde partie: caractéristiques de la saillie</h4>
+
     <div class="field">
-      <h5 class="subtitle is-5 has-text-weight-bold">Type et lieu de monte</h5>
-      <label class="label has-text-weight-semibold has-text-grey">Indiquez quels types de monte sont proposées pour votre étalon.</label>
+      <h5 class="subtitle is-5 has-text-weight-bold">Type de monte</h5>
+      <label class="label has-text-weight-semibold has-text-grey">Indiquez quel(s) type(s) de monte sont proposés pour votre étalon.</label>
       <div class="columns">
         <div class="column">
           <div>
@@ -237,7 +323,7 @@
       <div class="field">
         <label class="label has-text-weight-semibold has-text-grey">Lieu de monte</label>
         <div class="control">
-          <input class="input" type="text" placeholder="" formControlName="location">
+          <input class="input" type="text" placeholder="" formControlName="">
         </div>
       </div>
 

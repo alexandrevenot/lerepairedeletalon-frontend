@@ -18,7 +18,7 @@ margin-left: auto;
 }
 
 .photo-container .delete {
-    position: absolute;
+    position: absolute; 
     top: 5px;
     right: 5px;
 }
