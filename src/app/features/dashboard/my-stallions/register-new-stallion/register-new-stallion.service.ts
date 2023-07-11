@@ -3,23 +3,13 @@ import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular
 import { FormControl} from '@angular/forms';
 import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-
-export interface getCityItem {
-  city_name: string,
-  postal_code: string,
-  lat: number,
-  lng: number
-}
-
-export interface getCityData {
-  content: Array<getCityItem>
-}
+import { getCityItem } from 'src/environments/geolocation';
 
 @Injectable()
 export class RegisterNewStallionService {
   constructor(private http: HttpClient) { }
 
-  handleError(error: HttpErrorResponse, message: any) {
+  handleRegisterError(error: HttpErrorResponse, message: any) {
     if (error.status === 400) {
         message.setValue("Un étalon avec ce même numéro SIRE a déjà été ajouté.");
     } else {
@@ -28,27 +18,9 @@ export class RegisterNewStallionService {
     return throwError(() => new Error());
   }
 
-  getCity(
-    input: string,
-    success: {[key: string]: boolean},
-    locationMessage: FormControl<any>) {
-    let params = new HttpParams()
-    .set('user_input', input);
-
-    return this.http.get<getCityData>(
-      "http://localhost:3001/geoloc/get-city",
-      { params }
-    ).pipe(
-        catchError(() => {
-            success['status'] = false;
-            locationMessage.setValue("Veuillez vérifier l'orthographe de la ville ou en essayer une plus grande.")
-            return throwError(() => new Error())
-        })
-      );
-  }
-
   postRegisterNewStallion(
     form: { [key: string]: string },
+    location: getCityItem,
     breed: string,
     color: string,
     cSaillies: File,
@@ -60,13 +32,22 @@ export class RegisterNewStallionService {
     ) {
 
     const formData = new FormData();
+    formData.append('lat', location.lat.toString());
+    formData.append('lng', location.lng.toString());
+    formData.append('city', location.city_name);
+    formData.append('postal_code', location.postal_code);
     formData.append('breed', breed);
     formData.append('color', color);
     photos.forEach((file) => { formData.append('photos', file); });
     formData.append('c_saillies', cSaillies);
 
-    const r_types = Object.keys(rTypes).filter(key => rTypes[key]).join(',');
-    formData.append('r_types', r_types);
+    const coverTypesList = Object.keys(rTypes).filter(key => rTypes[key]);
+    let prices = [];
+    for (const coverType of coverTypesList) {
+      prices.push(form[coverType + 'Price']);
+    }
+    formData.append('prices', prices.join(','));
+    formData.append('cover_types', coverTypesList.join(','));
 
     const pedigreeL: string[] = [];
     for (let i = 1; i <= 14; i++) {
@@ -84,9 +65,8 @@ export class RegisterNewStallionService {
     formData.append('offspring', form["offspring"]);
     formData.append('performance', form["performance"]);
     formData.append('pedigree_po', form["pedigreePO"]);
-    formData.append('comments', form["comments"]);
-    formData.append('price', form["price"]);
-    formData.append('location', form["location"])
+    formData.append('stallion_additional_info', form["stallionAdditionalInfo"]);
+    formData.append('cover_additional_info', form["coverAdditionalInfo"]);
 
     let headers = new HttpHeaders();
     headers.append('Content-Type', 'multipart/form-data');
@@ -99,7 +79,7 @@ export class RegisterNewStallionService {
         catchError((error: HttpErrorResponse) => {
             submitted["status"] = false; 
             triggerEmptyMandatoryFields['status'] = true;
-            return this.handleError(error, message);
+            return this.handleRegisterError(error, message);
         })
       );
   }

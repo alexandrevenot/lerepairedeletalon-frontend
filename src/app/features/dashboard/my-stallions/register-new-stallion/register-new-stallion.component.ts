@@ -1,24 +1,27 @@
-import { Component, EventEmitter, Output, OnInit  } from '@angular/core';
+import { Component, OnInit  } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
-import { RegisterNewStallionService, getCityData, getCityItem } from './register-new-stallion.service';
-import { availableBreeds, availableColors, getNumberArray, photosMaxSizeInBytes } from 'src/environments/environment';
+import { RegisterNewStallionService } from './register-new-stallion.service';
+import { availableBreeds, availableColors, availableCoverTypes, getNumberArray, photosMaxSizeInBytes } from 'src/environments/environment';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { throwError } from 'rxjs';
+import { GeolocationService, getCityData, getCityItem } from 'src/environments/geolocation';
 
 @Component({
   selector: 'app-register-new-stallion',
   templateUrl: './register-new-stallion.component.html',
   styleUrls: ['./register-new-stallion.component.css'],
-  providers: [RegisterNewStallionService]
+  providers: [RegisterNewStallionService, GeolocationService]
 })
 export class RegisterNewStallionComponent implements OnInit {
   // imported variables and functions
   public availableBreeds = availableBreeds;
   public availableColors = availableColors;
+  public availableCoverTypes = availableCoverTypes;
   public photosMaxSizeInBytes = photosMaxSizeInBytes;
   public getNumberArray = getNumberArray;
 
   // utility variables
+  public coverTypes: {[key: string]: boolean} = {};
   public submitted!: {[key: string]: boolean};
   public registerMessage!: FormControl;
   public photosMessage!: FormControl;
@@ -44,10 +47,10 @@ export class RegisterNewStallionComponent implements OnInit {
   public cSaillies!: File;
   public photos: File[] = [];
   public photosURLs: SafeUrl[] = [];
-  public rTypes!: { [key: string]: boolean };
 
   constructor(
     private registerNewStallionService: RegisterNewStallionService,
+    private geolocationService: GeolocationService,
     private formBuilder: FormBuilder,
     private sanitizer: DomSanitizer
     ) {}
@@ -84,21 +87,22 @@ export class RegisterNewStallionComponent implements OnInit {
       p13: [''],
       p14: [''],
       pedigreePO: [''],
-      comments: [''],
-      price: ['', Validators.required],
+      stallionAdditionalInfo: [''],
       location: ['', Validators.required],
-      postalCode: ['', Validators.required]
+      postalCode: ['', Validators.required],
+      prices: this.formBuilder.array([]),
+      coverAdditionalInfo: ['']
     })
-  
-    this.breed = "Sélectionner";
-    this.rTypes = {
-      lib: false,
-      iai: false,
-      iarp: false,
-      iac: false,
-      iate: false,
-      icsi: false
+
+    for (const coverType of this.objectKeys(this.availableCoverTypes, 'all')) {
+      this.registerNewStallionForm.addControl(coverType + 'Price', new FormControl('', Validators.required))
     }
+    
+    for (const key in availableCoverTypes) {
+      this.coverTypes[key] = false;
+    }
+
+    this.breed = "Sélectionner";
   }
 
   // fetching form values
@@ -143,10 +147,30 @@ export class RegisterNewStallionComponent implements OnInit {
   }
 
   updateRType(event: any) {
-    this.rTypes[event.target.id] = event.target.checked;
+    this.coverTypes[event.target.id] = event.target.checked;
   }
 
   // utility functions on form values fetching
+  objectKeys(obj: Record<string, any>, part: 'first' | 'last' | 'all'): string[] {
+    if (part === 'first') {
+      return Object.keys(obj).slice(0, Math.ceil(Object.keys(obj).length / 2));
+    } else if (part === 'last') {
+      return Object.keys(obj).slice(Math.ceil(Object.keys(obj).length / 2), Object.keys(obj).length);
+    } else {
+      return Object.keys(obj).slice(0, Object.keys(obj).length);
+    }
+  }
+
+  getSelectedRTypes() {
+    let list = [];
+    for (let key of Object.keys(this.coverTypes)) {
+      if (this.coverTypes[key]) {
+        list.push(key);
+      }
+    }
+    return list;
+  }
+
   isFilledInForm(field: string) {
     return this.registerNewStallionForm.getRawValue()[field];
   }
@@ -164,22 +188,17 @@ export class RegisterNewStallionComponent implements OnInit {
     this.isLookingForLocation = true;
     this.locations.splice(0, this.locations.length);
     this.locationTagValues.splice(0, this.locationTagValues.length);
-    this.registerNewStallionService.getCity(
+    this.geolocationService.getCity(
       this.registerNewStallionForm.getRawValue().location,
       this.locationSearchSuccess,
       this.locationMessage)
     .subscribe((data: getCityData) => {
-      if (data.content.length <= 10) {
-        for (let item of data.content) {
-          this.locations.push(item);
-          this.locationTagValues.push(item.city_name + " (" + item.postal_code + ") ?")
-        }
-        this.locationMessage.setValue("");
-        this.locationSearchSuccess['status'] = true;
-      } else {
-        this.locationMessage.setValue("Il existe au moins " + data.content.length.toString() + " code postaux valides pour cette entrée. Veuillez ajouter au moins les premiers chiffres du code postal.");
-        this.locationSearchSuccess['status'] = false;
+      for (let item of data.content) {
+        this.locations.push(item);
+        this.locationTagValues.push(item.city_name + " (" + item.postal_code + ") ?")
       }
+      this.locationMessage.setValue("");
+      this.locationSearchSuccess['status'] = true;
     })
   }
 
@@ -228,11 +247,12 @@ export class RegisterNewStallionComponent implements OnInit {
     // post request
     this.registerNewStallionService.postRegisterNewStallion(
       this.registerNewStallionForm.getRawValue(),
+      this.selectedLocation,
       this.breed,
       this.color,
       this.cSaillies,
       this.photos,
-      this.rTypes,
+      this.coverTypes,
       this.submitted,
       this.registerMessage,
       this.triggerEmptyMandatoryFields

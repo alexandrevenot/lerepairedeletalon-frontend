@@ -36,7 +36,7 @@ export function getNumberArray(n: number): number[] {
     }
   }
 
-export const availableRTypes: {[key: string]: string} = {
+export const availableCoverTypes: {[key: string]: string} = {
     "lib": "Liberté / Main",
     "iai": "IAI: Insémination artificielle immédiate",
     "iarp": "IARP: Insémination artificielle réfrigérée sur place",

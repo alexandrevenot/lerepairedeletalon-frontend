@@ -7,7 +7,9 @@ import { getStallionPhoto } from '../../../../environments/httpCommonMethods'
 interface returnedItem {
     id: string;
     name: string;
-    location: string;
+    breed: string;
+    city: string;
+    postal_code: string;
     price: number;
     photoId: string;
   }

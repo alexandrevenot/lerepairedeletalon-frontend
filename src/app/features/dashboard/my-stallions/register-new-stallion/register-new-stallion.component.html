@@ -264,85 +264,68 @@
     <div class="field">
       <h5 class="subtitle is-5 has-text-weight-bold">Informations additionnelles</h5>
       <div class="control">
-        <textarea class="textarea" placeholder="Ajoutez ici toute information que vous jugez utile à propos de votre étalon." formControlName="comments"></textarea>
+        <textarea class="textarea" placeholder="Ajoutez ici toute information que vous jugez utile à propos de votre étalon." formControlName="stallionAdditionalInfo"></textarea>
       </div>
     </div>
 
-    <h4 class="subtitle is-4">Seconde partie: caractéristiques de la saillie</h4>
-
+    <h4 class="subtitle is-4">Seconde partie: caractéristiques de la saillie</h4> 
     <div class="field">
-      <h5 class="subtitle is-5 has-text-weight-bold">Type de monte</h5>
-      <label class="label has-text-weight-semibold has-text-grey">Indiquez quel(s) type(s) de monte sont proposés pour votre étalon.</label>
+      <h5 class="subtitle is-5 has-text-weight-bold">Type de saillie</h5>
+      <label class="label has-text-weight-semibold has-text-grey">Indiquez quel(s) type(s) de saillie sont proposés pour votre étalon.</label>
       <div class="columns">
         <div class="column">
-          <div>
+          <div *ngFor="let coverType of objectKeys(coverTypes, 'first')">
             <label class="checkbox">
-              <input type="checkbox" id="lib" (change)="updateRType($event)">
-              Liberté / Main
-            </label>
-          </div>
-
-          <div>
-            <label class="checkbox">
-              <input type="checkbox" id="iai" (change)="updateRType($event)">
-              IAI: Insémination artificielle immédiate
-            </label>
-          </div>
-
-          <div>
-            <label class="checkbox">
-              <input type="checkbox" id="iarp" (change)="updateRType($event)">
-              IARP: Insémination artificielle réfrigérée sur place
+              <input type="checkbox" [id]="coverType" (change)="updateRType($event)">
+              {{availableCoverTypes[coverType]}}
             </label>
           </div>
         </div>
+
         <div class="column">
-          <div>
+          <div *ngFor="let coverType of objectKeys(coverTypes, 'last')">
             <label class="checkbox">
-              <input type="checkbox" id="iac" (change)="updateRType($event)">
-              IART IAC: Insémination artificielle congelée
-            </label>
-          </div>
-
-          <div>
-            <label class="checkbox">
-              <input type="checkbox" id="iate" (change)="updateRType($event)">
-              TE IATE: Insémination artificielle et transfert d'embryon
-            </label>
-          </div>
-
-          <div>
-            <label class="checkbox">
-              <input type="checkbox" id="icsi" (change)="updateRType($event)">
-              ICSI: Intro-cytoplasmic sperm injection
+              <input type="checkbox" [id]="coverType" (change)="updateRType($event)">
+              {{availableCoverTypes[coverType]}}
             </label>
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="field">
-        <label class="label has-text-weight-semibold has-text-grey">Lieu de monte</label>
-        <div class="control">
-          <input class="input" type="text" placeholder="" formControlName="">
+    <h5 class="subtitle is-5 has-text-weight-bold mt-5">Prix</h5>
+    <label class="label has-text-weight-semibold has-text-grey" *ngIf="getSelectedRTypes().length === 0">
+      Commencez par sélectionner un type de saillie disponible pour votre étalon.
+    </label>
+
+    <div class="columns is-align-items-center" *ngFor="let coverType of getSelectedRTypes()">
+      <div class="column">
+        <label class="label has-text-weight-semibold has-text-grey">Si {{availableCoverTypes[coverType]}} :</label>
+      </div>
+
+      <div class="column">
+        <div class="field">
+          <label class="label has-text-weight-semibold has-text-grey">Indiquez le prix de la saillie.</label>
+          <div class="control has-icons-right">
+            <input class="input" type="text" formControlName="{{coverType}}Price">
+            <span class="icon is-small is-right">
+              <i class="fas fa-euro"></i>
+            </span>
+          </div>
         </div>
       </div>
-
     </div>
 
-    <div class="field">
-      <h5 class="subtitle is-5 has-text-weight-bold">Prix</h5>
-      <label class="label has-text-weight-semibold has-text-grey">Indiquez le prix de la saillie.</label>
-      <div class="control has-icons-right">
-        <input class="input" type="text" formControlName="price">
-        <span class="icon is-small is-right">
-          <i class="fas fa-euro"></i>
-        </span>
-      </div>
-    </div>
-
-    <div class="field is-grouped">
+    <div class="field mt-5">
+      <h5 class="subtitle is-5 has-text-weight-bold">Informations additionnelles</h5>
       <div class="control">
-        <button class="button is-primary" type="button" (click)="onSubmit()" [ngClass]="submitted['status'] ? 'is-loading' : ''">Enregistrer</button>
+        <textarea class="textarea" placeholder="Ajoutez ici des informations concernant les différents types de saillie disponibles pour votre étalon: lieu de monte / d'insémination, conditions de validité, nombre de paillettes maximal, à la charge de qui sont les différents frais, etc." formControlName="coverAdditionalInfo"></textarea>
+      </div>
+    </div>
+
+    <div class="field is-grouped mt-6">
+      <div class="control">
+        <button class="button is-primary" type="button" (click)="onSubmit()" [ngClass]="submitted['status'] ? 'is-loading' : ''">Ajouter l'étalon</button>
       </div>
       <div class="control">
         <button class="button is-light">Annuler</button>

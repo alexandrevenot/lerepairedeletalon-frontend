@@ -13,7 +13,12 @@ export class SearchComponent {
   currentFilters: updateFilterData = {
     form: {},
     breeds: {},
-    colors: {}
+    colors: {},
+    distance: {
+      max: 0,
+      lat: 0,
+      lng: 0
+    }
   };
 
   filtersAreLoading: boolean = false;

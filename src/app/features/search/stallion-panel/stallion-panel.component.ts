@@ -6,7 +6,9 @@ import { updateFilterData } from '../filters/filters.component'
 export interface Item {
   id: string;
   name: string;
-  location: string;
+  breed: string;
+  city: string;
+  postalCode: string;
   price: number;
   photoId: string;
   photo: string;
@@ -23,7 +25,12 @@ export class StallionPanelComponent implements OnInit, OnChanges {
   @Input() filters: updateFilterData = {
     form: {},
     breeds: {},
-    colors: {}
+    colors: {},
+    distance: {
+      max: 0,
+      lat: 0,
+      lng: 0
+    }
   };
   @Output() loadingEndingEvent = new EventEmitter();
   @Output() clickedOnProfileEvent = new EventEmitter();
@@ -42,7 +49,9 @@ export class StallionPanelComponent implements OnInit, OnChanges {
   public emptyItem = {
     id: "",
     name: "",
-    location: "",
+    breed: "",
+    city: "",
+    postalCode: "",
     price: 0,
     photoId: "",
     photo: ""
@@ -87,7 +96,9 @@ export class StallionPanelComponent implements OnInit, OnChanges {
         this.items.push({
           id: item.id,
           name: item.name,
-          location: item.location,
+          breed: item.breed,
+          city: item.city,
+          postalCode: item.postal_code,
           price: item.price,
           photoId: item.photoId,
           photo: ""

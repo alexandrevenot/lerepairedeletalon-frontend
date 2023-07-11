@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { StallionProfileService, returnedStallion } from './stallion-profile.service'
-import { getNumberArray, availableRTypes } from '../../../../environments/environment'
+import { getNumberArray, availableCoverTypes } from '../../../../environments/environment'
 
 @Component({
   selector: 'app-stallion-profile',
@@ -59,7 +59,7 @@ export class StallionProfileComponent {
         this.comments = content.comments;
         const rTypes = Object.keys(content.r_types).filter(key => content.r_types[key]);
         for (let rtype of rTypes) {
-          this.rTypes.push(availableRTypes[rtype])
+          this.rTypes.push(availableCoverTypes[rtype])
         }
         this.price = content.price;
   
