@@ -57,14 +57,20 @@ export class StallionPanelService {
       params = params.append('colors', color)
     }
 
-    if (typeof filters.form['lowest_price'] === "string" && filters.form['lowest_price'].length > 0) {
-      params = params.append('min_price', filters.form['lowest_price'])
+    if (typeof filters.form['lowestPrice'] === "string" && filters.form['lowestPrice'].length > 0) {
+      params = params.append('min_price', filters.form['lowestPrice'])
     }
 
-    if (typeof filters.form['highest_price'] === "string" && filters.form['highest_price'].length > 0) {
-      params = params.append('max_price', filters.form['highest_price'])
+    if (typeof filters.form['highestPrice'] === "string" && filters.form['highestPrice'].length > 0) {
+      params = params.append('max_price', filters.form['highestPrice'])
     }
     
+    if (filters.distance.max > 0) {
+      params = params.append('distance', filters.distance.max);
+      params = params.append('lat', filters.distance.lat);
+      params = params.append('lng', filters.distance.lng);
+    }
+
     return this.http.get<searchData>(
         "http://localhost:3001/stallions/search",
         { params }
