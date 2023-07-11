@@ -30,7 +30,8 @@ export class StallionPanelComponent implements OnInit, OnChanges {
       max: 0,
       lat: 0,
       lng: 0
-    }
+    },
+    coverTypes: {}
   };
   @Output() loadingEndingEvent = new EventEmitter();
   @Output() clickedOnProfileEvent = new EventEmitter();

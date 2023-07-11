@@ -21,6 +21,25 @@
     </div>
 
     <div class="field">
+        <button class="button is-fullwidth is-justify-content-flex-start" [ngClass]="filterIsSelected['coverType'] ? 'is-active' : ''" (click)="swapFilter('coverType')">
+            <span class="icon">
+                <i class="fa fa-chevron-up" [ngClass]="filterIsSelected['coverType'] ? '' : 'fa-rotate-180'"></i>
+            </span>
+            <span class="has-text-weight-semibold">Type de saillie</span>
+        </button>
+        <div class="content px-3 py-3">
+            <div *ngIf="filterIsSelected['coverType']">
+                <div *ngFor="let coverType of availableCoverTypesL">
+                    <label class="checkbox">
+                        <input type="checkbox" id={{coverType}} (change)="updateCheckbox('coverType', $event)" [checked]="selectedCoverTypes[coverType]">
+                        {{ availableCoverTypes[coverType] }}
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="field">
         <button class="button is-fullwidth is-justify-content-flex-start" [ngClass]="filterIsSelected['color'] ? 'is-active' : ''" (click)="swapFilter('color')">
             <span class="icon">
                 <i class="fa fa-chevron-up" [ngClass]="filterIsSelected['color'] ? '' : 'fa-rotate-180'"></i>

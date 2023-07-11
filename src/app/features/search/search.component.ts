@@ -18,7 +18,8 @@ export class SearchComponent {
       max: 0,
       lat: 0,
       lng: 0
-    }
+    },
+    coverTypes: {}
   };
 
   filtersAreLoading: boolean = false;

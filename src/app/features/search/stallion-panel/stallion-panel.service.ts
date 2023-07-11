@@ -45,6 +45,13 @@ export class StallionPanelService {
       }
     }
 
+    let coverTypes: string[] = [];
+    for (const coverType in filters.coverTypes) {
+      if (filters.coverTypes[coverType]) {
+        coverTypes.push(coverType);
+      }
+    }
+
     // params creation
     let params = new HttpParams()
     .set('limit', limit)
@@ -55,6 +62,10 @@ export class StallionPanelService {
     }
     for (const color of colors) {
       params = params.append('colors', color)
+    }
+
+    for (const coverType of coverTypes) {
+      params = params.append('cover_types', coverType)
     }
 
     if (typeof filters.form['lowestPrice'] === "string" && filters.form['lowestPrice'].length > 0) {

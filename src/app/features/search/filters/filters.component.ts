@@ -1,6 +1,6 @@
 import { Component, Input, EventEmitter, Output, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
-import { availableBreeds, availableColors, getNumberArray } from '../../../../environments/environment';
+import { availableBreeds, availableColors, availableCoverTypes, getNumberArray } from '../../../../environments/environment';
 import { GeolocationService, getCityData, getCityItem } from 'src/environments/geolocation';
 
 interface distanceData {
@@ -13,7 +13,8 @@ export interface updateFilterData {
   form: { [key: string]: string | null },
   breeds: { [key: string]: boolean },
   colors: { [key: string]: boolean },
-  distance: distanceData
+  distance: distanceData,
+  coverTypes: { [key: string]: boolean }
 }
 
 @Component({
@@ -30,12 +31,15 @@ export class FiltersComponent implements OnInit {
   // imports
   availableBreeds = availableBreeds;
   availableColors = availableColors;
+  availableCoverTypes = availableCoverTypes;
   public getNumberArrayF = getNumberArray;
 
   public filterForm!: FormGroup;
 
   selectedBreeds: { [key: string]: boolean } = {};
   selectedColors: { [key: string]: boolean } = {};
+  selectedCoverTypes: { [key: string]: boolean } = {};
+  availableCoverTypesL: string[] = [];
 
   distance: distanceData = {
     max: 0,
@@ -61,7 +65,8 @@ export class FiltersComponent implements OnInit {
     'breed': false,
     'color': false,
     'price': false,
-    'distance': false
+    'distance': false,
+    'coverType': false
   }
 
   constructor(
@@ -75,6 +80,11 @@ export class FiltersComponent implements OnInit {
     this.availableColors.forEach((elt) => {
       this.selectedColors[elt] = false;
     })
+
+    Object.keys(this.availableCoverTypes).forEach((elt) => {
+      this.availableCoverTypesL.push(elt);
+      this.selectedCoverTypes[elt] = false;
+    });
   }
 
   ngOnInit(): void {
@@ -91,11 +101,13 @@ export class FiltersComponent implements OnInit {
     this.filterIsSelected[field] = !this.filterIsSelected[field] 
   }
 
-  updateCheckbox(type: 'color' | 'breed', event: any) {
+  updateCheckbox(type: 'color' | 'breed' | 'coverType', event: any) {
     if (type == 'color') {
       this.selectedColors[event.target.id] = event.target.checked;
-    } else {
+    } else if (type == 'breed') {
       this.selectedBreeds[event.target.id] = event.target.checked;
+    } else {
+      this.selectedCoverTypes[event.target.id] = event.target.checked;
     }
   }
 
@@ -161,6 +173,10 @@ export class FiltersComponent implements OnInit {
     }
 
     this.distanceControl.setValue("");
+
+    Object.keys(this.availableCoverTypes).forEach((elt) => {
+      this.selectedCoverTypes[elt] = false;
+    });
   }
 
   onSubmit() {
@@ -174,7 +190,8 @@ export class FiltersComponent implements OnInit {
       form: this.filterForm.getRawValue(),
       breeds: this.selectedBreeds,
       colors: this.selectedColors,
-      distance: this.distance
+      distance: this.distance,
+      coverTypes: this.selectedCoverTypes
     });
   }
 }
