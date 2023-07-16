@@ -91,7 +91,8 @@ export class FiltersComponent implements OnInit {
     this.filterForm = this.formBuilder.group({
       lowestPrice: [''],
       highestPrice: [''],
-      location: ['']
+      location: [''],
+      postalCode: ['']
     });
     
     this.distanceControl = new FormControl('');
@@ -118,6 +119,7 @@ export class FiltersComponent implements OnInit {
     this.locationTagValues.splice(0, this.locationTagValues.length);
     this.geolocationService.getCity(
       this.filterForm.getRawValue().location,
+      this.filterForm.getRawValue().postalCode,
       this.locationSearchSuccess,
       this.locationMessage)
     .subscribe((data: getCityData) => {
@@ -184,6 +186,10 @@ export class FiltersComponent implements OnInit {
       this.distance.max = Number(this.distanceControl.getRawValue());
       this.distance.lat = this.selectedLocation.lat;
       this.distance.lng = this.selectedLocation.lng;
+    } else {
+      this.distance.max = 0;
+      this.distance.lat = 0;
+      this.distance.lng = 0;
     }
 
     this.updateFiltersEvent.emit({

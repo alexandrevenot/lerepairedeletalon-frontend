@@ -1,4 +1,4 @@
-<h4 class="subtitle is-4 has-text-weight-bold mb-6">Filtres</h4>
+<h4 class="subtitle is-4 has-text-weight-bold mb-6">Critères de recherche</h4>
 
 <form [formGroup]="filterForm">
     <div class="field">
@@ -96,35 +96,40 @@
             <span class="has-text-weight-semibold">Distance</span>
         </button>
         <div class="content px-3 py-3" *ngIf="filterIsSelected['distance']">
-            <label class="label has-text-weight-semibold has-text-grey">Votre localisation: ville et code postal</label>
-            <p class="help">Essayez par exemple: 'Tourves', 'Tourves 83' ou 'Tourves 83170'</p>
-            <div class="field is-grouped">
+            <div class="field">
+                <label class="label has-text-weight-semibold has-text-grey">Depuis quelle ville cherchez-vous?</label>
                 <div class="control is-expanded" [ngClass]="locationIsValidated? 'has-icons-right' : ''">
-                  <input class="input"[ngClass]="{
-                    'is-success': locationIsValidated,
-                    'is-danger': !locationIsValidated && isLookingForLocation
-                    }" type="text" placeholder="" formControlName="location">
-                  <span class="icon is-right" *ngIf="locationIsValidated">
-                    <i class="fas fa-check fa-sm"></i>
-                  </span>
-                </div>
-                <div class="control" *ngIf="!locationIsValidated">
-                  <button class="button is-primary" (click)="findCity()">Trouver une correspondance</button>
-                </div>
-                <div class="control" *ngIf="locationIsValidated">
-                  <button class="button is-primary" (click)="resetCity()">
-                    <span class="icon">
-                      <i class="fas fa-arrows-rotate"></i>
+                    <input class="input"[ngClass]="{
+                      'is-success': locationIsValidated,
+                      'is-danger': !locationIsValidated && isLookingForLocation
+                      }" type="text" placeholder="Toulouse" formControlName="location">
+                    <span class="icon is-right" *ngIf="locationIsValidated">
+                      <i class="fas fa-check fa-sm"></i>
                     </span>
-                    <span>Changer de ville</span>
-                  </button>
+                  </div>
+            </div>
+            <div class="field" *ngIf="!locationIsValidated">
+                <label class="label has-text-weight-semibold has-text-grey">Code postal <small>(optionnel)</small></label>
+                <div class="control">
+                  <input class="input" type="text" placeholder="31000" formControlName="postalCode">
                 </div>
             </div>
+            <div class="control" *ngIf="!locationIsValidated">
+                <button class="button is-primary is-fullwidth" (click)="findCity()">Me localiser</button>
+            </div>
+            <div class="control" *ngIf="locationIsValidated">
+                <button class="button is-primary is-fullwidth" (click)="resetCity()">
+                  <span class="icon">
+                    <i class="fas fa-arrows-rotate"></i>
+                  </span>
+                  <span>Changer de ville</span>
+                </button>
+              </div>
             <p class="help has-text-danger">{{ locationMessage.value }}</p>
             <div class="tags" *ngIf="locationSearchSuccess['status'] && isLookingForLocation">
               <span class="tag is-medium is-clickable" *ngFor="let index of getNumberArrayF(locationTagValues.length)" (click)="confirmLocationValue(index)">{{locationTagValues[index]}}</span>
             </div>
-            <label class="label has-text-weight-semibold has-text-grey">Distance maximale</label>
+            <label class="label has-text-weight-semibold has-text-grey">Distance maximale de l'étalon</label>
             <div class="field has-addons">
                 <p class="control">
                   <input class="input" type="text" placeholder="200" [formControl]="distanceControl">
@@ -138,13 +143,13 @@
         </div>
     </div>
 
-    <div class="content px-0 py-3">
+    <div class="content px-0 py-5">
         <div class="field is-grouped">
             <div class="control">
-                <button class="button is-primary" type="button" (click)="onSubmit()" [ngClass]="loadingStatus ? 'is-loading' : ''">Appliquer les filtres</button>
+                <button class="button is-primary" type="button" (click)="onSubmit()" [ngClass]="loadingStatus ? 'is-loading' : ''">Rechercher les étalons</button>
             </div>
             <div class="control">
-                <button class="button" type="button" (click)="resetFilters()">Réinitialiser les filtres</button>
+                <button class="button" type="button" (click)="resetFilters()">Tout effacer</button>
             </div>
         </div>
     </div>

@@ -89,7 +89,7 @@ export class RegisterNewStallionComponent implements OnInit {
       pedigreePO: [''],
       stallionAdditionalInfo: [''],
       location: ['', Validators.required],
-      postalCode: ['', Validators.required],
+      postalCode: [''],
       prices: this.formBuilder.array([]),
       coverAdditionalInfo: ['']
     })
@@ -190,6 +190,7 @@ export class RegisterNewStallionComponent implements OnInit {
     this.locationTagValues.splice(0, this.locationTagValues.length);
     this.geolocationService.getCity(
       this.registerNewStallionForm.getRawValue().location,
+      this.registerNewStallionForm.getRawValue().postalCode,
       this.locationSearchSuccess,
       this.locationMessage)
     .subscribe((data: getCityData) => {

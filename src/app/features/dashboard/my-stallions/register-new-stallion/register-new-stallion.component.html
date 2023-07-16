@@ -143,28 +143,46 @@
     </div>
 
     <h5 class="subtitle is-5 has-text-weight-bold">Localisation de l'étalon</h5>
-    <label class="label has-text-weight-semibold has-text-grey">Ville et code postal</label>
+    <div class="columns is-align-items-self-end">
+      <div class="column">
+        <div class="field">
+          <label class="label has-text-weight-semibold has-text-grey">Ville de résidence</label>
+          <div class="control" [ngClass]="locationIsValidated? 'has-icons-right' : ''">
+            <input class="input" [ngClass]="{
+              'is-success': locationIsValidated,
+              'is-danger': !locationIsValidated && isLookingForLocation
+              }" type="text" placeholder="Toulouse" formControlName="location">
+            <span class="icon is-right" *ngIf="locationIsValidated">
+              <i class="fas fa-check fa-sm"></i>
+            </span>
+          </div>
+        </div>
+      </div>
 
-    <div class="field is-grouped">
-      <div class="control is-expanded" [ngClass]="locationIsValidated? 'has-icons-right' : ''">
-        <input class="input"[ngClass]="{
-          'is-success': locationIsValidated,
-          'is-danger': !locationIsValidated && isLookingForLocation
-          }" type="text" placeholder="ex: Tourves, Tourves 83 ou Tourves 83170" formControlName="location">
-        <span class="icon is-right" *ngIf="locationIsValidated">
-          <i class="fas fa-check fa-sm"></i>
-        </span>
+      <div class="column">
+        <div class="field" *ngIf="!locationIsValidated">
+          <label class="label has-text-weight-semibold has-text-grey">Code postal <small>(optionnel)</small></label>
+          <div class="control">
+            <input class="input" [ngClass]="{
+              'is-success': locationIsValidated,
+              'is-danger': !locationIsValidated && isLookingForLocation
+              }" type="text" placeholder="31000" formControlName="postalCode">
+          </div>
       </div>
-      <div class="control" *ngIf="!locationIsValidated">
-        <button class="button is-primary" (click)="findCity()">Trouver une correspondance</button>
       </div>
-      <div class="control" *ngIf="locationIsValidated">
-        <button class="button is-primary" (click)="resetCity()">
-          <span class="icon">
-            <i class="fas fa-arrows-rotate"></i>
-          </span>
-          <span>Sélectionner une autre ville</span>
-        </button>
+
+      <div class="column">
+        <div class="control" *ngIf="!locationIsValidated">
+          <button class="button is-primary" (click)="findCity()">Localiser la ville</button>
+        </div>
+        <div class="control" *ngIf="locationIsValidated">
+          <button class="button is-primary" (click)="resetCity()">
+            <span class="icon">
+              <i class="fas fa-arrows-rotate"></i>
+            </span>
+            <span>Sélectionner une autre ville</span>
+          </button>
+        </div>
       </div>
     </div>
     
@@ -174,7 +192,7 @@
     </div>
     
 
-    <div class="field">
+    <div class="field py-3">
       <h5 class="subtitle is-5 has-text-weight-bold">Produits </h5>
       <div class="control">
         <textarea class="textarea" placeholder="Ce paragraphe concerne les produits de votre étalon, listez-les et donnez toute information à propos d'eux que vous jugez utile." formControlName="offspring"></textarea>
