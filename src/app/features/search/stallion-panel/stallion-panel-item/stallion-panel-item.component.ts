@@ -13,7 +13,8 @@ export class StallionPanelItemComponent implements OnInit{
     name: "",
     breed: "",
     city: "",
-    postalCode: "",
+    depName: "",
+    regName: "",
     price: 0,
     photoId: "",
     photo: ""
@@ -23,7 +24,8 @@ export class StallionPanelItemComponent implements OnInit{
   public location: string = "";
 
   ngOnInit() {
-    this.location = this.item.city + " (" + this.item.postalCode.slice(0, 2) + ")"
+    const complete_location = this.item.city + ", " + this.item.depName + ", " + this.item.regName;
+    this.location = complete_location.slice(0, 25) + '...'
   }
 
   handleClick(){

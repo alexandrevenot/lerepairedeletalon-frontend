@@ -5,12 +5,11 @@ import { catchError, throwError } from 'rxjs';
 interface stallionProfile {
     name: string;
     breed: string;
+    n_sire: string;
     birthdate: string;
-    c_saillies: string;
     color: string;
-    comments: string;
+    stallion_additional_info: string;
     height: number;
-    location: string;
     main_desc: string;
     nSIRE: string;
     offspring: string;
@@ -19,7 +18,11 @@ interface stallionProfile {
     performance: string;
     photos: Array<string>;
     price: number;
-    r_types: {[key: string]: boolean};
+    city: string;
+    dep_name: string;
+    reg_name: string;
+    cover_additional_info: string;
+    prices: Array<Record<string, any>>;
 }
 
 export interface returnedStallion {

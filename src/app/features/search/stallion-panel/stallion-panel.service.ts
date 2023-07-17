@@ -9,9 +9,10 @@ interface returnedItem {
     name: string;
     breed: string;
     city: string;
-    postal_code: string;
+    dep_name: string;
+    reg_name: string;
     price: number;
-    photoId: string;
+    photo_id: string;
   }
 
 export interface searchData {

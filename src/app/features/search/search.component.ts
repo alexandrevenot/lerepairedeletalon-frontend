@@ -8,8 +8,6 @@ import { updateFilterData } from './filters/filters.component'
 })
 export class SearchComponent {
 
-  clickedProfileStallionId: string | null = null;
-
   currentFilters: updateFilterData = {
     form: {},
     breeds: {},
@@ -34,6 +32,7 @@ export class SearchComponent {
   }
 
   handleClickOnProfile(itemId: string) {
-    this.clickedProfileStallionId = itemId;
+    const url = `/stallion-profile?id=${itemId}`;
+    window.open(url, '_blank');
   }
 }

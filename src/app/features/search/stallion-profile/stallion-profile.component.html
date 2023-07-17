@@ -1,97 +1,161 @@
+<section class="section">
+    <div class="container">
+        <div class="content py-3">
+            <h3 class="subtitle is-3 has-text-weight-bold mb-3">{{name}}</h3>
+            <h4 class="subtitle is-4 has-text-grey-light">{{breed}}</h4>
+            <div class="columns">
+                <div class="column">
+                    <p class="has-text-weight-semibold">
+                        {{location}}
+                    </p>
+                </div>
+
+                <div class="column has-text-right">
+                    <div class="is-flex is-align-items-center is-justify-content-flex-end">
+                        <button class="button is-rounded">
+                            <span>Ajouter aux favoris</span>
+                            <span class="icon is-small">
+                              <i class="far fa-heart" style="color: #DC143C"></i>
+                            </span>
+                        </button>
+                        <div class="has-text-weight-bold ml-3">
+                            -
+                        </div>
+                        <div class="ml-3 has-text-weight-bold is-clickable">
+                            15 commentaires
+                        </div>
+                        <div class="has-text-weight-bold ml-3">
+                            -
+                        </div>
+                        <span class="icon-text ml-3">
+                            <span class="has-text-weight-semibold">4.5</span>
+                            <span class="icon">
+                              <i class="fas fa-star" style="color: #FFDF00"></i>
+                            </span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <figure class="image py-4">
+            <img [src]="photos[0]" alt="Photo">
+        </figure>
+
+        <div class="content has-text-weight-semibold is-size-5 has-text-justified">
+            <p [innerHTML]="mainDesc"></p>
+        </div>
+
+        <div class="content py-4">
+            <h4 class="subtitle is-4 has-text-weight-bold">Informations basiques</h4>
+            <div class="content has-text-weight-semibold">
+                <div class="tags are-large">
+                    <span class="tag is-rounded">{{color}}</span>
+                    <span class="tag is-rounded">{{age}}</span>
+                    <span class="tag is-rounded">{{heightTagValue}}</span>            
+                </div>
+            </div>
+        </div>
+
+        <div class="content py-4">
+            <h4 class="subtitle is-4 has-text-weight-bold">Conditions de saillie</h4>
+            <div class="content has-text-weight-semibold">
+                <div class="tags are-large">
+                    <span class="tag is-rounded" *ngFor="let coverType of coverTypes">{{coverType}}</span>      
+                </div>
+            </div>
+            <div class="content has-text-weight-semibold is-size-5 has-text-justified">
+                <p [innerHTML]="coverAdditionalInfo"></p>
+            </div>
+        </div>
+
+        <div class="content py-4" *ngIf="hasPedigree">
+            <h4 class="subtitle is-4 has-text-weight-bold">Pedigree</h4>
+            <div class="columns is-flex is-align-items-center">
+                <div class="column">
+                    <div class="control my-3">
+                        <input class="input is-medium" value="{{pedigree[0]}}" readonly>
+                    </div>
+                </div>
+          
+                <div class="column">
+                    <div class="control py-5" *ngFor="let x of getNumberArray(2)">
+                        <input class="input is-medium" value="{{pedigree[2+x]}}" readonly>
+                    </div>
+                </div>
+          
+                <div class="column">
+                    <div class="control my-3" *ngFor="let x of getNumberArray(4)">
+                        <input class="input is-medium" value="{{pedigree[6+x]}}" readonly>
+                    </div>
+                </div>
+              </div>
+
+            <div class="columns is-flex is-align-items-center">
+              <div class="column">
+                <div class="control my-3">
+                    <input class="input is-medium" value="{{pedigree[1]}}" readonly>
+                </div>
+            </div>
+      
+            <div class="column">
+                <div class="control py-5" *ngFor="let x of getNumberArray(2)">
+                    <input class="input is-medium" value="{{pedigree[4+x]}}" readonly>
+                </div>
+            </div>
+      
+            <div class="column">
+                <div class="control my-3" *ngFor="let x of getNumberArray(4)">
+                    <input class="input is-medium" value="{{pedigree[10+x]}}" readonly>
+                </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content py-4" *ngIf="offspring">
+            <h4 class="subtitle is-4 has-text-weight-bold">Autres produits de l'étalon</h4>
+            <div class="content has-text-weight-semibold is-size-5 has-text-justified">
+                <p [innerHTML]="offspring"></p>
+            </div>
+        </div>
+
+        <div class="content py-4" *ngIf="performance">
+            <h4 class="subtitle is-4 has-text-weight-bold">Performances de l'étalon</h4>
+            <div class="content has-text-weight-semibold is-size-5 has-text-justified">
+                <p [innerHTML]="performance"></p>
+            </div>
+        </div>
+
+        <div class="content py-4" *ngIf="pedigreePO">
+            <h4 class="subtitle is-4 has-text-weight-bold">Performances du pedigree de l'étalon</h4>
+            <div class="content has-text-weight-semibold is-size-5 has-text-justified">
+                <p [innerHTML]="pedigreePO"></p>
+            </div>
+        </div>
+
+        <div class="content py-4" *ngIf="stallionAdditionalInfo">
+            <h4 class="subtitle is-4 has-text-weight-bold">Informations additionnelles</h4>
+            <div class="content has-text-weight-semibold is-size-5 has-text-justified">
+                <p [innerHTML]="stallionAdditionalInfo"></p>
+            </div>
+        </div>
+
+        <figure class="image py-4" *ngFor="let i of getNumberArray(getNbOfPhotos() - 1)">
+            <img [src]="photos[i+1]" alt="Photo numéro {{i}} de l'étalon">
+        </figure>
+    </div>
+</section>
+
+
+
+
 <div class="container">
-    <h3 class="title is-3 mb-3">{{ name }}</h3>
-    <h4 class="title is-4 mb-5 has-text-grey-light">{{ breed }}</h4>
-
-    <figure class="image mb-6">
-        <img [src]="photos[0]">
-    </figure>
-
-    <div class="content">
-        <h4 class="title is-4">Description</h4>
-        <p>{{ mainDesc }}</p>
-    </div>
-
-    <div class="columns">
-        <div class="column">
-            <div class="content">
-                <h4 class="title is-4">Robe</h4>
-                <p>{{ color }}</p>
-            </div>
-        </div>
-
-        <div class="column">
-            <div class="content">
-                <h4 class="title is-4">Âge</h4>
-                <p>{{ birthdate }}</p>
-            </div>
-        </div>
-
-        <div class="column">
-            <div class="content">
-                <h4 class="title is-4">Taille</h4>
-                <p>{{ height }}</p>
-            </div>
-        </div>
-    </div>
-
-    <h4 class="title is-4">Pedigree</h4>
-    <div class="columns">
-        <div class="column">
-            <div class="box" *ngFor="let i of getNumberArray(2)">
-                {{pedigree[i]}}
-            </div>
-        </div>
-
-        <div class="column">
-            <div class="box" *ngFor="let i of getNumberArray(4)">
-                {{pedigree[i+2]}}
-            </div>
-        </div>
-
-        <div class="column">
-            <div class="box" *ngFor="let i of getNumberArray(8)">
-                {{pedigree[i+6]}}
-            </div>
-        </div>
-    </div>
-
-    <div class="content">
-        <h4 class="title is-4" *ngIf="pedigreePO">Performances et produits du pedigree</h4>
-        <p>{{ pedigreePO }}</p>
-    </div>
-
-    <div class="content">
-        <h4 class="title is-4" *ngIf="offspring">Produits de l'étalon</h4>
-        <p>{{ offspring }}</p>
-    </div>
-
-    <div class="content">
-        <h4 class="title is-4" *ngIf="performance">Performances de l'étalon</h4>
-        <p>{{ performance }}</p>
-    </div>
-
-    <div class="content">
-        <h4 class="title is-4" *ngIf="comments">Informations additionnelles</h4>
-        <p>{{ comments }}</p>
-    </div>
-
-    <div class="content">
-        <h4 class="title is-4">Types de monte disponibles</h4>
-        <div class="tags are-medium">
-            <span class="tag" *ngFor="let rtype of rTypes">
-                {{ rtype }}
-            </span>
-        </div>
-    </div>
-
     <div class="content">
         <h4 class="title is-4">Prix</h4>
-        <p>{{ price }}€</p>
+        <p>xxx€</p>
     </div>
 
-    <figure class="image mb-6" *ngFor="let i of getNumberArray(getNbOfPhotos() - 1)">
-        <img [src]="photos[i+1]">
-    </figure>
+
 
     <div class="buttons">
         <button class="button is-primary" (click)="onClick()">

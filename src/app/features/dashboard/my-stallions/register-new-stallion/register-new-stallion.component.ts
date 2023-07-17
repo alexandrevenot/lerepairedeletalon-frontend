@@ -67,7 +67,7 @@ export class RegisterNewStallionComponent implements OnInit {
     this.registerNewStallionForm = this.formBuilder.group({
       name: ['', Validators.required],
       nSIRE: ['', Validators.required],
-      mainDesc: [''],
+      mainDesc: ['', Validators.required],
       birthdate: ['', Validators.required],
       height: ['', Validators.required],
       offspring: [''],
@@ -90,12 +90,11 @@ export class RegisterNewStallionComponent implements OnInit {
       stallionAdditionalInfo: [''],
       location: ['', Validators.required],
       postalCode: [''],
-      prices: this.formBuilder.array([]),
-      coverAdditionalInfo: ['']
+      coverAdditionalInfo: ['', Validators.required]
     })
 
     for (const coverType of this.objectKeys(this.availableCoverTypes, 'all')) {
-      this.registerNewStallionForm.addControl(coverType + 'Price', new FormControl('', Validators.required))
+      this.registerNewStallionForm.addControl(coverType + 'Price', new FormControl(''))
     }
     
     for (const key in availableCoverTypes) {
@@ -103,6 +102,7 @@ export class RegisterNewStallionComponent implements OnInit {
     }
 
     this.breed = "Sélectionner";
+    this.color = "Sélectionner";
   }
 
   // fetching form values
@@ -224,10 +224,19 @@ export class RegisterNewStallionComponent implements OnInit {
     this.locationIsValidated = true;
   }
 
+  public findInvalidControls() {
+    const invalid = [];
+    const controls = this.registerNewStallionForm.controls;
+    for (const name in controls) {
+        if (controls[name].invalid) {
+            invalid.push(name);
+        }
+    }
+    return invalid;
+}
+
   // final submit function
   onSubmit() {
-    this.submitted['status'] = true;
-
     // data validation
     let shouldThrowError = false;
 
@@ -241,12 +250,31 @@ export class RegisterNewStallionComponent implements OnInit {
       shouldThrowError = true;
     }
 
+    if (!this.registerNewStallionForm.valid) {
+      shouldThrowError = true;
+    }
+
+    let avCTNb = 0;
+    for (const coverType of this.objectKeys(this.availableCoverTypes, 'all')) {
+      const priceCtrl = this.registerNewStallionForm.get(coverType + 'Price')
+      if (priceCtrl && priceCtrl.value > 0) {
+        avCTNb++;
+      }
+    }
+    if (avCTNb === 0) {
+      shouldThrowError = true;
+    }
+
+    // if data is not validated
     if (shouldThrowError) {
-      throwError(() => new Error());
+      this.triggerEmptyMandatoryFields['status'] = true;
+      this.registerMessage.setValue('Une erreur est survenue. Merci de réessayer.');
+      throw new Error("Incomplete form");
     }
 
     // post request
-    this.registerNewStallionService.postRegisterNewStallion(
+    this.submitted['status'] = true;
+    return this.registerNewStallionService.postRegisterNewStallion(
       this.registerNewStallionForm.getRawValue(),
       this.selectedLocation,
       this.breed,

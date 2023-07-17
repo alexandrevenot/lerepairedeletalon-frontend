@@ -1,7 +1,8 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { StallionProfileService, returnedStallion } from './stallion-profile.service'
 import { getNumberArray, availableCoverTypes } from '../../../../environments/environment'
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-stallion-profile',
@@ -10,12 +11,14 @@ import { getNumberArray, availableCoverTypes } from '../../../../environments/en
   providers: [StallionProfileService]
 })
 export class StallionProfileComponent {
-  @Input() itemId: string | null = null;
+  public itemId: string | null = null;
 
   public getNumberArray = getNumberArray;
+  public availableCoverTypes = availableCoverTypes;
 
   public name: string = "";
   public breed: string = "";
+  public nSire: string = "";
   public photos: {[key: string]: string} = {};
   public mainDesc: string = ""
   public color: string = "";
@@ -26,8 +29,18 @@ export class StallionProfileComponent {
   public offspring: string = "";
   public performance: string = "";
   public comments: string = "";
-  public rTypes: string[] = [];
-  public price: number | null = null;
+  public city: string = "";
+  public depName: string = "";
+  public regName: string = "";
+  public coverAdditionalInfo: string = "";
+  public stallionAdditionalInfo: string = "";
+  public prices: Array<Record<string, any>> = [];
+
+  public location: string = "";
+  public age: string = "";
+  public heightTagValue: string = "";
+  public coverTypes: Array<string> = [];
+  public hasPedigree: boolean = false;
 
   askForMatingIsClicked: boolean = false;
   public askForMatingForm = new FormGroup({
@@ -38,30 +51,49 @@ export class StallionProfileComponent {
   });
 
   constructor(
-    private stallionProfileService: StallionProfileService
+    private stallionProfileService: StallionProfileService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      const stallionId = params['id'];
+      this.itemId = stallionId;
+    });
+
     if (typeof this.itemId === "string"){
       this.stallionProfileService.getStallionProfile(this.itemId)
       .subscribe((data: returnedStallion) => {
         const content = data.stallionProfile;
         this.name = content.name;
         this.breed = content.breed;
-        this.mainDesc = content.main_desc;
+        this.nSire = content.n_sire;
+        this.mainDesc = content.main_desc.replace(/(\r\n|\r|\n)/g, '<br>');;
         this.color = content.color;
         this.birthdate = content.birthdate;
         this.height = content.height;
         this.pedigree = content.pedigree.split('~');
-        this.pedigreePO = content.pedigree_po;
-        this.offspring = content.offspring;
-        this.performance = content.performance;
-        this.comments = content.comments;
-        const rTypes = Object.keys(content.r_types).filter(key => content.r_types[key]);
-        for (let rtype of rTypes) {
-          this.rTypes.push(availableCoverTypes[rtype])
+        this.pedigreePO = content.pedigree_po.replace(/(\r\n|\r|\n)/g, '<br>');;
+        this.offspring = content.offspring.replace(/(\r\n|\r|\n)/g, '<br>');
+        this.performance = content.performance.replace(/(\r\n|\r|\n)/g, '<br>');;
+        this.stallionAdditionalInfo = content.cover_additional_info.replace(/(\r\n|\r|\n)/g, '<br>');;
+        this.city = content.city;
+        this.depName = content.dep_name;
+        this.regName = content.reg_name;
+        this.coverAdditionalInfo = content.cover_additional_info.replace(/(\r\n|\r|\n)/g, '<br>');;
+        this.prices = content.prices;
+
+        this.location = this.city + ", " + this.depName + ", " + this.regName
+        this.age = this.calculateAge(this.birthdate);
+        this.heightTagValue = this.height + " centimètres au garrot"
+        for (const d of this.prices) {
+          this.coverTypes.push(availableCoverTypes[d['cover_type']]);
         }
-        this.price = content.price;
+        for (const parent of this.pedigree) {
+          if (parent != "") {
+            this.hasPedigree = true;
+          }
+        }
   
         for (const [index, photoId] of content.photos.entries()) {
           this.stallionProfileService.getPicture(photoId)
@@ -77,6 +109,24 @@ export class StallionProfileComponent {
     }
   }
   
+  calculateAge(dateString: string): string {
+    const birthDate = new Date(dateString);
+    const today = new Date();
+  
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+  
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+  
+    if (age === 1) {
+      return age.toString() + " an"
+    } else {
+      return age.toString() + " ans"
+    }
+  }
+
   getNbOfPhotos() {
     return Object.keys(this.photos).length
   }

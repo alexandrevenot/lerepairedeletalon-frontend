@@ -105,7 +105,10 @@
     <div class="field">
       <h5 class="subtitle is-5 has-text-weight-bold">Description principale</h5>
       <div class="control">
-        <textarea class="textarea" placeholder="Décrivez votre étalon en quelques lignes..." formControlName="mainDesc"></textarea>
+        <textarea class="textarea" [ngClass]="{
+          'is-success': isFilledInForm('mainDesc') && triggerEmptyMandatoryFields['status'],
+          'is-danger': !isFilledInForm('mainDesc') && triggerEmptyMandatoryFields['status']
+          }" placeholder="Décrivez votre étalon en quelques lignes..." formControlName="mainDesc"></textarea>
       </div>
     </div>
     
@@ -114,11 +117,16 @@
       <div class="column">
         <div class="field">
           <label class="label has-text-weight-semibold has-text-grey">Robe</label>
-          <div class="select is-primary">
-            <select (change)="updateSelect('color', $event)">
-              <option>Sélectionner</option>
-              <option *ngFor="let breed of availableColors">{{breed}}</option>
-            </select>
+          <div class="control">
+            <div class="select" [ngClass]="{
+              'is-success': dropdownIsSelected('color') && triggerEmptyMandatoryFields['status'],
+              'is-danger': !dropdownIsSelected('color') && triggerEmptyMandatoryFields['status']
+              }">
+              <select (change)="updateSelect('color', $event)">
+                <option>Sélectionner</option>
+                <option *ngFor="let color of availableColors">{{color}}</option>
+              </select>
+            </div>
           </div>
         </div>
       </div>
@@ -127,7 +135,10 @@
         <div class="field">
           <label class="label has-text-weight-semibold has-text-grey">Taille au garrot <small>(centimètres)</small></label>
           <div class="control">
-          <input class="input" type="text" placeholder="180" formControlName="height">
+          <input class="input" [ngClass]="{
+            'is-success': isFilledInForm('height') && triggerEmptyMandatoryFields['status'],
+            'is-danger': !isFilledInForm('height') && triggerEmptyMandatoryFields['status']
+            }" type="text" placeholder="180" formControlName="height">
           </div>
         </div>
       </div>
@@ -136,7 +147,10 @@
         <div class="field">
           <label class="label has-text-weight-semibold has-text-grey">Date de naissance <small>(JJ/MM/AAAA)</small></label>
           <div class="control">
-          <input class="input" type="text" placeholder="01/01/2000" formControlName="birthdate">
+          <input class="input" [ngClass]="{
+            'is-success': isFilledInForm('birthdate') && triggerEmptyMandatoryFields['status'],
+            'is-danger': !isFilledInForm('birthdate') && triggerEmptyMandatoryFields['status']
+            }" type="text" placeholder="01/01/2000" formControlName="birthdate">
           </div>
         </div>
       </div>
@@ -150,7 +164,7 @@
           <div class="control" [ngClass]="locationIsValidated? 'has-icons-right' : ''">
             <input class="input" [ngClass]="{
               'is-success': locationIsValidated,
-              'is-danger': !locationIsValidated && isLookingForLocation
+              'is-danger': !locationIsValidated && (isLookingForLocation || triggerEmptyMandatoryFields['status'])
               }" type="text" placeholder="Toulouse" formControlName="location">
             <span class="icon is-right" *ngIf="locationIsValidated">
               <i class="fas fa-check fa-sm"></i>
@@ -165,7 +179,7 @@
           <div class="control">
             <input class="input" [ngClass]="{
               'is-success': locationIsValidated,
-              'is-danger': !locationIsValidated && isLookingForLocation
+              'is-danger': !locationIsValidated && (isLookingForLocation || triggerEmptyMandatoryFields['status'])
               }" type="text" placeholder="31000" formControlName="postalCode">
           </div>
       </div>
@@ -312,7 +326,10 @@
     </div>
 
     <h5 class="subtitle is-5 has-text-weight-bold mt-5">Prix</h5>
-    <label class="label has-text-weight-semibold has-text-grey" *ngIf="getSelectedRTypes().length === 0">
+    <label class="label has-text-weight-semibold" [ngClass]="{
+      'has-text-grey': getSelectedRTypes().length > 0 && triggerEmptyMandatoryFields['status'],
+      'has-text-danger': !(getSelectedRTypes().length > 0) && triggerEmptyMandatoryFields['status']
+      }" *ngIf="getSelectedRTypes().length === 0">
       Commencez par sélectionner un type de saillie disponible pour votre étalon.
     </label>
 
@@ -337,7 +354,10 @@
     <div class="field mt-5">
       <h5 class="subtitle is-5 has-text-weight-bold">Informations additionnelles</h5>
       <div class="control">
-        <textarea class="textarea" placeholder="Ajoutez ici des informations concernant les différents types de saillie disponibles pour votre étalon: lieu de monte / d'insémination, conditions de validité, nombre de paillettes maximal, à la charge de qui sont les différents frais, etc." formControlName="coverAdditionalInfo"></textarea>
+        <textarea class="textarea" [ngClass]="{
+          'is-success': isFilledInForm('coverAdditionalInfo') && triggerEmptyMandatoryFields['status'],
+          'is-danger': !isFilledInForm('coverAdditionalInfo') && triggerEmptyMandatoryFields['status']
+          }" placeholder="Ajoutez ici des informations concernant les différents types de saillie disponibles pour votre étalon: lieu de monte / d'insémination, conditions de validité, nombre de paillettes maximal, à la charge de qui sont les différents frais, etc." formControlName="coverAdditionalInfo"></textarea>
       </div>
     </div>
 

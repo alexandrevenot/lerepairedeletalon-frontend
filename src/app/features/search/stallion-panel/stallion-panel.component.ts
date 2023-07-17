@@ -8,7 +8,8 @@ export interface Item {
   name: string;
   breed: string;
   city: string;
-  postalCode: string;
+  depName: string;
+  regName: string;
   price: number;
   photoId: string;
   photo: string;
@@ -52,7 +53,8 @@ export class StallionPanelComponent implements OnInit, OnChanges {
     name: "",
     breed: "",
     city: "",
-    postalCode: "",
+    depName: "",
+    regName: "",
     price: 0,
     photoId: "",
     photo: ""
@@ -99,16 +101,17 @@ export class StallionPanelComponent implements OnInit, OnChanges {
           name: item.name,
           breed: item.breed,
           city: item.city,
-          postalCode: item.postal_code,
+          depName: item.dep_name,
+          regName: item.reg_name,
           price: item.price,
-          photoId: item.photoId,
+          photoId: item.photo_id,
           photo: ""
         });
 
         const index: number = this.items.length - 1;
 
         // pp
-        this.stallionPanelService.getProfilePicture(item.photoId)
+        this.stallionPanelService.getProfilePicture(item.photo_id)
         .subscribe(response => {
           const reader = new FileReader();
           reader.onloadend = () => {

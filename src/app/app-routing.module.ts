@@ -4,6 +4,7 @@ import { RegisterComponent } from './features/authentication/register/register.c
 import { LoginComponent } from './features/authentication/login/login.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { SearchComponent } from './features/search/search.component';
+import { StallionProfileComponent } from './features/search/stallion-profile/stallion-profile.component';
 
 const routes: Routes = [
   {path: '', redirectTo: '/search', pathMatch: 'full'},
@@ -11,6 +12,7 @@ const routes: Routes = [
   {path: 'login', component: LoginComponent},
   {path: 'dashboard', component: DashboardComponent},
   {path: 'search', component: SearchComponent},
+  {path: 'stallion-profile', component: StallionProfileComponent}
 ];
 
 @NgModule({
