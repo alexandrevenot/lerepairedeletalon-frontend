@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { StallionProfileService, returnedStallion } from './stallion-profile.service'
-import { getNumberArray, availableCoverTypes } from '../../../../environments/environment'
+import { getNumberArray, availableCoverTypes, availableBreeds } from '../../../../environments/environment'
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -15,6 +15,7 @@ export class StallionProfileComponent {
 
   public getNumberArray = getNumberArray;
   public availableCoverTypes = availableCoverTypes;
+  public availableBreeds = availableBreeds;
 
   public name: string = "";
   public breed: string = "";
@@ -82,12 +83,11 @@ export class StallionProfileComponent {
         this.regName = content.reg_name;
         this.coverAdditionalInfo = content.cover_additional_info.replace(/(\r\n|\r|\n)/g, '<br>');;
         this.prices = content.prices;
-
         this.location = this.city + ", " + this.depName + ", " + this.regName
         this.age = this.calculateAge(this.birthdate);
         this.heightTagValue = this.height + " centimètres au garrot"
         for (const d of this.prices) {
-          this.coverTypes.push(availableCoverTypes[d['cover_type']]);
+          this.coverTypes.push(d['cover_type']);
         }
         for (const parent of this.pedigree) {
           if (parent != "") {
@@ -129,6 +129,12 @@ export class StallionProfileComponent {
 
   getNbOfPhotos() {
     return Object.keys(this.photos).length
+  }
+
+  // demand
+
+  selectMareBreed(event: any) {
+
   }
 
   onClick() {

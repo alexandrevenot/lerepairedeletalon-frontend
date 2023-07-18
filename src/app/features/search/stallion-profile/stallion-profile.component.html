@@ -61,7 +61,7 @@
             <h4 class="subtitle is-4 has-text-weight-bold">Conditions de saillie</h4>
             <div class="content has-text-weight-semibold">
                 <div class="tags are-large">
-                    <span class="tag is-rounded" *ngFor="let coverType of coverTypes">{{coverType}}</span>      
+                    <span class="tag is-rounded" *ngFor="let coverType of coverTypes">{{availableCoverTypes[coverType]}}</span>      
                 </div>
             </div>
             <div class="content has-text-weight-semibold is-size-5 has-text-justified">
@@ -146,66 +146,166 @@
     </div>
 </section>
 
+<section class="section">
+    <div class="container">
+        <form class="box">
+            <h4 class="subtitle is-4 has-text-weight-bold pb-4 has-text-centered">Formulaire de demande de saillie</h4>
 
+            <div class="columns is-align-items-center">
+                <div class="column is-2 has-text-right">
+                    <label class="label">Pour la jument</label>
+                </div>
 
+                <div class="column">
+                    <div class="field">
+                        <p class="control is-expanded">
+                          <input class="input" type="text" placeholder="Nom de la jument">
+                        </p>
+                      </div>
+                </div>
 
-<div class="container">
-    <div class="content">
-        <h4 class="title is-4">Prix</h4>
-        <p>xxx€</p>
+                <div class="column">
+                    <div class="field">
+                        <p class="control is-expanded">
+                          <input class="input" type="text" placeholder="N° SIRE">
+                        </p>
+                      </div>
+                </div>
+
+                <div class="column">
+                    <div class="field">
+                        <div class="control is-expanded">
+                            <div class="select is-fullwidth">
+                                <select (change)="selectMareBreed($event)">
+                                    <option>Race</option>
+                                    <option *ngFor="let breed of availableBreeds">{{breed}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="columns is-align-items-center">
+                <div class="column is-2 has-text-right">
+                    <label class="label">Votre contact</label>
+                </div>
+
+                <div class="column">
+                    <div class="field">
+                        <p class="control is-expanded has-icons-left">
+                          <input class="input" type="text" placeholder="Nom et prénom">
+                          <span class="icon is-small is-left">
+                            <i class="fas fa-user"></i>
+                          </span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="field">
+                        <p class="control is-expanded has-icons-left">
+                          <input class="input" type="text" placeholder="Numéro de téléphone">
+                          <span class="icon is-small is-left">
+                            <i class="fas fa-phone"></i>
+                          </span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="field">
+                        <p class="control is-expanded has-icons-left">
+                          <input class="input" type="email" placeholder="Email">
+                          <span class="icon is-small is-left">
+                            <i class="fas fa-envelope"></i>
+                          </span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="columns is-align-items-center">
+                <div class="column is-2 has-text-right">
+                    <label class="label">Type de saillie souhaité</label>
+                </div>
+
+                <div class="column">
+                    <div class="field">
+                        <div class="control">
+                          <label class="radio has-text-weight-semibold" *ngFor="let coverType of coverTypes">
+                            <input type="radio" name="member">
+                            {{availableCoverTypes[coverType]}}
+                          </label>
+                        </div>
+                      </div>
+                </div>
+            </div>
+
+            <div class="columns is-align-items-start">
+                <div class="column is-2 has-text-right">
+                    <label class="label">Votre message</label>
+                </div>
+
+                <div class="column">
+                    <div class="field">
+                        <div class="control">
+                          <textarea class="textarea" placeholder="Bonjour, cet étalon m'intéresse..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="columns is-align-items-start">
+                <div class="column is-2 has-text-right">
+                    <label class="label">Prix</label>
+                </div>
+
+                <div class="column">
+                    <div class="columns has-text-grey">
+                        <div class="column">
+                            <p>Sous-total</p>
+                            <p>Frais de service HT</p>
+                            <p>TVA Frais de service <small>(si particulier)</small></p>
+                        </div>
+
+                        <div class="column has-text-right">
+                            <p>1350 €</p>
+                            <p>50 €</p>
+                            <p>200 €</p>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="columns has-text-grey">
+                        <div class="column">
+                            <p>Total</p>
+
+                        </div>
+
+                        <div class="column has-text-right">
+                            <p>1780 €</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="columns is-align-items-center">
+                <div class="column is-2 has-text-right">
+
+                </div>
+
+                <div class="column">
+                    <div class="field">
+                    <div class="control">
+                      <button class="button is-primary" (click)="sendDemandClick()">
+                        Envoyer la demande de saillie
+                      </button>
+                    </div>
+                  </div>
+                </div>
+            </div>
+        </form>
     </div>
-
-
-
-    <div class="buttons">
-        <button class="button is-primary" (click)="onClick()">
-            Demander une saillie
-        </button>
-
-        <button class="button">
-            Retour
-        </button>
-    </div>
-
-    <form [formGroup]="askForMatingForm" *ngIf="askForMatingIsClicked">
-        <h4 class="title is-4">Demande de saillie</h4>
-        <div class="field">
-            <label class="label">Nom de la jument</label>
-            <div class="control">
-            <input class="input" type="text" placeholder="" formControlName="mare_name">
-            </div>
-        </div>
-
-        <div class="field">
-            <label class="label">N° SIRE de la jument</label>
-            <div class="control">
-            <input class="input" type="text" placeholder="" formControlName="mare_nSIRE">
-            </div>
-        </div>
-
-        <div class="field">
-            <label class="label">Numéro de téléphone</label>
-            <div class="control">
-            <input class="input" type="text" placeholder="" formControlName="buyer_number">
-            </div>
-        </div>
-
-        <div class="field">
-            <label class="label">Message</label>
-            <div class="control">
-              <textarea class="textarea" placeholder="Laissez un message au vendeur, décrivant votre projet et toute information que vous jugerez utile..." formControlName="message"></textarea>
-            </div>
-        </div>
-
-        <div class="buttons">
-            <button class="button is-primary" (click)="sendDemandClick()">
-                Envoyer la demande
-            </button>
-    
-            <button class="button" (click)="cancelAskClick()">
-                Annuler
-            </button>
-        </div>
-    </form>
-
-</div>
+</section>
