@@ -148,7 +148,7 @@
 
 <section class="section">
     <div class="container">
-        <form class="box">
+        <form [formGroup]="askForMatingForm" class="box">
             <h4 class="subtitle is-4 has-text-weight-bold pb-4 has-text-centered">Formulaire de demande de saillie</h4>
 
             <div class="columns is-align-items-center">
@@ -159,7 +159,7 @@
                 <div class="column">
                     <div class="field">
                         <p class="control is-expanded">
-                          <input class="input" type="text" placeholder="Nom de la jument">
+                          <input class="input" type="text" placeholder="Nom de la jument" formControlName="mareName">
                         </p>
                       </div>
                 </div>
@@ -167,7 +167,7 @@
                 <div class="column">
                     <div class="field">
                         <p class="control is-expanded">
-                          <input class="input" type="text" placeholder="N° SIRE">
+                          <input class="input" type="text" placeholder="N° SIRE" formControlName="mareNSIRE">
                         </p>
                       </div>
                 </div>
@@ -176,7 +176,7 @@
                     <div class="field">
                         <div class="control is-expanded">
                             <div class="select is-fullwidth">
-                                <select (change)="selectMareBreed($event)">
+                                <select formControlName="mareBreed">
                                     <option>Race</option>
                                     <option *ngFor="let breed of availableBreeds">{{breed}}</option>
                                 </select>
@@ -194,7 +194,7 @@
                 <div class="column">
                     <div class="field">
                         <p class="control is-expanded has-icons-left">
-                          <input class="input" type="text" placeholder="Nom et prénom">
+                          <input class="input" type="text" placeholder="Nom et prénom" formControlName="buyerName">
                           <span class="icon is-small is-left">
                             <i class="fas fa-user"></i>
                           </span>
@@ -205,7 +205,7 @@
                 <div class="column">
                     <div class="field">
                         <p class="control is-expanded has-icons-left">
-                          <input class="input" type="text" placeholder="Numéro de téléphone">
+                          <input class="input" type="text" placeholder="Numéro de téléphone" formControlName="buyerPhoneNumber">
                           <span class="icon is-small is-left">
                             <i class="fas fa-phone"></i>
                           </span>
@@ -216,7 +216,7 @@
                 <div class="column">
                     <div class="field">
                         <p class="control is-expanded has-icons-left">
-                          <input class="input" type="email" placeholder="Email">
+                          <input class="input" type="email" placeholder="Email" formControlName="buyerEmail">
                           <span class="icon is-small is-left">
                             <i class="fas fa-envelope"></i>
                           </span>
@@ -234,7 +234,7 @@
                     <div class="field">
                         <div class="control">
                           <label class="radio has-text-weight-semibold" *ngFor="let coverType of coverTypes">
-                            <input type="radio" name="member">
+                            <input type="radio" [value]="coverType" formControlName="selectedCoverType">
                             {{availableCoverTypes[coverType]}}
                           </label>
                         </div>
@@ -250,7 +250,7 @@
                 <div class="column">
                     <div class="field">
                         <div class="control">
-                          <textarea class="textarea" placeholder="Bonjour, cet étalon m'intéresse..."></textarea>
+                          <textarea class="textarea" placeholder="Bonjour, cet étalon m'intéresse..." formControlName="messageToVendor"></textarea>
                         </div>
                     </div>
                 </div>
@@ -266,13 +266,13 @@
                         <div class="column">
                             <p>Sous-total</p>
                             <p>Frais de service HT</p>
-                            <p>TVA Frais de service <small>(si particulier)</small></p>
+                            <p>TVA des frais de service <small>(si particulier)</small></p>
                         </div>
 
                         <div class="column has-text-right">
-                            <p>1350 €</p>
-                            <p>50 €</p>
-                            <p>200 €</p>
+                            <p>{{subtotal}} €</p>
+                            <p>{{serviceFeesHT}} €</p>
+                            <p>{{serviceFeesTaxes}} €</p>
                         </div>
                     </div>
 
@@ -281,11 +281,11 @@
                     <div class="columns has-text-grey">
                         <div class="column">
                             <p>Total</p>
-
+                            <p class="mt-4">(Aucun paiement n'est à effectuer pour le moment, ce n'est qu'une proposition.)</p>
                         </div>
 
-                        <div class="column has-text-right">
-                            <p>1780 €</p>
+                        <div class="column is-2 has-text-right">
+                            <p>{{total}} €</p>
                         </div>
                     </div>
                 </div>
@@ -303,6 +303,10 @@
                         Envoyer la demande de saillie
                       </button>
                     </div>
+                    <p class="help" [ngClass]="{
+                        'has-text-success': !shouldThrowError,
+                        'has-text-danger': shouldThrowError
+                        }">{{ sendFormMessage.value }}</p>
                   </div>
                 </div>
             </div>

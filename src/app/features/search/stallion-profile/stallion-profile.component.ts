@@ -1,14 +1,18 @@
 import { Component } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { StallionProfileService, returnedStallion } from './stallion-profile.service'
 import { getNumberArray, availableCoverTypes, availableBreeds } from '../../../../environments/environment'
 import { ActivatedRoute } from '@angular/router';
+import { PricingService, checkoutResponse } from 'src/environments/pricing';
 
 @Component({
   selector: 'app-stallion-profile',
   templateUrl: './stallion-profile.component.html',
   styleUrls: ['./stallion-profile.component.css'],
-  providers: [StallionProfileService]
+  providers: [
+    StallionProfileService,
+    PricingService
+  ]
 })
 export class StallionProfileComponent {
   public itemId: string | null = null;
@@ -17,6 +21,7 @@ export class StallionProfileComponent {
   public availableCoverTypes = availableCoverTypes;
   public availableBreeds = availableBreeds;
 
+  // raw data
   public name: string = "";
   public breed: string = "";
   public nSire: string = "";
@@ -37,26 +42,59 @@ export class StallionProfileComponent {
   public stallionAdditionalInfo: string = "";
   public prices: Array<Record<string, any>> = [];
 
+  // parsed data
   public location: string = "";
   public age: string = "";
   public heightTagValue: string = "";
   public coverTypes: Array<string> = [];
   public hasPedigree: boolean = false;
 
-  askForMatingIsClicked: boolean = false;
-  public askForMatingForm = new FormGroup({
-    mare_nSIRE: new FormControl(''),
-    mare_name: new FormControl(''),
-    buyer_number: new FormControl(''),
-    message: new FormControl('')
-  });
+  // form data
+  public askForMatingForm!: FormGroup;
+  public subtotal: number = 0;
+  public serviceFeesHT: number = 0;
+  public serviceFeesTaxes: number = 0;
+  public total: number = 0;
+
+  // form data validation
+  public shouldThrowError: boolean = false;
+  public sendFormMessage!: FormControl;
 
   constructor(
     private stallionProfileService: StallionProfileService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private formBuilder: FormBuilder,
+    private pricingService: PricingService
   ) {}
 
   ngOnInit() {
+    this.askForMatingForm = this.formBuilder.group({
+      mareName: ['', Validators.required],
+      mareNSIRE: ['', Validators.required],
+      buyerName: ['', Validators.required],
+      buyerPhoneNumber: ['', Validators.required],
+      buyerEmail: ['', Validators.required],
+      selectedCoverType: ['', Validators.required],
+      mareBreed: ['', Validators.required],
+      messageToVendor: ['', Validators.required]
+    });
+
+    this.sendFormMessage = new FormControl('');
+
+    let sCTCtrl = this.askForMatingForm.get('selectedCoverType')
+    if (sCTCtrl) {
+      sCTCtrl.valueChanges.subscribe(value => {
+        this.pricingService.getCheckout(this.getPriceOfCoverType(value))
+        .subscribe((data: checkoutResponse) => {
+          this.subtotal = data.subtotal;
+          this.serviceFeesHT = data.service_fees_ht;
+          this.serviceFeesTaxes = data.service_fees_taxes;
+          this.total = data.total;
+        })
+      });
+    }
+
+
     this.route.queryParams.subscribe(params => {
       const stallionId = params['id'];
       this.itemId = stallionId;
@@ -109,6 +147,7 @@ export class StallionProfileComponent {
     }
   }
   
+  // stallion profile functions
   calculateAge(dateString: string): string {
     const birthDate = new Date(dateString);
     const today = new Date();
@@ -131,21 +170,24 @@ export class StallionProfileComponent {
     return Object.keys(this.photos).length
   }
 
-  // demand
-
-  selectMareBreed(event: any) {
-
-  }
-
-  onClick() {
-    this.askForMatingIsClicked = true;
+  // demand functions
+  getPriceOfCoverType(coverType: string) {
+    for (const d of this.prices) {
+      if (d['cover_type'] == coverType) {
+        return d['price']
+      }
+    }
+    return 0
   }
 
   sendDemandClick() {
     console.log(this.askForMatingForm.getRawValue());
-  }
-
-  cancelAskClick() {
-    this.askForMatingIsClicked = false;
+    if (!this.askForMatingForm.valid) {
+      this.shouldThrowError = true;
+      this.sendFormMessage.setValue("Remplissez s'il vous plaît tous les champs du formulaire de demande.");
+    } else {
+      this.shouldThrowError = false;
+      this.sendFormMessage.setValue("Demande envoyée avec succès.");
+    }
   }
 }

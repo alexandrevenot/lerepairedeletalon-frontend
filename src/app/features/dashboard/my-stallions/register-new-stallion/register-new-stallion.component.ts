@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms'
 import { RegisterNewStallionService } from './register-new-stallion.service';
 import { availableBreeds, availableColors, availableCoverTypes, getNumberArray, photosMaxSizeInBytes } from 'src/environments/environment';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { throwError } from 'rxjs';
 import { GeolocationService, getCityData, getCityItem } from 'src/environments/geolocation';
 
 @Component({
@@ -233,7 +232,7 @@ export class RegisterNewStallionComponent implements OnInit {
         }
     }
     return invalid;
-}
+  }
 
   // final submit function
   onSubmit() {
