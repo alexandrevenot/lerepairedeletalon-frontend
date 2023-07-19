@@ -188,45 +188,6 @@
 
             <div class="columns is-align-items-center">
                 <div class="column is-2 has-text-right">
-                    <label class="label">Votre contact</label>
-                </div>
-
-                <div class="column">
-                    <div class="field">
-                        <p class="control is-expanded has-icons-left">
-                          <input class="input" type="text" placeholder="Nom et prénom" formControlName="buyerName">
-                          <span class="icon is-small is-left">
-                            <i class="fas fa-user"></i>
-                          </span>
-                        </p>
-                    </div>
-                </div>
-
-                <div class="column">
-                    <div class="field">
-                        <p class="control is-expanded has-icons-left">
-                          <input class="input" type="text" placeholder="Numéro de téléphone" formControlName="buyerPhoneNumber">
-                          <span class="icon is-small is-left">
-                            <i class="fas fa-phone"></i>
-                          </span>
-                        </p>
-                    </div>
-                </div>
-
-                <div class="column">
-                    <div class="field">
-                        <p class="control is-expanded has-icons-left">
-                          <input class="input" type="email" placeholder="Email" formControlName="buyerEmail">
-                          <span class="icon is-small is-left">
-                            <i class="fas fa-envelope"></i>
-                          </span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="columns is-align-items-center">
-                <div class="column is-2 has-text-right">
                     <label class="label">Type de saillie souhaité</label>
                 </div>
 
@@ -299,13 +260,13 @@
                 <div class="column">
                     <div class="field">
                     <div class="control">
-                      <button class="button is-primary" (click)="sendDemandClick()">
+                      <button class="button is-primary" [ngClass]="buttonIsLoading['status']? 'is-loading' : ''" (click)="sendDemandClick()">
                         Envoyer la demande de saillie
                       </button>
                     </div>
                     <p class="help" [ngClass]="{
-                        'has-text-success': !shouldThrowError,
-                        'has-text-danger': shouldThrowError
+                        'has-text-success': !formNotValid && !backendErrorStatus['status'],
+                        'has-text-danger': formNotValid || backendErrorStatus['status']
                         }">{{ sendFormMessage.value }}</p>
                   </div>
                 </div>

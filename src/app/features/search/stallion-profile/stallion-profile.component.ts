@@ -41,6 +41,7 @@ export class StallionProfileComponent {
   public coverAdditionalInfo: string = "";
   public stallionAdditionalInfo: string = "";
   public prices: Array<Record<string, any>> = [];
+  public owner: string = "";
 
   // parsed data
   public location: string = "";
@@ -57,8 +58,10 @@ export class StallionProfileComponent {
   public total: number = 0;
 
   // form data validation
-  public shouldThrowError: boolean = false;
+  public formNotValid: boolean = false;
   public sendFormMessage!: FormControl;
+  public backendErrorStatus: Record<string, boolean> = {'status': false}
+  public buttonIsLoading:  Record<string, boolean> = {'status': false}
 
   constructor(
     private stallionProfileService: StallionProfileService,
@@ -71,11 +74,8 @@ export class StallionProfileComponent {
     this.askForMatingForm = this.formBuilder.group({
       mareName: ['', Validators.required],
       mareNSIRE: ['', Validators.required],
-      buyerName: ['', Validators.required],
-      buyerPhoneNumber: ['', Validators.required],
-      buyerEmail: ['', Validators.required],
-      selectedCoverType: ['', Validators.required],
       mareBreed: ['', Validators.required],
+      selectedCoverType: ['', Validators.required],
       messageToVendor: ['', Validators.required]
     });
 
@@ -104,6 +104,7 @@ export class StallionProfileComponent {
       this.stallionProfileService.getStallionProfile(this.itemId)
       .subscribe((data: returnedStallion) => {
         const content = data.stallionProfile;
+        this.owner = content.owner;
         this.name = content.name;
         this.breed = content.breed;
         this.nSire = content.n_sire;
@@ -181,13 +182,26 @@ export class StallionProfileComponent {
   }
 
   sendDemandClick() {
-    console.log(this.askForMatingForm.getRawValue());
     if (!this.askForMatingForm.valid) {
-      this.shouldThrowError = true;
+      this.formNotValid = true;
       this.sendFormMessage.setValue("Remplissez s'il vous plaît tous les champs du formulaire de demande.");
+      return
     } else {
-      this.shouldThrowError = false;
-      this.sendFormMessage.setValue("Demande envoyée avec succès.");
+      this.formNotValid = false;
     }
+
+    this.buttonIsLoading['status'] = true;
+    this.stallionProfileService.sendDemandToVendor(
+      this.askForMatingForm.getRawValue(),
+      this.owner,
+      this.nSire,
+      this.backendErrorStatus,
+      this.sendFormMessage,
+      this.buttonIsLoading
+    ).subscribe(() => {
+      this.backendErrorStatus['status'] = false;
+      this.buttonIsLoading['status'] = false;
+      this.sendFormMessage.setValue("Demande envoyée avec succès.");
+    })
   }
 }
