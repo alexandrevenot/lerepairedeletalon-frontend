@@ -7,6 +7,7 @@ export interface coverItem {
     stallion_name: string;
     mare_name: string;
     status: string;
+    income: number;
 }
 
 export interface coversData {
@@ -14,7 +15,7 @@ export interface coversData {
 }
 
 @Injectable()
-export class SellerMyCoversService {
+export class MyCoversService {
     constructor(private http: HttpClient) {}
 
     handleError(error: HttpErrorResponse) {
@@ -22,10 +23,10 @@ export class SellerMyCoversService {
         return throwError(() => new Error());
       }
 
-    getCovers(group: string) {
+    getCovers(group: string, pov: string) {
         let params = new HttpParams()
         .set('group', group)
-        .set('point_of_view', 'seller')
+        .set('point_of_view', pov)
 
         return this.http.get<coversData>(
             "http://localhost:3001/covers/get-cover-group",

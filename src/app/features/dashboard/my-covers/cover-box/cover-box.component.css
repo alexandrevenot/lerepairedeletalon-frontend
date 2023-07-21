@@ -1,0 +1,15 @@
+.middle-column {
+    position: relative;
+}
+
+.middle-column::before {
+    content: '';
+    position: absolute;
+    top: 20%; /* Espace en haut de la ligne */
+    bottom: 20%; /* Espace en bas de la ligne */
+    left: 50%;
+    transform: translateX(-50%);
+    height: 60%; /* Hauteur de la ligne */
+    width: 1px;
+    background-color: #7f7f7f;; /* Couleur de la ligne */
+  }

@@ -1,8 +1,8 @@
 <div class="columns">
     <div class="column is-11 is-offset-1">
-        <h2 class="title is-2 mb-6">{{title[coverType]}}</h2>
+        <h2 class="title is-2 mb-6">{{title[coverStatus]}}</h2>
         <div class="box has-text-centered" *ngFor="let i of getNumberArrayF(covers.length)">
-        <app-seller-cover-box [item]="covers[i]"></app-seller-cover-box>
+        <app-cover-box [item]="covers[i]"></app-cover-box>
         </div>
     </div>
 </div>

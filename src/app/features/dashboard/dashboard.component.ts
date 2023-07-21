@@ -9,26 +9,40 @@ export class DashboardComponent {
 
   selectedComponentKey: string = "";
   highlightedLabel: string = "";
+  selectedCategory: string = "";
 
-  isExpandable: { [key: string]: boolean } = {
-    myStallionsComponent: true,
-    sellerMyCoversComponent: true
+  isExpandable: Record<string, Record<string, boolean>> = {
+    seller: {
+      MyCoversComponent: true,
+      myStallionsComponent: true
+    },
+    buyer: {
+      MyCoversComponent: true,
+      myStallionsComponent: true
+    }
   };
 
-  isExpanded: { [key: string]: boolean } = {
-    sellerMyCoversComponent: false,
-    myStallionsComponent: false
+  isExpanded: Record<string, Record<string, boolean>> = {
+    seller: {
+      MyCoversComponent: false,
+      myStallionsComponent: false
+    },
+    buyer: {
+      MyCoversComponent: false,
+      myStallionsComponent: false
+    }
   };
   
-  isHighlighted(key: string) {
-    return this.highlightedLabel == key;
+  isHighlighted(key: string, category: string) {
+    return this.highlightedLabel == key && this.selectedCategory == category;
   }
 
-  onClick(key: string, parentKey: string | null) {
+  onClick(key: string, parentKey: string | null, category: string) {
+    this.selectedCategory = category;
     this.highlightedLabel = key;
     if (parentKey === null) { // label
-      if (this.isExpandable[key]) {
-        this.isExpanded[key] = !this.isExpanded[key];
+      if (this.isExpandable[category][key]) {
+        this.isExpanded[category][key] = !this.isExpanded[category][key];
       }
       this.selectedComponentKey = key;
     } else { // sublabel

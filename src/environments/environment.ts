@@ -47,20 +47,16 @@ export const availableCoverTypes: {[key: string]: string} = {
 
 export const statusMapping: {[key: string]: string} = {
   offered: "Proposée, en attente d'acceptation",
-  approved: "Acceptée",
-  purchased: "Payée par l'acheteur",
-  committed: "Confirmée, saillie engagée",
-  declared_terminated: "Déclarée par vous comme terminée",
-  confirmed_terminated: "Confirmée par l'acheteur comme terminée"
+  approved: "Acceptée, en attente de paiement",
+  downpaid: "Acompte payé par l'acheteur, saillie engagée",
+  fullypaid: "Solde payé par l'acheteur, saillie terminée"
 }
 
 export const statusHelper: {[key: string]: string} = {
   offered: "is-warning",
   approved: "is-success",
-  purchased: "is-warning",
-  committed: "is-success",
-  declared_terminated: "is-warning",
-  confirmed_terminated: "is-success"
+  downpaid: "is-success",
+  fullypaid: "is-success"
 }
 
 export const photosMaxSizeInBytes: number = 4 * 1024 * 1024; // 4 Mo
