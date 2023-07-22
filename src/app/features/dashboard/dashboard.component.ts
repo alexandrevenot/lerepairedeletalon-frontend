@@ -7,9 +7,13 @@ import { Component } from '@angular/core';
 })
 export class DashboardComponent {
 
+  // common variables
   selectedComponentKey: string = "";
   highlightedLabel: string = "";
   selectedCategory: string = "";
+
+  // specific variables
+  selectedCoverId: string = "";
 
   isExpandable: Record<string, Record<string, boolean>> = {
     seller: {
@@ -48,5 +52,11 @@ export class DashboardComponent {
     } else { // sublabel
       this.selectedComponentKey = parentKey;
     }
+  }
+
+  // special pages
+  goToCoverPage(coverId: string) {
+    this.selectedCoverId = coverId;
+    this.selectedComponentKey = "CoverPageComponent";
   }
 }

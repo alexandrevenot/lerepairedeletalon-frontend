@@ -56,14 +56,19 @@
             <app-my-stallions-list *ngIf="highlightedLabel === 'stallionsList'"></app-my-stallions-list>
             <app-register-new-stallion *ngIf="highlightedLabel === 'registerNewStallion'"></app-register-new-stallion>
             </ng-container>
-            <ng-container *ngSwitchCase="'MyCoversComponent'">
-            <app-my-covers [coverStatus]="'pending'" [pointOfView]="'seller'" *ngIf="highlightedLabel === 'pending' && selectedCategory === 'seller'"></app-my-covers>
-            <app-my-covers [coverStatus]="'onGoing'" [pointOfView]="'seller'" *ngIf="highlightedLabel === 'onGoing' && selectedCategory === 'seller'"></app-my-covers>
-            <app-my-covers [coverStatus]="'done'" [pointOfView]="'seller'" *ngIf="highlightedLabel === 'done' && selectedCategory === 'seller'"></app-my-covers>
 
-            <app-my-covers [coverStatus]="'pending'" [pointOfView]="'buyer'" *ngIf="highlightedLabel === 'pending' && selectedCategory === 'buyer'"></app-my-covers>
-            <app-my-covers [coverStatus]="'onGoing'" [pointOfView]="'buyer'" *ngIf="highlightedLabel === 'onGoing' && selectedCategory === 'buyer'"></app-my-covers>
-            <app-my-covers [coverStatus]="'done'" [pointOfView]="'buyer'" *ngIf="highlightedLabel === 'done' && selectedCategory === 'buyer'"></app-my-covers>
+            <ng-container *ngSwitchCase="'MyCoversComponent'">
+            <app-my-covers [coverStatus]="'pending'" [pointOfView]="'seller'" *ngIf="highlightedLabel === 'pending' && selectedCategory === 'seller'" (goToCoverPageEvent)="goToCoverPage($event)"></app-my-covers>
+            <app-my-covers [coverStatus]="'onGoing'" [pointOfView]="'seller'" *ngIf="highlightedLabel === 'onGoing' && selectedCategory === 'seller'" (goToCoverPageEvent)="goToCoverPage($event)"></app-my-covers>
+            <app-my-covers [coverStatus]="'done'" [pointOfView]="'seller'" *ngIf="highlightedLabel === 'done' && selectedCategory === 'seller'" (goToCoverPageEvent)="goToCoverPage($event)"></app-my-covers>
+
+            <app-my-covers [coverStatus]="'pending'" [pointOfView]="'buyer'" *ngIf="highlightedLabel === 'pending' && selectedCategory === 'buyer'" (goToCoverPageEvent)="goToCoverPage($event)"></app-my-covers>
+            <app-my-covers [coverStatus]="'onGoing'" [pointOfView]="'buyer'" *ngIf="highlightedLabel === 'onGoing' && selectedCategory === 'buyer'" (goToCoverPageEvent)="goToCoverPage($event)"></app-my-covers>
+            <app-my-covers [coverStatus]="'done'" [pointOfView]="'buyer'" *ngIf="highlightedLabel === 'done' && selectedCategory === 'buyer'" (goToCoverPageEvent)="goToCoverPage($event)"></app-my-covers>
+            </ng-container>
+
+            <ng-container *ngSwitchCase="'CoverPageComponent'">
+                <app-cover-page [coverId]="selectedCoverId"></app-cover-page>
             </ng-container>
         </div>
     </div>

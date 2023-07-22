@@ -1,0 +1,209 @@
+<section class="section">
+    <div class="container">
+        <h3 class="subtitle is-3 has-text-weight-bold mb-3">Détails de la saillie</h3>
+    </div>
+</section>
+<section class="section">
+    <div class="container">
+
+        <h4 class="subtitle is-4 has-text-weight-bold">Étalon</h4>
+        <div class="columns pb-4">
+
+            <div class="column">
+                <label class="label has-text-weight-semibold has-text-grey-light">Nom </label>
+                <input class="input is-medium is-primary" value="Baloubet du Rouet" readonly>
+            </div>
+
+            <div class="column">
+                <label class="label has-text-weight-semibold has-text-grey-light">Race</label>
+                <input class="input is-medium is-primary" value="Selle-Français" readonly>
+            </div>
+
+            <div class="column">
+                <label class="label has-text-weight-semibold has-text-grey-light">N° SIRE</label>
+                <input class="input is-medium is-primary" value="985471X" readonly>
+            </div>
+
+        </div>
+
+        <h4 class="subtitle is-4 has-text-weight-bold">Jument</h4>
+        <div class="columns pb-4">
+            <div class="column">
+                <label class="label has-text-weight-semibold has-text-grey-light">Nom</label>
+                <input class="input is-medium is-primary" value="Michelle" readonly>
+            </div>
+
+            <div class="column">
+                <label class="label has-text-weight-semibold has-text-grey-light">Race</label>
+                <input class="input is-medium is-primary" value="Selle-Français" readonly>
+            </div>
+
+            <div class="column">
+                <label class="label has-text-weight-semibold has-text-grey-light">N° SIRE</label>
+                <input class="input is-medium is-primary" value="9863156X" readonly>
+            </div>
+        </div>
+
+
+        <h4 class="subtitle is-4 has-text-weight-bold">Acheteur</h4>
+        <div class="columns pb-4">
+            <div class="column">
+                <label class="label has-text-weight-semibold has-text-grey-light">Nom</label>
+                <div class="control has-icons-left">
+                    <input class="input is-medium is-primary" value="Michel Lagraphe" readonly>
+                    <span class="icon is-medium is-left">
+                        <i class="fa-solid fa-user" style="color: hsl(0, 0%, 71%);"></i>
+                    </span>
+                </div>
+            </div>
+
+            <div class="column">
+                <label class="label has-text-weight-semibold has-text-grey-light">Numéro de téléphone</label>
+                <div class="control has-icons-left">
+                    <input class="input is-medium is-primary" value="06 76 35 98 42" readonly>
+                    <span class="icon is-medium is-left">
+                        <i class="fa-solid fa-phone" style="color: hsl(0, 0%, 71%);"></i>
+                    </span>
+                </div>
+            </div>
+
+            <div class="column">
+                <label class="label has-text-weight-semibold has-text-grey-light">Adresse mail</label>
+                <div class="control has-icons-left">
+                    <input class="input is-medium is-primary" value="mlagraphe@hotmail.fr" readonly>
+                    <span class="icon is-medium is-left">
+                        <i class="fa-solid fa-envelope" style="color: hsl(0, 0%, 71%);"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <h4 class="subtitle is-4 has-text-weight-bold">Saillie</h4>
+        <div class="columns pb-4">
+            <div class="column">
+                <label class="label has-text-weight-semibold has-text-grey-light">Type</label>
+                <input class="input is-medium is-primary" value="Insémination artificielle immédiate" readonly>
+            </div>
+
+            <div class="column">
+                <label class="label has-text-weight-semibold has-text-grey-light">Revenus bruts</label>
+                <div class="control has-icons-right">
+                    <input class="input is-medium is-primary" value="545" readonly>
+                    <span class="icon is-medium is-right">
+                        <i class="fa-solid fa-euro" style="color: hsl(0, 0%, 71%);"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <h4 class="subtitle is-4 has-text-weight-bold">Message de l'acheteur</h4>
+        <div class="content pb-4">
+            <div class="content has-text-weight-semibold is-size-5 has-text-justified">
+                <span class="icon">
+                    <i class="fas fa-quote-left"></i>
+                </span>
+                <p [innerHTML]="messageFromBuyer"></p>
+                <span class="icon is-pulled-right">
+                    <i class="fas fa-quote-right"></i>
+                </span>
+            </div>
+        </div>
+
+        <h4 class="subtitle is-4 has-text-weight-bold">Historique des actions</h4>
+        <div class="content">
+            <table>
+                <thead>
+                <tr>
+                    <th>Étape</th>
+                    <th>Date</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Proposée</td>
+                    <td>Le 25/10/2023</td>
+                </tr>
+                <tr>
+                    <td>Acceptée</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Acompte payé</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Solde payé</td>
+                    <td>-</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="is-flex is-align-items-self-start">
+            <h4 class="subtitle is-4 has-text-weight-bold mr-5">Notes personnelles</h4>
+
+            <button class="button is-primary is-outlined">
+                <span class="icon">
+                    <i class="fas fa-pen-to-square"></i>
+                </span>
+                <span>Éditer</span>
+            </button>
+        </div>
+        <div class="control">
+            <textarea class="textarea" rows="15" readonly>Utilisez cet espace pour écrire des notes à propos de cette saillie.</textarea>
+        </div>
+
+        <div class="field is-grouped py-2" *ngIf="false">
+            <p class="control">
+                <button class="button is-primary">
+                    <span class="icon">
+                      <i class="fas fa-check"></i>
+                    </span>
+                    <span>Enregistrer les changements</span>
+                </button>
+            </p>
+            <p class="control">
+                <button class="button is-danger is-outlined">
+                    <span class="icon">
+                      <i class="fas fa-xmark"></i>
+                    </span>
+                    <span>Annuler</span>
+                </button>
+            </p>
+        </div>
+    </div>
+</section>
+<section class="section">
+    <div class="container">
+        <div class="box is-flex is-flex-direction-column is-align-items-center">
+            <h4 class="subtitle is-4 has-text-weight-bold mr-5">Gérer la saillie</h4>
+ 
+            <div class="block has-text-grey mb-2">
+                Statut:
+            </div>
+            <div class="block">
+                <span class="tag is-large is-warning">Proposée, en attente d'acceptation</span>
+            </div>
+
+            <div class="field is-grouped is-centered py-4">
+                <p class="control">
+                  <button class="button is-primary is-medium">
+                    <span class="icon">
+                      <i class="fas fa-check"></i>
+                    </span>
+                    <span>Accepter la proposition</span>
+                  </button>
+                </p>
+                <p class="control">
+                    <button class="button is-danger is-medium">
+                      <span class="icon">
+                        <i class="fas fa-xmark"></i>
+                      </span>
+                      <span>Refuser la proposition</span>
+                    </button>
+                  </p>
+            </div>
+
+        </div>
+    </div>
+</section>

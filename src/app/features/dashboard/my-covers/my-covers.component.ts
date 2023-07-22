@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MyCoversService, coversData, coverItem } from './my-covers.service';
 import { getNumberArray } from '../../../../environments/environment';
 
@@ -11,6 +11,8 @@ import { getNumberArray } from '../../../../environments/environment';
 export class MyCoversComponent implements OnInit{
   @Input() coverStatus!: "pending" | "onGoing" | "done";
   @Input() pointOfView! : "buyer" | "seller";
+
+  @Output() goToCoverPageEvent = new EventEmitter();
 
   public getNumberArrayF = getNumberArray;
 
@@ -39,4 +41,9 @@ export class MyCoversComponent implements OnInit{
       })
     }
   }
+
+  goToCoverPage(coverId: string) {
+    this.goToCoverPageEvent.emit(coverId);
+  }
+
 }

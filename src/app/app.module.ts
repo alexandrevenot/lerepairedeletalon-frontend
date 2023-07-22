@@ -21,6 +21,7 @@ import { StallionPanelItemComponent } from './features/search/stallion-panel/sta
 import { StallionProfileComponent } from './features/search/stallion-profile/stallion-profile.component';
 import { MyCoversComponent } from './features/dashboard/my-covers/my-covers.component';
 import { CoverBoxComponent } from './features/dashboard/my-covers/cover-box/cover-box.component';
+import { CoverPageComponent } from './features/dashboard/my-covers/cover-page/cover-page.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { CoverBoxComponent } from './features/dashboard/my-covers/cover-box/cove
     StallionPanelItemComponent,
     StallionProfileComponent,
     MyCoversComponent,
-    CoverBoxComponent
+    CoverBoxComponent,
+    CoverPageComponent
   ],
   imports: [
     BrowserModule,

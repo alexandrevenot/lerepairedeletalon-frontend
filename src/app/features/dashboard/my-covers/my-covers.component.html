@@ -1,8 +1,13 @@
-<div class="columns">
-    <div class="column is-11 is-offset-1">
-        <h2 class="title is-2 mb-6">{{title[coverStatus]}}</h2>
+<section class="section">
+    <div class="container">
+        <h3 class="subtitle is-3 has-text-weight-bold">{{title[coverStatus]}}</h3>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
         <div class="box has-text-centered" *ngFor="let i of getNumberArrayF(covers.length)">
-        <app-cover-box [item]="covers[i]"></app-cover-box>
+        <app-cover-box [item]="covers[i]" (goToCoverPageEvent)="goToCoverPage($event)"></app-cover-box>
         </div>
     </div>
-</div>
+</section>

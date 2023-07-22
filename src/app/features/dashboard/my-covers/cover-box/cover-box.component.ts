@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { coverItem } from '../my-covers.service';
 import { statusHelper, statusMapping } from '../../../../../environments/environment';
 
@@ -15,7 +15,12 @@ export class CoverBoxComponent {
     status: "",
     income: 0
   };
+  @Output() goToCoverPageEvent = new EventEmitter();
 
   public statusMappingObject = statusMapping;
   public statusHelperObject = statusHelper;
+
+  goToCoverPage(coverId: string) {
+    this.goToCoverPageEvent.emit(coverId);
+  }
 }
