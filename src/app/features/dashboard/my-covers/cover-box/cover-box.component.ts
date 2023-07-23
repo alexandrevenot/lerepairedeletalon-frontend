@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { coverItem } from '../my-covers.service';
-import { statusHelper, statusMapping } from '../../../../../environments/environment';
+import { statusCommentaryMapping, statusHelper, statusMapping } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-cover-box',
@@ -13,11 +13,12 @@ export class CoverBoxComponent {
     stallion_name: "",
     mare_name: "",
     status: "",
-    income: 0
+    price: 0
   };
   @Output() goToCoverPageEvent = new EventEmitter();
 
   public statusMappingObject = statusMapping;
+  public statusCommentaryMappingObject = statusCommentaryMapping;
   public statusHelperObject = statusHelper;
 
   goToCoverPage(coverId: string) {

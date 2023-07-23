@@ -1,6 +1,6 @@
 <div class="columns">
     <div class="column has-text-right">
-        <h4 class="subtitle is-4">{{item.stallion_name}}</h4>
+        <h4 class="subtitle is-4 has-text-weight-semibold">{{item.stallion_name}}</h4>
     </div>
 
     <div class="column middle-column is-1">
@@ -8,7 +8,7 @@
     </div>
 
     <div class="column has-text-left">
-        <h4 class="subtitle is-4">{{item.mare_name}}</h4>
+        <h4 class="subtitle is-4 has-text-weight-semibold">{{item.mare_name}}</h4>
     </div>
 </div>
 
@@ -18,7 +18,7 @@
             Statut:
         </div>
         <div class="block">
-            <span class="tag is-medium" [ngClass]="statusHelperObject[item.status]">{{statusMappingObject[item.status]}}</span>
+            <span class="tag is-medium" [ngClass]="statusHelperObject[item.status]">{{statusMappingObject[item.status]}}, {{statusCommentaryMappingObject[item.status]}}</span>
         </div>
     </div>
     <div class="column is-2">
@@ -27,7 +27,7 @@
                 Revenus bruts:
             </div>
             <div class="block">
-                <span class="tag is-medium has-text-weight-semibold">{{item.income}} €</span>
+                <span class="tag is-medium has-text-weight-semibold">{{item.price}} €</span>
             </div>
         </div>
     </div>
@@ -38,26 +38,7 @@
                     <i class="fas fa-eye"></i>
                 </span>
                 <span>
-                    Consulter
-                </span>
-            </button>
-        </div>
-        <div class="buttons is-centered">
-            <button class="button is-success" *ngIf="item.status === 'offered'">
-                <span class="icon">
-                    <i class="fas fa-check"></i>
-                </span>
-                <span>
-                    Accepter
-                </span>
-            </button>
-
-            <button class="button is-danger" *ngIf="item.status === 'offered'">
-                <span class="icon">
-                    <i class="fas fa-xmark"></i>
-                </span>
-                <span>
-                    Refuser
+                    Gérer / Consulter les détails
                 </span>
             </button>
         </div>

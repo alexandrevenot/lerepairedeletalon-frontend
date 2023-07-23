@@ -7,7 +7,7 @@ export interface coverItem {
     stallion_name: string;
     mare_name: string;
     status: string;
-    income: number;
+    price: number;
 }
 
 export interface coversData {

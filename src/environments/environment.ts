@@ -46,10 +46,17 @@ export const availableCoverTypes: {[key: string]: string} = {
 }
 
 export const statusMapping: {[key: string]: string} = {
-  offered: "Proposée, en attente d'acceptation",
-  approved: "Acceptée, en attente de paiement",
-  downpaid: "Acompte payé par l'acheteur, saillie engagée",
-  fullypaid: "Solde payé par l'acheteur, saillie terminée"
+  offered: "Proposée",
+  approved: "Acceptée",
+  downpaid: "Acompte payé par l'acheteur",
+  fullypaid: "Solde payé par l'acheteur"
+}
+
+export const statusCommentaryMapping: {[key: string]: string} = {
+  offered: "en attente d'acceptation",
+  approved: "en attente de paiement",
+  downpaid: "saillie engagée",
+  fullypaid: "saillie terminée"
 }
 
 export const statusHelper: {[key: string]: string} = {

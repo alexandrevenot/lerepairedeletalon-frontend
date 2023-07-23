@@ -4,8 +4,7 @@ import { catchError, throwError } from "rxjs";
 
 export interface checkoutResponse {
     subtotal: number,
-    service_fees_ht: number,
-    service_fees_taxes: number,
+    service_fees: number,
     total: number
 }
 

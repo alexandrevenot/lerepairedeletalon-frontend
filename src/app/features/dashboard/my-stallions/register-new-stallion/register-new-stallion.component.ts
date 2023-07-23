@@ -273,6 +273,7 @@ export class RegisterNewStallionComponent implements OnInit {
 
     // post request
     this.submitted['status'] = true;
+    console.log(this.registerNewStallionForm.getRawValue());
     return this.registerNewStallionService.postRegisterNewStallion(
       this.registerNewStallionForm.getRawValue(),
       this.selectedLocation,

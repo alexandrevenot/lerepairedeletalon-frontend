@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, createPlatform } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { StallionProfileService, returnedStallion } from './stallion-profile.service'
 import { getNumberArray, availableCoverTypes, availableBreeds } from '../../../../environments/environment'
@@ -53,8 +53,7 @@ export class StallionProfileComponent {
   // form data
   public askForMatingForm!: FormGroup;
   public subtotal: number = 0;
-  public serviceFeesHT: number = 0;
-  public serviceFeesTaxes: number = 0;
+  public serviceFees: number = 0;
   public total: number = 0;
 
   // form data validation
@@ -87,8 +86,7 @@ export class StallionProfileComponent {
         this.pricingService.getCheckout(this.getPriceOfCoverType(value))
         .subscribe((data: checkoutResponse) => {
           this.subtotal = data.subtotal;
-          this.serviceFeesHT = data.service_fees_ht;
-          this.serviceFeesTaxes = data.service_fees_taxes;
+          this.serviceFees = data.service_fees;
           this.total = data.total;
         })
       });
@@ -108,19 +106,19 @@ export class StallionProfileComponent {
         this.name = content.name;
         this.breed = content.breed;
         this.nSire = content.n_sire;
-        this.mainDesc = content.main_desc.replace(/(\r\n|\r|\n)/g, '<br>');;
+        this.mainDesc = content.main_desc.replace(/(\r\n|\r|\n)/g, '<br>');
         this.color = content.color;
         this.birthdate = content.birthdate;
         this.height = content.height;
         this.pedigree = content.pedigree.split('~');
-        this.pedigreePO = content.pedigree_po.replace(/(\r\n|\r|\n)/g, '<br>');;
+        this.pedigreePO = content.pedigree_po.replace(/(\r\n|\r|\n)/g, '<br>');
         this.offspring = content.offspring.replace(/(\r\n|\r|\n)/g, '<br>');
-        this.performance = content.performance.replace(/(\r\n|\r|\n)/g, '<br>');;
-        this.stallionAdditionalInfo = content.cover_additional_info.replace(/(\r\n|\r|\n)/g, '<br>');;
+        this.performance = content.performance.replace(/(\r\n|\r|\n)/g, '<br>');
+        this.stallionAdditionalInfo = content.cover_additional_info.replace(/(\r\n|\r|\n)/g, '<br>');
         this.city = content.city;
         this.depName = content.dep_name;
         this.regName = content.reg_name;
-        this.coverAdditionalInfo = content.cover_additional_info.replace(/(\r\n|\r|\n)/g, '<br>');;
+        this.coverAdditionalInfo = content.cover_additional_info.replace(/(\r\n|\r|\n)/g, '<br>');
         this.prices = content.prices;
         this.location = this.city + ", " + this.depName + ", " + this.regName
         this.age = this.calculateAge(this.birthdate);
