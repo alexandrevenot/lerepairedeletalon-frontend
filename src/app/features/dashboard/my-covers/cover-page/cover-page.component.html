@@ -45,7 +45,10 @@
         </div>
 
 
-        <h4 class="subtitle is-4 has-text-weight-bold">Acheteur</h4>
+        <h4 class="subtitle is-4 has-text-weight-bold">{{messageContact[pov]}}</h4>
+
+        <label class="label has-text-weight-semibold has-text-grey-light" *ngIf="status == 'offered' && pov == 'buyer'? 'Masqué' : ''">Le numéro de téléphone et l'adresse mail du vendeur restent masqués tant que la saille n'a pas été acceptée.</label>
+
         <div class="columns pb-4">
             <div class="column">
                 <label class="label has-text-weight-semibold has-text-grey-light">Nom</label>
@@ -60,7 +63,7 @@
             <div class="column">
                 <label class="label has-text-weight-semibold has-text-grey-light">Numéro de téléphone</label>
                 <div class="control has-icons-left">
-                    <input class="input is-medium is-primary" [value]="contactPhoneNumber" readonly>
+                    <input class="input is-medium is-primary" [value]="contactPhoneNumber" readonly [disabled]="status == 'offered' && pov == 'buyer'">
                     <span class="icon is-medium is-left">
                         <i class="fa-solid fa-phone" style="color: hsl(0, 0%, 71%);"></i>
                     </span>
@@ -70,7 +73,7 @@
             <div class="column">
                 <label class="label has-text-weight-semibold has-text-grey-light">Adresse mail</label>
                 <div class="control has-icons-left">
-                    <input class="input is-medium is-primary" [value]="contactEmail" readonly>
+                    <input class="input is-medium is-primary" [value]="contactEmail" readonly [disabled]="status == 'offered' && pov == 'buyer'">
                     <span class="icon is-medium is-left">
                         <i class="fa-solid fa-envelope" style="color: hsl(0, 0%, 71%);"></i>
                     </span>
@@ -96,7 +99,7 @@
             </div>
         </div>
 
-        <h4 class="subtitle is-4 has-text-weight-bold">Message de l'acheteur</h4>
+        <h4 class="subtitle is-4 has-text-weight-bold">{{messageTitle[pov]}}</h4>
         <div class="content pb-4">
             <div class="content has-text-weight-semibold is-size-5 has-text-justified">
                 <span class="icon">
@@ -119,7 +122,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr *ngFor="let status of statusList">
+                <tr *ngFor="let status of statusList.slice(0, statusList.length - 1)">
                     <td>{{statusMappingObject[status]}}</td>
                     <td>{{timestamps[status]}}</td>
                 </tr>
@@ -166,18 +169,15 @@
 <section class="section">
     <div class="container">
         <div class="box is-flex is-flex-direction-column is-align-items-center">
-            <h4 class="subtitle is-4 has-text-weight-bold mr-5">Gérer la saillie</h4>
+            <h4 class="subtitle is-4 has-text-weight-bold mr-5">Statut de la saillie</h4>
  
-            <div class="block has-text-grey mb-2">
-                Statut:
-            </div>
             <div class="block">
-                <span class="tag is-large is-warning">Proposée, en attente d'acceptation</span>
+                <span class="tag is-large" [ngClass]="statusHelperObject[status]">{{statusMappingObject[status]}}, {{statusCommentaryMappingObject[status]}}</span>
             </div>
 
-            <div class="field is-grouped is-centered py-4">
+            <div class="field is-grouped is-centered py-4" *ngIf="status == 'offered' && pov == 'seller'">
                 <p class="control">
-                  <button class="button is-primary is-medium">
+                  <button class="button is-primary is-medium" (click)="acceptProposal()">
                     <span class="icon">
                       <i class="fas fa-check"></i>
                     </span>
@@ -185,7 +185,7 @@
                   </button>
                 </p>
                 <p class="control">
-                    <button class="button is-danger is-medium">
+                    <button class="button is-danger is-medium" (click)="declineProposal()">
                       <span class="icon">
                         <i class="fas fa-xmark"></i>
                       </span>

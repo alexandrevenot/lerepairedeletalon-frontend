@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CoverPageService, GetCoverInfo } from './cover-page.service';
-import { availableCoverTypes, statusMapping } from 'src/environments/environment';
+import { availableCoverTypes, statusCommentaryMapping, statusHelper, statusMapping } from 'src/environments/environment';
 import { Form, FormControl } from '@angular/forms';
 
 @Component({
@@ -14,6 +14,8 @@ export class CoverPageComponent implements OnInit{
 
   public availableCoverTypes = availableCoverTypes;
   public statusMappingObject = statusMapping;
+  public statusCommentaryMappingObject = statusCommentaryMapping;
+  public statusHelperObject = statusHelper;
   public statusList: string[] = Object.keys(this.statusMappingObject);
 
   public stallionName: string = "";
@@ -29,6 +31,17 @@ export class CoverPageComponent implements OnInit{
   public price: number = 0;
   public messageFromBuyer: string = "";
   public timestamps: Record<string, string> = {};
+  public status: string = "";
+  public pov: string = "";
+
+  public messageTitle: Record<string, string> = {
+    "seller": "Message de l'acheteur",
+    "buyer": "Le message que vous avez laissé"
+  }
+  public messageContact: Record<string, string> = {
+    "seller": "Contact de l'acheteur",
+    "buyer": "Contact du vendeur"
+  }
 
   public lastSavedNotesValue: string = "";
   public notesFormControl: FormControl = new FormControl('');
@@ -40,6 +53,10 @@ export class CoverPageComponent implements OnInit{
   constructor(private coverPageService: CoverPageService) {}
 
   ngOnInit(): void {
+    this.loadCoverInfo();
+  }
+
+  loadCoverInfo() {
     this.coverPageService.getCoverInfo(this.coverId)
     .subscribe((data: GetCoverInfo) => {
       this.stallionName = data.stallion_name;
@@ -55,9 +72,11 @@ export class CoverPageComponent implements OnInit{
       this.price = data.price;
       this.messageFromBuyer = data.buyer_message.replace(/(\r\n|\r|\n)/g, '<br>');
       this.timestamps = data.timestamps;
+      this.status = data.status;
+      this.pov = data.pov;
+
       this.notesFormControl.setValue(data.notes);
       this.lastSavedNotesValue = data.notes;
-
       this.notesFormControl.value;
     })
   }
@@ -78,6 +97,20 @@ export class CoverPageComponent implements OnInit{
       this.updateNotesMessage.setValue("Les notes ont bien été sauvegardées.")
       this.updateNotesSuccess['status'] = true;
       this.notesAreBeingModified = false;
+    })
+  }
+
+  acceptProposal() {
+    this.coverPageService.answerProposal(this.coverId)
+    .subscribe(() => {
+      this.loadCoverInfo();
+    })
+  }
+
+  declineProposal() {
+    this.coverPageService.answerProposal(this.coverId, true)
+    .subscribe(() => {
+      this.status = "refused";
     })
   }
 }

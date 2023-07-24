@@ -13,13 +13,18 @@ export class CoverBoxComponent {
     stallion_name: "",
     mare_name: "",
     status: "",
-    price: 0
+    price: 0,
+    pov: ""
   };
   @Output() goToCoverPageEvent = new EventEmitter();
 
   public statusMappingObject = statusMapping;
   public statusCommentaryMappingObject = statusCommentaryMapping;
   public statusHelperObject = statusHelper;
+  public priceName: Record<string, string> = {
+    "seller": "Revenus bruts",
+    "buyer": "Prix"
+  }
 
   goToCoverPage(coverId: string) {
     this.goToCoverPageEvent.emit(coverId);

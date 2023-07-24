@@ -35,7 +35,8 @@ export class MyCoversComponent implements OnInit{
             stallion_name: item.stallion_name,
             mare_name: item.mare_name,
             status: item.status,
-            price: item.price
+            price: item.price,
+            pov: this.pointOfView
           });
         }
       })

@@ -19,6 +19,7 @@ export interface GetCoverInfo {
     timestamps: Record<string, string>;
     notes: string;
     status: string;
+    pov: string;
 }
 
 @Injectable()
@@ -56,6 +57,21 @@ export class CoverPageService {
             catchError((error: HttpErrorResponse) => {
                 message.setValue("Erreur lors de la sauvegarde des notes");
                 success['status'] = false;
+                return this.handleError(error);
+            })
+        )
+    }
+
+    answerProposal(coverId: string, refuse: boolean = false) {
+        const body: Record<string, any> = {
+            cover_id: coverId,
+            refuse: refuse
+        }
+        return this.http.put(
+            "http://localhost:3001/covers/step-forward-cover",
+            body
+        ).pipe(
+            catchError((error: HttpErrorResponse) => {
                 return this.handleError(error);
             })
         )

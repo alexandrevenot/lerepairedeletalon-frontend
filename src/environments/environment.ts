@@ -49,21 +49,24 @@ export const statusMapping: {[key: string]: string} = {
   offered: "Proposée",
   approved: "Acceptée",
   downpaid: "Acompte payé par l'acheteur",
-  fullypaid: "Solde payé par l'acheteur"
+  fullypaid: "Solde payé par l'acheteur",
+  refused: "Refusée"
 }
 
 export const statusCommentaryMapping: {[key: string]: string} = {
   offered: "en attente d'acceptation",
   approved: "en attente de paiement",
   downpaid: "saillie engagée",
-  fullypaid: "saillie terminée"
+  fullypaid: "saillie terminée",
+  refused: "ne pourra pas être achetée"
 }
 
 export const statusHelper: {[key: string]: string} = {
   offered: "is-warning",
   approved: "is-success",
   downpaid: "is-success",
-  fullypaid: "is-success"
+  fullypaid: "is-success",
+  refused: "is-danger"
 }
 
 export const photosMaxSizeInBytes: number = 4 * 1024 * 1024; // 4 Mo

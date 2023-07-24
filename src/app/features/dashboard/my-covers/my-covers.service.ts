@@ -8,6 +8,7 @@ export interface coverItem {
     mare_name: string;
     status: string;
     price: number;
+    pov: string;
 }
 
 export interface coversData {
