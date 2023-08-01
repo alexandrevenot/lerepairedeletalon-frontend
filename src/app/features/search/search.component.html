@@ -1,23 +1,25 @@
-<app-navbar></app-navbar>
-<div class="columns" *ngIf="clickedProfileStallionId === null">
+<div class="columns">
     <div class="column is-offset-1">
-        <h3 class="title is-3 mb-6">Étalons disponibles à la saillie</h3>
+        <section class="section">
+            <h3 class="title is-3 has-text-weight-bold">Étalons disponibles à la saillie</h3>
+        </section>
     </div>
 </div>
 
 <div class="columns">
-    <div class="column is-4" style="height:90vh; position: sticky; top: 4rem;" *ngIf="clickedProfileStallionId === null">
-        <app-filters [loadingStatus]="filtersAreLoading" (updateFiltersEvent)="handleNewFilters($event)"></app-filters>
+    <div class="column is-3 is-offset-1">
+        <section class="section">
+            <app-filters [loadingStatus]="filtersAreLoading" (updateFiltersEvent)="handleNewFilters($event)"></app-filters>
+        </section>
     </div>
 
     <div class="column">
-        <app-stallion-panel
-        [filters]="currentFilters"
-        (loadingEndingEvent)="handleLoadingEnding()"
-        (clickedOnProfileEvent)="handleClickOnProfile($event)"
-        *ngIf="clickedProfileStallionId === null"
-        ></app-stallion-panel>
-
-        <app-stallion-profile [itemId]="clickedProfileStallionId" *ngIf="clickedProfileStallionId !== null"></app-stallion-profile>
+        <section class="section">
+            <app-stallion-panel
+            [filters]="currentFilters"
+            (loadingEndingEvent)="handleLoadingEnding()"
+            (clickedOnProfileEvent)="handleClickOnProfile($event)"
+            ></app-stallion-panel>
+        </section>
     </div>
 </div>

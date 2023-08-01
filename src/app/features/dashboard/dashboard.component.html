@@ -1,30 +1,75 @@
-<app-navbar></app-navbar>
-<div class="columns">
-    <div class="column is-offset-1">
-        <h1 class="title is-1">Tableau de bord</h1>
-    </div>
-</div>
-
 <div class="columns">
     <div class="column is-3 is-offset-1">
-        <div class="block">
-            <div class="column is-3">
-                <button (click)="selectedItem='stallions'" class="button is-large is-white">Mes étalons</button>
-            </div>
-        </div>
+        <section class="section">
+            <h1 class="title is-1">Tableau de bord</h1>
+        </section>
 
-        <div class="block">
-            <div class="column is-3">
-                <button (click)="selectedItem='settings'" class="button is-large is-white">Paramètres</button>
-            </div>
-        </div>
+        <section class="section">
+            <aside class="menu">
+                <p class="menu-label">
+                    Achat
+                </p>
+                <ul class="menu-list">
+                    <li><a [ngClass]="isHighlighted('MyCoversComponent', 'buyer')? 'is-active' : ''" (click)="onClick('MyCoversComponent', null, 'buyer')">Mes saillies</a>
+                        <ul *ngIf="isExpanded['buyer']['MyCoversComponent']">
+                            <li><a [ngClass]="isHighlighted('pending', 'buyer')? 'is-active' : ''" (click)="onClick('pending', 'MyCoversComponent', 'buyer')">Mes demandes de saillies</a></li>
+                            <li><a [ngClass]="isHighlighted('onGoing', 'buyer')? 'is-active' : ''" (click)="onClick('onGoing', 'MyCoversComponent', 'buyer')">Mes saillies en cours</a></li>
+                            <li><a [ngClass]="isHighlighted('done', 'buyer')? 'is-active' : ''" (click)="onClick('done', 'MyCoversComponent', 'buyer')">Mes saillies terminées</a></li>
+                        </ul>
+                    </li>
+                    <li><a>Mes favoris</a></li>
+                    <li><a>Mes avis donnés</a></li>
+                </ul>
+                <p class="menu-label">
+                    Vente
+                </p>
+                <ul class="menu-list">
+                    <li><a [ngClass]="isHighlighted('myStallionsComponent', 'seller')? 'is-active' : ''" (click)="onClick('myStallionsComponent', null, 'seller')">Mes étalons</a>
+                        <ul *ngIf="isExpanded['seller']['myStallionsComponent']">
+                            <li><a [ngClass]="isHighlighted('stallionsList', 'seller')? 'is-active' : ''" (click)="onClick('stallionsList', 'myStallionsComponent', 'seller')">Liste de mes étalons</a></li>
+                            <li><a [ngClass]="isHighlighted('registerNewStallion', 'seller')? 'is-active' : ''" (click)="onClick('registerNewStallion', 'myStallionsComponent', 'seller')">Ajouter un nouvel étalon</a></li>
+                        </ul>
+                    </li>
+
+                    <li><a [ngClass]="isHighlighted('MyCoversComponent', 'seller')? 'is-active' : ''" (click)="onClick('MyCoversComponent', null, 'seller')">Mes saillies</a>
+                        <ul *ngIf="isExpanded['seller']['MyCoversComponent']">
+                            <li><a [ngClass]="isHighlighted('pending', 'seller')? 'is-active' : ''" (click)="onClick('pending', 'MyCoversComponent', 'seller')">Mes demandes de saillies</a></li>
+                            <li><a [ngClass]="isHighlighted('onGoing', 'seller')? 'is-active' : ''" (click)="onClick('onGoing', 'MyCoversComponent', 'seller')">Mes saillies en cours</a></li>
+                            <li><a [ngClass]="isHighlighted('done', 'seller')? 'is-active' : ''" (click)="onClick('done', 'MyCoversComponent', 'seller')">Mes saillies terminées</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <p class="menu-label">
+                    Paramètres
+                </p>
+                <ul class="menu-list">
+                    <li><a>Informations du profil</a></li>
+                    <li><a>RIB</a></li>
+                </ul>
+            </aside>
+        </section>
     </div>
 
-    <div class="column is-7" *ngIf="selectedItem === 'stallions'">
-        <app-my-stallions></app-my-stallions>
-    </div>
+    <div class="column is-7">
+        <div [ngSwitch]="selectedComponentKey">
+            <ng-container *ngSwitchCase="'myStallionsComponent'">
+            <app-my-stallions-list *ngIf="highlightedLabel === 'stallionsList'"></app-my-stallions-list>
+            <app-register-new-stallion *ngIf="highlightedLabel === 'registerNewStallion'"></app-register-new-stallion>
+            </ng-container>
 
-    <div class="column is-7" *ngIf="selectedItem === 'settings'">
-        <app-settings></app-settings>
+            <ng-container *ngSwitchCase="'MyCoversComponent'">
+            <app-my-covers [coverStatus]="'pending'" [pointOfView]="'seller'" *ngIf="highlightedLabel === 'pending' && selectedCategory === 'seller'" (goToCoverPageEvent)="goToCoverPage($event)"></app-my-covers>
+            <app-my-covers [coverStatus]="'onGoing'" [pointOfView]="'seller'" *ngIf="highlightedLabel === 'onGoing' && selectedCategory === 'seller'" (goToCoverPageEvent)="goToCoverPage($event)"></app-my-covers>
+            <app-my-covers [coverStatus]="'done'" [pointOfView]="'seller'" *ngIf="highlightedLabel === 'done' && selectedCategory === 'seller'" (goToCoverPageEvent)="goToCoverPage($event)"></app-my-covers>
+
+            <app-my-covers [coverStatus]="'pending'" [pointOfView]="'buyer'" *ngIf="highlightedLabel === 'pending' && selectedCategory === 'buyer'" (goToCoverPageEvent)="goToCoverPage($event)"></app-my-covers>
+            <app-my-covers [coverStatus]="'onGoing'" [pointOfView]="'buyer'" *ngIf="highlightedLabel === 'onGoing' && selectedCategory === 'buyer'" (goToCoverPageEvent)="goToCoverPage($event)"></app-my-covers>
+            <app-my-covers [coverStatus]="'done'" [pointOfView]="'buyer'" *ngIf="highlightedLabel === 'done' && selectedCategory === 'buyer'" (goToCoverPageEvent)="goToCoverPage($event)"></app-my-covers>
+            </ng-container>
+
+            <ng-container *ngSwitchCase="'CoverPageComponent'">
+                <app-cover-page [coverId]="selectedCoverId"></app-cover-page>
+            </ng-container>
+        </div>
     </div>
 </div>

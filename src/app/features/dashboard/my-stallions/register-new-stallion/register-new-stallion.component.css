@@ -1,0 +1,24 @@
+img {
+    width: auto;
+    height: 86px;
+    border-radius: 6px;
+  }
+
+.photo-container {
+display: flex;
+align-items: flex-start;
+}
+
+.image {
+    margin-right: 10px;
+}
+
+.file-is-large-is-boxed {
+margin-left: auto;
+}
+
+.photo-container .delete {
+    position: absolute; 
+    top: 5px;
+    right: 5px;
+}

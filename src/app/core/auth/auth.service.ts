@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpRequest, HttpHandler } from '@angular/common/http';
 import { catchError, switchMap, throwError } from 'rxjs';
+import { Router } from '@angular/router';
 
 export interface refreshData {
     accessToken: string;
@@ -9,7 +10,10 @@ export interface refreshData {
 
 @Injectable()
 export class AuthService {
-    constructor(private http: HttpClient) { }
+    constructor(
+        private http: HttpClient,
+        private router: Router
+    ) { }
 
     getToken(type: string) {
         let value: string | null = localStorage.getItem(`${type}Token`);
@@ -44,5 +48,11 @@ export class AuthService {
                 return throwError(() => err);
             })
         )
+    }
+
+    disconnectUser() {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        this.router.navigate(['/login']);
     }
 }

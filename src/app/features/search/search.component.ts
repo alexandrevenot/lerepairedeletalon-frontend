@@ -8,12 +8,16 @@ import { updateFilterData } from './filters/filters.component'
 })
 export class SearchComponent {
 
-  clickedProfileStallionId: string | null = null;
-
   currentFilters: updateFilterData = {
     form: {},
     breeds: {},
-    colors: {}
+    colors: {},
+    distance: {
+      max: 0,
+      lat: 0,
+      lng: 0
+    },
+    coverTypes: {}
   };
 
   filtersAreLoading: boolean = false;
@@ -28,6 +32,7 @@ export class SearchComponent {
   }
 
   handleClickOnProfile(itemId: string) {
-    this.clickedProfileStallionId = itemId;
+    const url = `/stallion-profile?id=${itemId}`;
+    window.open(url, '_blank');
   }
 }

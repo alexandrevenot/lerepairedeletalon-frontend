@@ -9,12 +9,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './features/authentication/login/login.component';
 import { httpInterceptorProviders } from './core/http-interceptors/index';
 import { AuthService } from './core/auth/auth.service';
-import { ProtectedRessourceComponent } from './features/protected-ressource/protected-ressource.component';
 import { NavbarComponent } from './layout/navbar/navbar.component';
 import { RegisterNewStallionComponent } from './features/dashboard/my-stallions/register-new-stallion/register-new-stallion.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
-import { MyStallionsComponent } from './features/dashboard/my-stallions/my-stallions.component';
-import { SettingsComponent } from './features/dashboard/settings/settings.component';
 import { DashboardStallionBoxComponent } from './features/dashboard/my-stallions/my-stallions-list/dashboard-stallion-box/dashboard-stallion-box.component';
 import { MyStallionsListComponent } from './features/dashboard/my-stallions/my-stallions-list/my-stallions-list.component';
 import { SearchComponent } from './features/search/search.component';
@@ -22,25 +19,28 @@ import { StallionPanelComponent } from './features/search/stallion-panel/stallio
 import { FiltersComponent } from './features/search/filters/filters.component';
 import { StallionPanelItemComponent } from './features/search/stallion-panel/stallion-panel-item/stallion-panel-item.component';
 import { StallionProfileComponent } from './features/search/stallion-profile/stallion-profile.component';
+import { MyCoversComponent } from './features/dashboard/my-covers/my-covers.component';
+import { CoverBoxComponent } from './features/dashboard/my-covers/cover-box/cover-box.component';
+import { CoverPageComponent } from './features/dashboard/my-covers/cover-page/cover-page.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     RegisterComponent,
     LoginComponent,
-    ProtectedRessourceComponent,
     NavbarComponent,
     RegisterNewStallionComponent,
     DashboardComponent,
-    MyStallionsComponent,
-    SettingsComponent,
     DashboardStallionBoxComponent,
     MyStallionsListComponent,
     SearchComponent,
     StallionPanelComponent,
     FiltersComponent,
     StallionPanelItemComponent,
-    StallionProfileComponent
+    StallionProfileComponent,
+    MyCoversComponent,
+    CoverBoxComponent,
+    CoverPageComponent
   ],
   imports: [
     BrowserModule,

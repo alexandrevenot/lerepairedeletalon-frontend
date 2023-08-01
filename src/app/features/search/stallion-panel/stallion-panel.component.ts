@@ -6,7 +6,10 @@ import { updateFilterData } from '../filters/filters.component'
 export interface Item {
   id: string;
   name: string;
-  location: string;
+  breed: string;
+  city: string;
+  depName: string;
+  regName: string;
   price: number;
   photoId: string;
   photo: string;
@@ -23,7 +26,13 @@ export class StallionPanelComponent implements OnInit, OnChanges {
   @Input() filters: updateFilterData = {
     form: {},
     breeds: {},
-    colors: {}
+    colors: {},
+    distance: {
+      max: 0,
+      lat: 0,
+      lng: 0
+    },
+    coverTypes: {}
   };
   @Output() loadingEndingEvent = new EventEmitter();
   @Output() clickedOnProfileEvent = new EventEmitter();
@@ -42,7 +51,10 @@ export class StallionPanelComponent implements OnInit, OnChanges {
   public emptyItem = {
     id: "",
     name: "",
-    location: "",
+    breed: "",
+    city: "",
+    depName: "",
+    regName: "",
     price: 0,
     photoId: "",
     photo: ""
@@ -87,16 +99,19 @@ export class StallionPanelComponent implements OnInit, OnChanges {
         this.items.push({
           id: item.id,
           name: item.name,
-          location: item.location,
+          breed: item.breed,
+          city: item.city,
+          depName: item.dep_name,
+          regName: item.reg_name,
           price: item.price,
-          photoId: item.photoId,
+          photoId: item.photo_id,
           photo: ""
         });
 
         const index: number = this.items.length - 1;
 
         // pp
-        this.stallionPanelService.getProfilePicture(item.photoId)
+        this.stallionPanelService.getProfilePicture(item.photo_id)
         .subscribe(response => {
           const reader = new FileReader();
           reader.onloadend = () => {

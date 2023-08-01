@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SettingsComponent } from './settings.component';
+import { SellerCoverBoxComponent } from './seller-cover-box.component';
 
-describe('SettingsComponent', () => {
-  let component: SettingsComponent;
-  let fixture: ComponentFixture<SettingsComponent>;
+describe('SellerCoverBoxComponent', () => {
+  let component: SellerCoverBoxComponent;
+  let fixture: ComponentFixture<SellerCoverBoxComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SettingsComponent ]
+      declarations: [ SellerCoverBoxComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(SettingsComponent);
+    fixture = TestBed.createComponent(SellerCoverBoxComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

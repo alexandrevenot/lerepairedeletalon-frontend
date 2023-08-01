@@ -1,0 +1,199 @@
+<section class="section">
+    <div class="container">
+        <h3 class="subtitle is-3 has-text-weight-bold mb-3">Détails de la saillie</h3>
+    </div>
+</section>
+<section class="section">
+    <div class="container">
+
+        <h4 class="subtitle is-4 has-text-weight-bold">Étalon</h4>
+        <div class="columns pb-4">
+
+            <div class="column">
+                <label class="label has-text-weight-semibold has-text-grey-light">Nom </label>
+                <input class="input is-medium is-primary" [value]="stallionName" readonly>
+            </div>
+
+            <div class="column">
+                <label class="label has-text-weight-semibold has-text-grey-light">Race</label>
+                <input class="input is-medium is-primary" [value]="stallionBreed" readonly>
+            </div>
+
+            <div class="column">
+                <label class="label has-text-weight-semibold has-text-grey-light">N° SIRE</label>
+                <input class="input is-medium is-primary" [value]="stallionNSIRE" readonly>
+            </div>
+
+        </div>
+
+        <h4 class="subtitle is-4 has-text-weight-bold">Jument</h4>
+        <div class="columns pb-4">
+            <div class="column">
+                <label class="label has-text-weight-semibold has-text-grey-light">Nom</label>
+                <input class="input is-medium is-primary" [value]="mareName" readonly>
+            </div>
+
+            <div class="column">
+                <label class="label has-text-weight-semibold has-text-grey-light">Race</label>
+                <input class="input is-medium is-primary" [value]="mareBreed" readonly>
+            </div>
+
+            <div class="column">
+                <label class="label has-text-weight-semibold has-text-grey-light">N° SIRE</label>
+                <input class="input is-medium is-primary" [value]="mareNSIRE" readonly>
+            </div>
+        </div>
+
+
+        <h4 class="subtitle is-4 has-text-weight-bold">{{messageContact[pov]}}</h4>
+
+        <label class="label has-text-weight-semibold has-text-grey-light" *ngIf="status == 'offered' && pov == 'buyer'? 'Masqué' : ''">Le numéro de téléphone et l'adresse mail du vendeur restent masqués tant que la saille n'a pas été acceptée.</label>
+
+        <div class="columns pb-4">
+            <div class="column">
+                <label class="label has-text-weight-semibold has-text-grey-light">Nom</label>
+                <div class="control has-icons-left">
+                    <input class="input is-medium is-primary" [value]="contactName" readonly>
+                    <span class="icon is-medium is-left">
+                        <i class="fa-solid fa-user" style="color: hsl(0, 0%, 71%);"></i>
+                    </span>
+                </div>
+            </div>
+
+            <div class="column">
+                <label class="label has-text-weight-semibold has-text-grey-light">Numéro de téléphone</label>
+                <div class="control has-icons-left">
+                    <input class="input is-medium is-primary" [value]="contactPhoneNumber" readonly [disabled]="status == 'offered' && pov == 'buyer'">
+                    <span class="icon is-medium is-left">
+                        <i class="fa-solid fa-phone" style="color: hsl(0, 0%, 71%);"></i>
+                    </span>
+                </div>
+            </div>
+
+            <div class="column">
+                <label class="label has-text-weight-semibold has-text-grey-light">Adresse mail</label>
+                <div class="control has-icons-left">
+                    <input class="input is-medium is-primary" [value]="contactEmail" readonly [disabled]="status == 'offered' && pov == 'buyer'">
+                    <span class="icon is-medium is-left">
+                        <i class="fa-solid fa-envelope" style="color: hsl(0, 0%, 71%);"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <h4 class="subtitle is-4 has-text-weight-bold">Saillie</h4>
+        <div class="columns pb-4">
+            <div class="column">
+                <label class="label has-text-weight-semibold has-text-grey-light">Type</label>
+                <input class="input is-medium is-primary" [value]="availableCoverTypes[coverType]" readonly>
+            </div>
+
+            <div class="column">
+                <label class="label has-text-weight-semibold has-text-grey-light">Revenus bruts</label>
+                <div class="control has-icons-right">
+                    <input class="input is-medium is-primary" [value]="price" readonly>
+                    <span class="icon is-medium is-right">
+                        <i class="fa-solid fa-euro" style="color: hsl(0, 0%, 71%);"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <h4 class="subtitle is-4 has-text-weight-bold">{{messageTitle[pov]}}</h4>
+        <div class="content pb-4">
+            <div class="content has-text-weight-semibold is-size-5 has-text-justified">
+                <span class="icon">
+                    <i class="fas fa-quote-left"></i>
+                </span>
+                <p [innerHTML]="messageFromBuyer"></p>
+                <span class="icon is-pulled-right">
+                    <i class="fas fa-quote-right"></i>
+                </span>
+            </div>
+        </div>
+
+        <h4 class="subtitle is-4 has-text-weight-bold">Historique des actions</h4>
+        <div class="content">
+            <table>
+                <thead>
+                <tr>
+                    <th>Étape</th>
+                    <th>Date</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let status of statusList.slice(0, statusList.length - 1)">
+                    <td>{{statusMappingObject[status]}}</td>
+                    <td>{{timestamps[status]}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="is-flex is-align-items-self-start py-4">
+            <h4 class="subtitle is-4 has-text-weight-bold mr-5">Notes personnelles</h4>
+
+            <div class="control">
+                <button class="button is-primary is-outlined" *ngIf="!notesAreBeingModified" (click)="askForNotesEdit()">
+                    <span class="icon">
+                        <i class="fas fa-pen-to-square"></i>
+                    </span>
+                    <span>Éditer</span>
+                </button>
+            </div>
+        </div>
+        <div class="control">
+            <textarea class="textarea" rows="15" placeholder="Utilisez cet espace pour écrire des notes à propos de cette saillie." [formControl]="notesFormControl" [readonly]="!notesAreBeingModified"></textarea>
+        </div>
+        <p class="help" [ngClass]="updateNotesSuccess['status'] ? 'has-text-success' : 'has-text-danger'">{{ updateNotesMessage.value }}</p>
+        <div class="field is-grouped py-2" *ngIf="notesAreBeingModified">
+            <p class="control">
+                <button class="button is-primary" (click)="updateNotes()">
+                    <span class="icon">
+                      <i class="fas fa-check"></i>
+                    </span>
+                    <span>Enregistrer les changements</span>
+                </button>
+            </p>
+            <p class="control">
+                <button class="button is-danger is-outlined" (click)="cancelNotesEdition()">
+                    <span class="icon">
+                      <i class="fas fa-xmark"></i>
+                    </span>
+                    <span>Annuler</span>
+                </button>
+            </p>
+        </div>
+    </div>
+</section>
+<section class="section">
+    <div class="container">
+        <div class="box is-flex is-flex-direction-column is-align-items-center">
+            <h4 class="subtitle is-4 has-text-weight-bold mr-5">Statut de la saillie</h4>
+ 
+            <div class="block">
+                <span class="tag is-large" [ngClass]="statusHelperObject[status]">{{statusMappingObject[status]}}, {{statusCommentaryMappingObject[status]}}</span>
+            </div>
+
+            <div class="field is-grouped is-centered py-4" *ngIf="status == 'offered' && pov == 'seller'">
+                <p class="control">
+                  <button class="button is-primary is-medium" (click)="acceptProposal()">
+                    <span class="icon">
+                      <i class="fas fa-check"></i>
+                    </span>
+                    <span>Accepter la proposition</span>
+                  </button>
+                </p>
+                <p class="control">
+                    <button class="button is-danger is-medium" (click)="declineProposal()">
+                      <span class="icon">
+                        <i class="fas fa-xmark"></i>
+                      </span>
+                      <span>Refuser la proposition</span>
+                    </button>
+                  </p>
+            </div>
+
+        </div>
+    </div>
+</section>

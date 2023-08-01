@@ -12,28 +12,31 @@ import { Router } from "@angular/router";
 
 export class RegisterComponent {
 
-  constructor(
-    private registerService: RegisterService,
-    private router: Router
-    ) {}
-
-
   registerForm = new FormGroup({
     firstname: new FormControl('', Validators.required),
     lastname: new FormControl('', Validators.required),
     email: new FormControl('', Validators.required),
+    phoneNumber: new FormControl('', Validators.required),
     password: new FormControl('', Validators.required),
   });
 
   message = new FormControl('');
   buttonIsClicked = {status: false};
 
+  constructor(
+    private registerService: RegisterService,
+    private router: Router
+    ) {}
+
   sendRegisterData() {
-    let firstname = this.registerForm.value.firstname;
-    let lastname = this.registerForm.value.lastname;
-    let email = this.registerForm.value.email;
-    let password = this.registerForm.value.password;
-    return this.registerService.postRegister(firstname, lastname, email, password, this.message, this.buttonIsClicked)
+    return this.registerService.postRegister(
+      this.registerForm.value.firstname,
+      this.registerForm.value.lastname,
+      this.registerForm.value.email,
+      this.registerForm.value.phoneNumber,
+      this.registerForm.value.password,
+      this.message,
+      this.buttonIsClicked)
   }
 
   onSubmit() {
