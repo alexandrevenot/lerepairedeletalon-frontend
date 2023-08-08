@@ -1,7 +1,7 @@
-import { Component, createPlatform } from '@angular/core';
+import { Component, OnInit, createPlatform } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { StallionProfileService, returnedStallion } from './stallion-profile.service'
-import { getNumberArray, availableCoverTypes, availableBreeds } from '../../../../environments/environment'
+import { getNumberArray, availableCoverTypes, availableBreeds, coverPlaceNames } from '../../../../environments/environment'
 import { ActivatedRoute } from '@angular/router';
 import { PricingService, checkoutResponse } from 'src/environments/pricing';
 
@@ -14,11 +14,12 @@ import { PricingService, checkoutResponse } from 'src/environments/pricing';
     PricingService
   ]
 })
-export class StallionProfileComponent {
+export class StallionProfileComponent implements OnInit{
   public itemId: string | null = null;
 
   public getNumberArray = getNumberArray;
   public availableCoverTypes = availableCoverTypes;
+  public coverPlaceNames = coverPlaceNames;
   public availableBreeds = availableBreeds;
 
   // raw data
@@ -48,6 +49,7 @@ export class StallionProfileComponent {
   public age: string = "";
   public heightTagValue: string = "";
   public coverTypes: Array<string> = [];
+  public coverPlaces: Record<string, string> = {};
   public hasPedigree: boolean = false;
 
   // form data
@@ -55,6 +57,8 @@ export class StallionProfileComponent {
   public subtotal: number = 0;
   public serviceFees: number = 0;
   public total: number = 0;
+
+  public selectedCoverTypeValue: string = "";
 
   // form data validation
   public formNotValid: boolean = false;
@@ -75,14 +79,23 @@ export class StallionProfileComponent {
       mareNSIRE: ['', Validators.required],
       mareBreed: ['', Validators.required],
       selectedCoverType: ['', Validators.required],
-      messageToVendor: ['', Validators.required]
+      messageToVendor: ['', Validators.required],
+      offeredCoverPlace: ['']
     });
 
     this.sendFormMessage = new FormControl('');
 
     let sCTCtrl = this.askForMatingForm.get('selectedCoverType')
+
     if (sCTCtrl) {
       sCTCtrl.valueChanges.subscribe(value => {
+
+        this.selectedCoverTypeValue = value;
+
+        if (this.coverPlaces[value] != ""){
+          this.askForMatingForm.get('offeredCoverPlace')?.setValue("");
+        }
+
         this.pricingService.getCheckout(this.getPriceOfCoverType(value))
         .subscribe((data: checkoutResponse) => {
           this.subtotal = data.subtotal;
@@ -125,6 +138,7 @@ export class StallionProfileComponent {
         this.heightTagValue = this.height + " centimètres au garrot"
         for (const d of this.prices) {
           this.coverTypes.push(d['cover_type']);
+          this.coverPlaces[d['cover_type']] = d['cover_place'];
         }
         for (const parent of this.pedigree) {
           if (parent != "") {
@@ -180,7 +194,8 @@ export class StallionProfileComponent {
   }
 
   sendDemandClick() {
-    if (!this.askForMatingForm.valid) {
+    console.log(this.askForMatingForm.getRawValue())
+    if (!this.askForMatingForm.valid || (this.coverPlaces[this.selectedCoverTypeValue] == '' && this.askForMatingForm.get('offeredCoverPlace')?.getRawValue() == '')) {
       this.formNotValid = true;
       this.sendFormMessage.setValue("Remplissez s'il vous plaît tous les champs du formulaire de demande.");
       return

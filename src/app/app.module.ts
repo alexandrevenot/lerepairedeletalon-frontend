@@ -22,6 +22,8 @@ import { StallionProfileComponent } from './features/search/stallion-profile/sta
 import { MyCoversComponent } from './features/dashboard/my-covers/my-covers.component';
 import { CoverBoxComponent } from './features/dashboard/my-covers/cover-box/cover-box.component';
 import { CoverPageComponent } from './features/dashboard/my-covers/cover-page/cover-page.component';
+import { ProfileInformationComponent } from './features/dashboard/parameters/profile-information/profile-information.component';
+import { CoverPageActionComponent } from './features/dashboard/my-covers/cover-page/cover-page-action/cover-page-action.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +42,9 @@ import { CoverPageComponent } from './features/dashboard/my-covers/cover-page/co
     StallionProfileComponent,
     MyCoversComponent,
     CoverBoxComponent,
-    CoverPageComponent
+    CoverPageComponent,
+    ProfileInformationComponent,
+    CoverPageActionComponent
   ],
   imports: [
     BrowserModule,

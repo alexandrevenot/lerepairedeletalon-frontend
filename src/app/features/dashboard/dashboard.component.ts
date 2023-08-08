@@ -1,11 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit{
 
   // common variables
   selectedComponentKey: string = "";
@@ -14,6 +15,7 @@ export class DashboardComponent {
 
   // specific variables
   selectedCoverId: string = "";
+  selectedCoverActionType: string = "";
 
   isExpandable: Record<string, Record<string, boolean>> = {
     seller: {
@@ -23,6 +25,9 @@ export class DashboardComponent {
     buyer: {
       MyCoversComponent: true,
       myStallionsComponent: true
+    },
+    parameters: {
+      ProfileInformationComponent: false
     }
   };
 
@@ -37,6 +42,23 @@ export class DashboardComponent {
     }
   };
   
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router
+    ) {}
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      const coverId = params['coverId'];
+      if (coverId) {
+        setTimeout(() => {
+          this.goToCoverPage(coverId);
+          this.router.navigate(['/dashboard']);
+        }, 2000)
+      }
+    });
+  }
+
   isHighlighted(key: string, category: string) {
     return this.highlightedLabel == key && this.selectedCategory == category;
   }
@@ -58,5 +80,11 @@ export class DashboardComponent {
   goToCoverPage(coverId: string) {
     this.selectedCoverId = coverId;
     this.selectedComponentKey = "CoverPageComponent";
+  }
+
+  goToCoverPageAction(params: {coverId: string, coverActionType: string}) {
+    this.selectedCoverId = params.coverId;
+    this.selectedCoverActionType = params.coverActionType;
+    this.selectedComponentKey = "CoverPageActionComponent";
   }
 }

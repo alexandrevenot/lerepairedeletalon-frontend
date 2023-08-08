@@ -99,6 +99,7 @@ export class StallionProfileService {
             mare_breed: form['mareBreed'],
             cover_type: form['selectedCoverType'],
             message: form['messageToVendor'],
+            offered_cover_place: form['offeredCoverPlace'],
             status: 'offered'
         }
 

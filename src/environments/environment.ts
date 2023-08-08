@@ -37,36 +37,49 @@ export function getNumberArray(n: number): number[] {
   }
 
 export const availableCoverTypes: {[key: string]: string} = {
-    "lib": "Liberté / Main",
-    "iai": "IAI: Insémination artificielle immédiate",
-    "iarp": "IARP: Insémination artificielle réfrigérée sur place",
-    "iac": "IART IAC: Insémination artificielle congelée",
-    "iate": "TE IATE: Insémination artificielle et transfert d'embryon",
-    "icsi": "ICSI: Intro-cytoplasmic sperm injection"
+    "lib": "Monte en liberté",
+    "hand": "Monte en main",
+    "iai": "Insémination artificielle immédiate",
+    "iarp": "Insémination artificielle réfrigérée sur place",
+    "iac": "Insémination artificielle congelée"
+}
+
+export const coverPlaceNames: Record<string, string> = {
+  "lib": "centre de pension",
+  "hand": "centre de pension",
+  "iai": "centre d'insémination",
+  "iarp": "centre d'insémination",
+  "iac": "centre d'insémination"
 }
 
 export const statusMapping: {[key: string]: string} = {
   offered: "Proposée",
   approved: "Acceptée",
+  signingstarted: "Procédure de signature engagée",
+  buyersigned: "Contrat signé par l'acheteur",
+  sellersigned: "Contrat signé par les deux parties",
   downpaid: "Acompte payé par l'acheteur",
-  fullypaid: "Solde payé par l'acheteur",
-  refused: "Refusée"
+  fullypaid: "Solde payé par l'acheteur"
 }
 
 export const statusCommentaryMapping: {[key: string]: string} = {
   offered: "en attente d'acceptation",
-  approved: "en attente de paiement",
+  approved: "en attente de signature",
+  signingstarted: "en attente de signature côté acheteur",
+  buyersigned: "en attente de signature côté vendeur",
+  sellersigned: "en attente de paiement",
   downpaid: "saillie engagée",
-  fullypaid: "saillie terminée",
-  refused: "ne pourra pas être achetée"
+  fullypaid: "saillie terminée"
 }
 
 export const statusHelper: {[key: string]: string} = {
   offered: "is-warning",
   approved: "is-success",
+  signingstarted: "is-warning",
+  buyersigned: "is-warning",
+  sellersigned: "is-success",
   downpaid: "is-success",
-  fullypaid: "is-success",
-  refused: "is-danger"
+  fullypaid: "is-success"
 }
 
 export const photosMaxSizeInBytes: number = 4 * 1024 * 1024; // 4 Mo
