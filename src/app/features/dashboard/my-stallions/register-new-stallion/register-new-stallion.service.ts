@@ -43,11 +43,14 @@ export class RegisterNewStallionService {
 
     const coverTypesList = Object.keys(rTypes).filter(key => rTypes[key]);
     let prices = [];
+    let coverPlaces = [];
     for (const coverType of coverTypesList) {
       prices.push(form[coverType + 'Price']);
+      coverPlaces.push(form[coverType + 'Place']);
     }
     formData.append('prices', prices.join(','));
     formData.append('cover_types', coverTypesList.join(','));
+    formData.append('cover_places', coverPlaces.join(','));
 
     const pedigreeL: string[] = [];
     for (let i = 1; i <= 14; i++) {

@@ -9,7 +9,7 @@ import { getNumberArray } from '../../../../environments/environment';
   providers: [MyCoversService]
 })
 export class MyCoversComponent implements OnInit{
-  @Input() coverStatus!: "pending" | "onGoing" | "done";
+  @Input() coverStatus!: "pendingApproval" | "pendingSignature" | "onGoing" | "done";
   @Input() pointOfView! : "buyer" | "seller";
 
   @Output() goToCoverPageEvent = new EventEmitter();
@@ -17,16 +17,19 @@ export class MyCoversComponent implements OnInit{
   public getNumberArrayF = getNumberArray;
 
   covers: coverItem[] = [];
-  title = {
-    "pending": "Mes demandes de saillies",
-    "onGoing": "Mes saillies en cours",
-    "done": "Mes saillies terminées"
-  };
+  title: Record<string, string> = {};
 
   constructor(private myCoversService: MyCoversService) {}
 
   ngOnInit(): void {
-    if (["pending", "onGoing", "done"].includes(this.coverStatus)) {
+    this.title = {
+      "pendingApproval": this.pointOfView == "seller" ? "Mes demandes de saillies": "Mes saillies demandées",
+      "pendingSignature": "Mes saillies en cours de signature",
+      "onGoing": "Mes saillies engagées",
+      "done": "Mes saillies terminées"
+    };
+
+    if (["pendingApproval", "pendingSignature", "onGoing", "done"].includes(this.coverStatus)) {
       this.myCoversService.getCovers(this.coverStatus, this.pointOfView)
       .subscribe((data: coversData) => {
         for (let item of data.items) {

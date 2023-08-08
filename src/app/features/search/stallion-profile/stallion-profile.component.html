@@ -59,11 +59,18 @@
 
         <div class="content py-4">
             <h4 class="subtitle is-4 has-text-weight-bold">Conditions de saillie</h4>
-            <div class="content has-text-weight-semibold">
-                <div class="tags are-large">
-                    <span class="tag is-rounded" *ngFor="let coverType of coverTypes">{{availableCoverTypes[coverType]}}</span>      
+            <div class="columns pb-4" *ngFor="let coverType of coverTypes">
+                <div class="column">
+                    <label class="label has-text-weight-semibold has-text-grey-light">Type de saillie proposé</label>
+                    <input class="input is-medium" [value]="availableCoverTypes[coverType]" readonly>
+                </div>
+    
+                <div class="column">
+                    <label class="label has-text-weight-semibold has-text-grey-light">{{coverPlaceNames[coverType].slice(0,1).toUpperCase()}}{{coverPlaceNames[coverType].slice(1,coverPlaceNames[coverType].length)}}</label>
+                    <input class="input is-medium" [value]="coverPlaces[coverType]? coverPlaces[coverType] : 'Le ' + coverPlaceNames[coverType] + ' est à proposer au vendeur.'" readonly [disabled]="!coverPlaces[coverType]">
                 </div>
             </div>
+
             <div class="content has-text-weight-semibold is-size-5 has-text-justified">
                 <p [innerHTML]="coverAdditionalInfo"></p>
             </div>
@@ -151,28 +158,31 @@
         <form [formGroup]="askForMatingForm" class="box">
             <h4 class="subtitle is-4 has-text-weight-bold pb-4 has-text-centered">Formulaire de demande de saillie</h4>
 
-            <div class="columns is-align-items-center">
+            <div class="columns is-align-items-end">
                 <div class="column is-2 has-text-right">
-                    <label class="label">Pour la jument</label>
+                    <label class="label pb-4">Pour la jument</label>
                 </div>
 
                 <div class="column">
+                    <label class="label has-text-grey-light has-text-weight-semibold">Nom</label>
                     <div class="field">
                         <p class="control is-expanded">
-                          <input class="input" type="text" placeholder="Nom de la jument" formControlName="mareName">
+                          <input class="input" type="text" placeholder="Bernadette de Normandie" formControlName="mareName">
                         </p>
                       </div>
                 </div>
 
                 <div class="column">
+                    <label class="label has-text-grey-light has-text-weight-semibold">N° SIRE</label>
                     <div class="field">
                         <p class="control is-expanded">
-                          <input class="input" type="text" placeholder="N° SIRE" formControlName="mareNSIRE">
+                          <input class="input" type="text" placeholder="12345678X" formControlName="mareNSIRE">
                         </p>
                       </div>
                 </div>
 
                 <div class="column">
+                    <label class="label has-text-grey-light has-text-weight-semibold">Race</label>
                     <div class="field">
                         <div class="control is-expanded">
                             <div class="select is-fullwidth">
@@ -200,6 +210,21 @@
                           </label>
                         </div>
                       </div>
+                </div>
+            </div>
+
+            <div class="columns is-align-items-end" *ngIf="coverPlaces[selectedCoverTypeValue] === ''">
+                <div class="column is-2 has-text-right">
+                    <label class="label pb-4">Vous proposez</label>
+                </div>
+
+                <div class="column">
+                    <label class="label has-text-grey-light has-text-weight-semibold">{{'Adresse complète du ' + coverPlaceNames[selectedCoverTypeValue]}}</label>
+                    <div class="field">
+                        <p class="control is-expanded">
+                          <input class="input" type="text" placeholder="Le Haras du Fleuve, 790 route de ..." formControlName="offeredCoverPlace">
+                        </p>
+                    </div>
                 </div>
             </div>
 

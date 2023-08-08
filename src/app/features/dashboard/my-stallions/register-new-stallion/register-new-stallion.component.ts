@@ -1,7 +1,7 @@
 import { Component, OnInit  } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { RegisterNewStallionService } from './register-new-stallion.service';
-import { availableBreeds, availableColors, availableCoverTypes, getNumberArray, photosMaxSizeInBytes } from 'src/environments/environment';
+import { availableBreeds, availableColors, availableCoverTypes, coverPlaceNames, getNumberArray, photosMaxSizeInBytes } from 'src/environments/environment';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { GeolocationService, getCityData, getCityItem } from 'src/environments/geolocation';
 
@@ -16,11 +16,13 @@ export class RegisterNewStallionComponent implements OnInit {
   public availableBreeds = availableBreeds;
   public availableColors = availableColors;
   public availableCoverTypes = availableCoverTypes;
+  public coverPlaceNames = coverPlaceNames;
   public photosMaxSizeInBytes = photosMaxSizeInBytes;
   public getNumberArray = getNumberArray;
 
   // utility variables
   public coverTypes: {[key: string]: boolean} = {};
+  public coverTypesForWhichCenterIsNotFilled: Record<string, boolean> = {};
   public submitted!: {[key: string]: boolean};
   public registerMessage!: FormControl;
   public photosMessage!: FormControl;
@@ -93,11 +95,13 @@ export class RegisterNewStallionComponent implements OnInit {
     })
 
     for (const coverType of this.objectKeys(this.availableCoverTypes, 'all')) {
-      this.registerNewStallionForm.addControl(coverType + 'Price', new FormControl(''))
+      this.registerNewStallionForm.addControl(coverType + 'Price', new FormControl({value: '', disabled: false}));
+      this.registerNewStallionForm.addControl(coverType + 'Place', new FormControl(''));
     }
     
     for (const key in availableCoverTypes) {
       this.coverTypes[key] = false;
+      this.coverTypesForWhichCenterIsNotFilled[key] = false;
     }
 
     this.breed = "Sélectionner";
@@ -147,6 +151,15 @@ export class RegisterNewStallionComponent implements OnInit {
 
   updateRType(event: any) {
     this.coverTypes[event.target.id] = event.target.checked;
+  }
+
+  updateCoverTypesForWhichCenterIsNotFilled(event: any) {
+    this.coverTypesForWhichCenterIsNotFilled[event.target.id] = event.target.checked;
+    if (event.target.checked) {
+      this.registerNewStallionForm.get(event.target.id + 'Place')?.disable();
+    } else {
+      this.registerNewStallionForm.get(event.target.id + 'Place')?.enable();
+    }
   }
 
   // utility functions on form values fetching
@@ -255,9 +268,13 @@ export class RegisterNewStallionComponent implements OnInit {
 
     let avCTNb = 0;
     for (const coverType of this.objectKeys(this.availableCoverTypes, 'all')) {
-      const priceCtrl = this.registerNewStallionForm.get(coverType + 'Price')
+      const priceCtrl = this.registerNewStallionForm.get(coverType + 'Price');
+      const placeCtrl = this.registerNewStallionForm.get(coverType + 'Place');
       if (priceCtrl && priceCtrl.value > 0) {
         avCTNb++;
+        if ((!placeCtrl || !placeCtrl.value) && !this.coverTypesForWhichCenterIsNotFilled[coverType]) {
+          shouldThrowError = true;
+        }
       }
     }
     if (avCTNb === 0) {

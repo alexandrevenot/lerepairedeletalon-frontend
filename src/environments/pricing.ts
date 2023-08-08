@@ -21,7 +21,7 @@ export class PricingService {
       .set('subtotal', price);
 
       return this.http.get<checkoutResponse>(
-        "http://localhost:3001/pricing/get-checkout",
+        "http://localhost:3001/pricing/get-checkout-simulation",
         { params }
       ).pipe(
           catchError((error: HttpErrorResponse) => {

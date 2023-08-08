@@ -1,7 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CoverPageService, GetCoverInfo } from './cover-page.service';
-import { availableCoverTypes, statusCommentaryMapping, statusHelper, statusMapping } from 'src/environments/environment';
-import { Form, FormControl } from '@angular/forms';
+import { availableCoverTypes, coverPlaceNames, statusCommentaryMapping, statusHelper, statusMapping } from 'src/environments/environment';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-cover-page',
@@ -12,7 +12,10 @@ import { Form, FormControl } from '@angular/forms';
 export class CoverPageComponent implements OnInit{
   @Input() coverId: string = "";
 
+  @Output() goToCoverPageActionEvent = new EventEmitter();
+
   public availableCoverTypes = availableCoverTypes;
+  public coverPlaceNames = coverPlaceNames;
   public statusMappingObject = statusMapping;
   public statusCommentaryMappingObject = statusCommentaryMapping;
   public statusHelperObject = statusHelper;
@@ -28,11 +31,14 @@ export class CoverPageComponent implements OnInit{
   public contactPhoneNumber: string = "";
   public contactEmail: string = "";
   public coverType: string = "";
+  public coverPlace: string = "";
   public price: number = 0;
   public messageFromBuyer: string = "";
   public timestamps: Record<string, string> = {};
   public status: string = "";
   public pov: string = "";
+
+  public coverPlaceIsOffered: boolean = false;
 
   public messageTitle: Record<string, string> = {
     "seller": "Message de l'acheteur",
@@ -49,6 +55,50 @@ export class CoverPageComponent implements OnInit{
   public updateNotesMessage: FormControl = new FormControl('');
   public updateNotesSuccess: Record<string, boolean> = {'status': false};
   public notesAreBeingModified: boolean = false;
+
+  // cover management
+  public actions: Record<string, Record<string, Record<string, string>>> = {
+    seller: {
+      green: {
+        offered: "Accepter la proposition",
+        approved: "",
+        signingstarted: "",
+        buyersigned: "Signer le contrat",
+        sellersigned: "",
+        downpaid: "",
+        fullypaid: ""
+      },
+      red: {
+        offered: "Refuser la proposition",
+        approved: "Annuler la proposition",
+        signingstarted: "Annuler la procédure de signature",
+        buyersigned: "Annuler la procédure de signature",
+        sellersigned: "Demander la non-réalisation de la saillie",
+        downpaid: "Demander la déclaration de la saillie comme échouée",
+        fullypaid: ""
+      }
+    },
+    buyer: {
+      green: {
+        offered: "",
+        approved: "Engager la procédure de signature",
+        signingstarted: "Signer le contrat",
+        buyersigned: "",
+        sellersigned: "Payer l'acompte de la saillie",
+        downpaid: "Payer le solde de la saillie",
+        fullypaid: ""
+      },
+      red: {
+        offered: "Annuler la proposition",
+        approved: "Annuler la proposition",
+        signingstarted: "Annuler la procédure de signature",
+        buyersigned: "Annuler la procédure de signature",
+        sellersigned: "Demander la non-réalisation de la saillie",
+        downpaid: "Demander la déclaration de la saillie comme échouée",
+        fullypaid: ""
+      }
+    }
+  }
 
   constructor(private coverPageService: CoverPageService) {}
 
@@ -70,11 +120,13 @@ export class CoverPageComponent implements OnInit{
       this.contactEmail = data.contact_email;
       this.coverType = data.cover_type;
       this.price = data.price;
+      this.coverPlace = data.cover_place;
       this.messageFromBuyer = data.buyer_message.replace(/(\r\n|\r|\n)/g, '<br>');
       this.timestamps = data.timestamps;
       this.status = data.status;
       this.pov = data.pov;
 
+      this.coverPlaceIsOffered = data.cover_place_is_offered;
       this.notesFormControl.setValue(data.notes);
       this.lastSavedNotesValue = data.notes;
       this.notesFormControl.value;
@@ -100,6 +152,7 @@ export class CoverPageComponent implements OnInit{
     })
   }
 
+  // cover management
   acceptProposal() {
     this.coverPageService.answerProposal(this.coverId)
     .subscribe(() => {
@@ -107,10 +160,25 @@ export class CoverPageComponent implements OnInit{
     })
   }
 
-  declineProposal() {
-    this.coverPageService.answerProposal(this.coverId, true)
+  createContract() {
+    this.coverPageService.createContract(this.coverId)
     .subscribe(() => {
-      this.status = "refused";
+      this.loadCoverInfo();
     })
   }
+
+  // common cover management methods
+  green(status: string, pov: string) {
+    if (status == "offered" && pov == "seller") {
+      this.acceptProposal();
+    } else if (status  == "approved" && pov == "buyer") {
+      this.createContract();
+    } else if ((status == "signingstarted" && pov == "buyer") || (status == "buyersigned" && pov == "seller")) {
+      this.goToCoverPageActionEvent.emit({coverId: this.coverId, coverActionType: "signature"});
+    } else if (["sellersigned", "downpaid"].includes(status) && pov == "buyer") {
+      this.goToCoverPageActionEvent.emit({coverId: this.coverId, coverActionType: "payment"});
+    }
+  }
+
+  red(status: string, pov: string) {}
 }

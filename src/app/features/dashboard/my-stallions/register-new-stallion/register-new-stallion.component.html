@@ -333,20 +333,36 @@
       Commencez par sélectionner un type de saillie disponible pour votre étalon.
     </label>
 
-    <div class="columns is-align-items-center" *ngFor="let coverType of getSelectedRTypes()">
-      <div class="column">
-        <label class="label has-text-weight-semibold has-text-grey">Si {{availableCoverTypes[coverType]}} :</label>
-      </div>
 
-      <div class="column">
-        <div class="field">
-          <label class="label has-text-weight-semibold has-text-grey">Indiquez le prix de la saillie.</label>
-          <div class="control has-icons-right">
-            <input class="input" type="text" formControlName="{{coverType}}Price">
-            <span class="icon is-small is-right">
-              <i class="fas fa-euro"></i>
-            </span>
+    <div class="py-4" *ngFor="let coverType of getSelectedRTypes()">
+      <label class="label has-text-weight-bold">Si l'acheteur choisit une {{availableCoverTypes[coverType]}} :</label>
+      <div class="columns is-align-items-end">
+        <div class="column is-3">
+          <div class="field">
+            <label class="label has-text-weight-semibold has-text-grey">Indiquez le prix de la saillie.</label>
+            <div class="control has-icons-right">
+              <input class="input" type="text" formControlName="{{coverType}}Price">
+              <span class="icon is-small is-right">
+                <i class="fas fa-euro"></i>
+              </span>
+            </div>
           </div>
+        </div>
+
+        <div class="column">
+          <div class="field">
+            <label class="label has-text-weight-semibold has-text-grey">Indiquez l'adresse du {{coverPlaceNames[coverType]}}.</label>
+            <div class="control">
+              <input class="input" type="text" formControlName="{{coverType}}Place">
+            </div>
+          </div>
+        </div>
+
+        <div class="column">
+          <label class="checkbox has-text-weight-semibold has-text-grey">
+              <input type="checkbox" [id]="coverType" (change)="updateCoverTypesForWhichCenterIsNotFilled($event)">
+              Je ne souhaite pas imposer de {{coverPlaceNames[coverType]}} à l'acheteur, je le définirai avec lui plus tard.
+          </label>
         </div>
       </div>
     </div>
@@ -357,7 +373,7 @@
         <textarea class="textarea" [ngClass]="{
           'is-success': isFilledInForm('coverAdditionalInfo') && triggerEmptyMandatoryFields['status'],
           'is-danger': !isFilledInForm('coverAdditionalInfo') && triggerEmptyMandatoryFields['status']
-          }" placeholder="Ajoutez ici des informations concernant les différents types de saillie disponibles pour votre étalon: lieu de monte / d'insémination, conditions de validité, nombre de paillettes maximal, à la charge de qui sont les différents frais, etc." formControlName="coverAdditionalInfo"></textarea>
+          }" formControlName="coverAdditionalInfo"></textarea>
       </div>
     </div>
 

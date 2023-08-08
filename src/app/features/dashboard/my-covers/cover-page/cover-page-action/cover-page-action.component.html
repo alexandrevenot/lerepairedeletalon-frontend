@@ -1,0 +1,92 @@
+<section class="section">
+    <div class="container">
+        <h3 class="subtitle is-3 has-text-weight-bold mb-3">{{coverActionType == 'signature' ? 'Signature du contrat de saillie': paymentTitle}}</h3>
+    </div>
+</section>
+
+<section class="section" *ngIf="coverActionType == 'signature' && iframe_url">
+    <div class="container">
+        <iframe title="Signature du du contrat de saillie" [src]="iframe_url" [style]="'width: 100%; height: ' + nativeHeight + 'px;'"></iframe>
+    </div>
+</section>
+
+<section class="section" *ngIf="coverActionType == 'payment'">
+    <div class="container">
+        <div class="box">
+            <h5 class="subtitle is-5 has-text-weight-bold has-text-grey pb-4">Décomposition des frais</h5>
+
+            <div class="columns">
+                <div class="column">
+                    <div class="columns has-text-grey">
+                        <div class="column">
+                            <p>Prix de la saille TTC <small class="has-text-weight-semibold">(TVA 5.5%)</small></p>
+                            <p>Frais de service TTC <small class="has-text-weight-semibold">(TVA 20%)</small></p>
+                        </div>
+
+                        <div class="column has-text-right">
+                            <p>{{subtotal}} €</p>
+                            <p>{{serviceFees}} €</p>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="columns has-text-grey">
+                        <div class="column">
+                            <p>Total</p>
+                        </div>
+
+                        <div class="column is-2 has-text-right">
+                            <p>{{total}} €</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="section" *ngIf="coverActionType == 'payment'">
+    <div class="container">
+        <div class="box">
+            <h5 class="subtitle is-5 has-text-weight-bold has-text-grey pb-4">Informations de carte et paiement</h5>
+
+            <div class="columns">
+                <div class="column">
+                    <div class="control">
+                        <label class="label has-text-weight-semibold has-text-grey">Numéro de carte</label>
+                        <input class="input" type="text" placeholder="0000 0000 0000 0000">
+                    </div>
+
+                    <div class="control py-4">
+                        <label class="label has-text-weight-semibold has-text-grey">Nom sur la carte</label>
+                        <input class="input" type="text" placeholder="Michel Dupont">
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="control">
+                        <label class="label has-text-weight-semibold has-text-grey">Date d'expiration</label>
+                        <input class="input" type="text" placeholder="12/24">
+                    </div>
+
+                    <div class="control py-4">
+                        <label class="label has-text-weight-semibold has-text-grey">Code de sécurité</label>
+                        <input class="input" type="text" placeholder="000">
+                    </div>
+                </div>
+            </div>
+
+            <div class="control pb-4">
+                <label class="checkbox has-text-weight-semibold has-text-grey">
+                    <input type="checkbox">
+                    En cochant cette case, je reconnais avoir pris connaissance des <span class="is-underlined">conditions générales de vente</span>
+                </label>
+            </div>
+
+            <div class="control">
+                <button class="button is-primary" (click)="pay()">{{"Payer " + total.toString() + "€ TTC"}}</button>
+            </div>
+        </div>
+
+    </div>
+</section>

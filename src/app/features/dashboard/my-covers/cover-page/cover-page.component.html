@@ -89,7 +89,13 @@
             </div>
 
             <div class="column">
-                <label class="label has-text-weight-semibold has-text-grey-light">Revenus bruts</label>
+                <label class="label has-text-weight-semibold has-text-grey-light" *ngIf="coverPlaceNames[coverType]">{{coverPlaceNames[coverType].slice(0,1).toUpperCase()}}{{coverPlaceNames[coverType].slice(1,coverPlaceNames[coverType].length)}}</label>
+                <input class="input is-medium" [ngClass]="coverPlaceIsOffered && pov == 'seller' && status == 'offered'? 'is-warning' : 'is-primary'"  [value]="coverPlace" readonly>
+            </div>
+
+            <div class="column is-2">
+                <label class="label has-text-weight-semibold has-text-grey-light" *ngIf="pov == 'buyer'">Prix</label>
+                <label class="label has-text-weight-semibold has-text-grey-light" *ngIf="pov == 'seller'">Revenus bruts</label>
                 <div class="control has-icons-right">
                     <input class="input is-medium is-primary" [value]="price" readonly>
                     <span class="icon is-medium is-right">
@@ -98,6 +104,10 @@
                 </div>
             </div>
         </div>
+        <div class="notification is-warning" *ngIf="pov == 'seller' && coverPlaceIsOffered && status == 'offered'">
+            <strong>Attention:</strong> L'acheteur a proposé un {{coverPlaceNames[coverType]}}. Si celui-ci ne vous convient pas, vous en informerez l'acheteur lorsque vous prendrez contact avec lui.
+            Lorsque vous aurez trouvé un arrangement, refusez cette proposition et demandez-lui d'en faire une nouvelle, avec le bon centre cette fois.
+          </div>
 
         <h4 class="subtitle is-4 has-text-weight-bold">{{messageTitle[pov]}}</h4>
         <div class="content pb-4">
@@ -122,7 +132,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr *ngFor="let status of statusList.slice(0, statusList.length - 1)">
+                <tr *ngFor="let status of statusList.slice(0, statusList.length)">
                     <td>{{statusMappingObject[status]}}</td>
                     <td>{{timestamps[status]}}</td>
                 </tr>
@@ -175,21 +185,23 @@
                 <span class="tag is-large" [ngClass]="statusHelperObject[status]">{{statusMappingObject[status]}}, {{statusCommentaryMappingObject[status]}}</span>
             </div>
 
-            <div class="field is-grouped is-centered py-4" *ngIf="status == 'offered' && pov == 'seller'">
+
+            <h4 class="subtitle is-4 has-text-weight-bold mr-5" *ngIf="actions[pov] && (actions[pov]['green'][status] || actions[pov]['red'][status])">Actions</h4>
+            <div class="field is-grouped is-centered">
                 <p class="control">
-                  <button class="button is-primary is-medium" (click)="acceptProposal()">
+                  <button class="button is-primary is-medium" (click)="green(status, pov)" *ngIf="actions[pov] && actions[pov]['green'][status]">
                     <span class="icon">
                       <i class="fas fa-check"></i>
                     </span>
-                    <span>Accepter la proposition</span>
+                    <span>{{actions[pov]['green'][status]}}</span>
                   </button>
                 </p>
                 <p class="control">
-                    <button class="button is-danger is-medium" (click)="declineProposal()">
+                    <button class="button is-danger is-medium" (click)="red(status, pov)" *ngIf="actions[pov] && actions[pov]['red'][status]">
                       <span class="icon">
                         <i class="fas fa-xmark"></i>
                       </span>
-                      <span>Refuser la proposition</span>
+                      <span>{{actions[pov]['red'][status]}}</span>
                     </button>
                   </p>
             </div>

@@ -14,6 +14,8 @@ export interface GetCoverInfo {
     contact_phone_number: string;
     contact_email: string;
     cover_type: string;
+    cover_place: string;
+    cover_place_is_offered: boolean;
     price: number;
     buyer_message: string;
     timestamps: Record<string, string>;
@@ -69,6 +71,20 @@ export class CoverPageService {
         }
         return this.http.put(
             "http://localhost:3001/covers/step-forward-cover",
+            body
+        ).pipe(
+            catchError((error: HttpErrorResponse) => {
+                return this.handleError(error);
+            })
+        )
+    }
+
+    createContract(coverId: string) {
+        const body: Record<string, string> = {
+            cover_id: coverId
+        }
+        return this.http.put(
+            "http://localhost:3001/contracts/sign-contract",
             body
         ).pipe(
             catchError((error: HttpErrorResponse) => {
