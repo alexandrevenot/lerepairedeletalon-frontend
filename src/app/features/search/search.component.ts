@@ -11,6 +11,7 @@ export class SearchComponent {
   currentFilters: updateFilterData = {
     form: {},
     breeds: {},
+    productionBreeds: {},
     colors: {},
     distance: {
       max: 0,

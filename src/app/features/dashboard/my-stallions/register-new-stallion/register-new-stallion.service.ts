@@ -25,7 +25,8 @@ export class RegisterNewStallionService {
     color: string,
     cSaillies: File,
     photos: File[],
-    rTypes: {[key: string]: boolean},
+    coverTypes: Array<string>,
+    productionBreeds: Array<string>,
     submitted: {[key: string]: boolean},
     message: FormControl<any>,
     triggerEmptyMandatoryFields: {[key: string]: boolean}
@@ -41,24 +42,20 @@ export class RegisterNewStallionService {
     photos.forEach((file) => { formData.append('photos', file); });
     formData.append('c_saillies', cSaillies);
 
-    const coverTypesList = Object.keys(rTypes).filter(key => rTypes[key]);
-    let prices = [];
-    let coverPlaces = [];
-    for (const coverType of coverTypesList) {
-      prices.push(form[coverType + 'Price']);
-      coverPlaces.push(form[coverType + 'Place']);
-    }
-    formData.append('prices', prices.join(','));
-    formData.append('cover_types', coverTypesList.join(','));
-    formData.append('cover_places', coverPlaces.join(','));
+    coverTypes.forEach((coverType) => {
+      formData.append('cover_types', coverType);
+      formData.append('prices', form[coverType + 'Price']);
+      formData.append('cover_places', form[coverType + 'Place']);
+    });
+
+    productionBreeds.forEach((breed) => { formData.append('production_breeds', breed); });
 
     const pedigreeL: string[] = [];
     for (let i = 1; i <= 14; i++) {
     const key = `p${i}`;
     pedigreeL.push(form[key]);
     }
-    const pedigree = pedigreeL.join('~');
-    formData.append('pedigree', pedigree);
+    pedigreeL.forEach((parent) => { formData.append('pedigree', parent); });
 
     formData.append('name', form["name"]);
     formData.append('n_sire', form["nSIRE"]);

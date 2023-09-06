@@ -12,6 +12,7 @@ interface distanceData {
 export interface updateFilterData {
   form: { [key: string]: string | null },
   breeds: { [key: string]: boolean },
+  productionBreeds: Record<string, boolean>,
   colors: { [key: string]: boolean },
   distance: distanceData,
   coverTypes: { [key: string]: boolean }
@@ -37,6 +38,7 @@ export class FiltersComponent implements OnInit {
   public filterForm!: FormGroup;
 
   selectedBreeds: { [key: string]: boolean } = {};
+  selectedProductionBreeds: Record<string, boolean> = {};
   selectedColors: { [key: string]: boolean } = {};
   selectedCoverTypes: { [key: string]: boolean } = {};
   availableCoverTypesL: string[] = [];
@@ -63,6 +65,7 @@ export class FiltersComponent implements OnInit {
 
   filterIsSelected: { [key: string]: boolean } = {
     'breed': false,
+    'productionBreed': false,
     'color': false,
     'price': false,
     'distance': false,
@@ -75,6 +78,10 @@ export class FiltersComponent implements OnInit {
     ) {
     this.availableBreeds.forEach((elt) => {
       this.selectedBreeds[elt] = false;
+    })
+
+    this.availableBreeds.forEach((elt) => {
+      this.selectedProductionBreeds[elt] = false;
     })
 
     this.availableColors.forEach((elt) => {
@@ -102,11 +109,13 @@ export class FiltersComponent implements OnInit {
     this.filterIsSelected[field] = !this.filterIsSelected[field] 
   }
 
-  updateCheckbox(type: 'color' | 'breed' | 'coverType', event: any) {
+  updateCheckbox(type: 'color' | 'breed' | 'coverType' | 'productionBreed', event: any) {
     if (type == 'color') {
       this.selectedColors[event.target.id] = event.target.checked;
     } else if (type == 'breed') {
       this.selectedBreeds[event.target.id] = event.target.checked;
+    } else if (type == 'productionBreed') {
+      this.selectedProductionBreeds[event.target.id] = event.target.checked;
     } else {
       this.selectedCoverTypes[event.target.id] = event.target.checked;
     }
@@ -157,6 +166,10 @@ export class FiltersComponent implements OnInit {
     this.availableBreeds.forEach((elt) => {
       this.selectedBreeds[elt] = false;
     });
+  
+    this.availableBreeds.forEach((elt) => {
+      this.selectedProductionBreeds[elt] = false;
+    });
 
     this.availableColors.forEach((elt) => {
       this.selectedColors[elt] = false;
@@ -195,6 +208,7 @@ export class FiltersComponent implements OnInit {
     this.updateFiltersEvent.emit({
       form: this.filterForm.getRawValue(),
       breeds: this.selectedBreeds,
+      productionBreeds: this.selectedProductionBreeds,
       colors: this.selectedColors,
       distance: this.distance,
       coverTypes: this.selectedCoverTypes

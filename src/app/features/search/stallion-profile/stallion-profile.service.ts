@@ -3,28 +3,34 @@ import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http'
 import { catchError, throwError } from 'rxjs';
 import { FormControl } from '@angular/forms';
 
+interface CoverSpecs {
+    cover_type: string;
+    cover_place: string;
+    price: number;
+}
+
 interface stallionProfile {
+    owner: string;
     name: string;
     breed: string;
     n_sire: string;
-    birthdate: string;
-    color: string;
-    stallion_additional_info: string;
-    height: number;
-    main_desc: string;
-    nSIRE: string;
-    offspring: string;
-    pedigree: string;
-    pedigree_po: string;
-    performance: string;
     photos: Array<string>;
-    price: number;
+    main_desc: string;
+    color: string;
+    age: number;
+    height: number;
+    offspring: string;
+    performance: string;
+    pedigree: Array<string>;
+    pedigree_po: string;
+    stallion_additional_info: string;
+    prices: Array<CoverSpecs>
+    production_breeds: Array<string>;
+    cover_additional_info: string;
     city: string;
+    postal_code: string;
     dep_name: string;
     reg_name: string;
-    cover_additional_info: string;
-    prices: Array<Record<string, any>>;
-    owner: string;
 }
 
 export interface returnedStallion {
@@ -42,10 +48,10 @@ export class StallionProfileService {
     
     getStallionProfile(stallionId: string) {
         let params = new HttpParams()
-        .set('id', stallionId)
+        .set('stallion_id', stallionId)
 
         return this.http.get<returnedStallion>(
-            "http://localhost:3001/stallions/get-stallion-profile-information",
+            "http://localhost:3001/stallions/stallion-profile-information",
             { params }
         ).pipe(
             catchError((error: HttpErrorResponse) => {
@@ -56,10 +62,10 @@ export class StallionProfileService {
 
     getPicture(photoId: string) {
         let params = new HttpParams()
-        .set('id', photoId)
+        .set('photo_id', photoId)
 
         return this.http.get(
-            "http://localhost:3001/stallions/get-stallion-photo",
+            "http://localhost:3001/stallions/stallion-photo",
             {params, responseType: 'blob'}
           ).pipe(
             catchError((error: HttpErrorResponse) => {
@@ -99,8 +105,7 @@ export class StallionProfileService {
             mare_breed: form['mareBreed'],
             cover_type: form['selectedCoverType'],
             message: form['messageToVendor'],
-            offered_cover_place: form['offeredCoverPlace'],
-            status: 'offered'
+            offered_cover_place: form['offeredCoverPlace']
         }
 
         return this.http.post(

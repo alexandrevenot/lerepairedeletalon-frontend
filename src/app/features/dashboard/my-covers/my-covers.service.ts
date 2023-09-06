@@ -30,7 +30,7 @@ export class MyCoversService {
         .set('point_of_view', pov)
 
         return this.http.get<coversData>(
-            "http://localhost:3001/covers/get-cover-group",
+            "http://localhost:3001/covers/cover-group",
             { params }
         ).pipe(
             catchError((error: HttpErrorResponse) => {

@@ -35,10 +35,10 @@ export class CoverPageService {
 
     getCoverInfo(coverId: string) {
         let params = new HttpParams()
-        .set('id', coverId);
+        .set('cover_id', coverId);
 
         return this.http.get<GetCoverInfo>(
-            "http://localhost:3001/covers/get-cover-information",
+            "http://localhost:3001/covers/cover-information",
             { params }
         ).pipe(
             catchError((error: HttpErrorResponse) => {
@@ -69,7 +69,7 @@ export class CoverPageService {
             cover_id: coverId,
             refuse: refuse
         }
-        return this.http.put(
+        return this.http.post(
             "http://localhost:3001/covers/step-forward-cover",
             body
         ).pipe(
@@ -83,8 +83,8 @@ export class CoverPageService {
         const body: Record<string, string> = {
             cover_id: coverId
         }
-        return this.http.put(
-            "http://localhost:3001/contracts/sign-contract",
+        return this.http.post(
+            "http://localhost:3001/contracts/engage-signature-process",
             body
         ).pipe(
             catchError((error: HttpErrorResponse) => {

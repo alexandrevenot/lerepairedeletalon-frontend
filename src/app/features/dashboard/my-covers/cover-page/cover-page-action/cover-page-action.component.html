@@ -1,8 +1,4 @@
-<section class="section">
-    <div class="container">
-        <h3 class="subtitle is-3 has-text-weight-bold mb-3">{{coverActionType == 'signature' ? 'Signature du contrat de saillie': paymentTitle}}</h3>
-    </div>
-</section>
+<h3 class="subtitle is-3 has-text-weight-semibold">{{coverActionType == 'signature' ? 'Signature du contrat de saillie': paymentTitle}}</h3>
 
 <section class="section" *ngIf="coverActionType == 'signature' && iframe_url">
     <div class="container">

@@ -55,7 +55,7 @@ export class CoverPageActionService {
             cover_id: coverId
         }
 
-        return this.http.put(
+        return this.http.post(
             "http://localhost:3001/covers/step-forward-payment",
             body
         ).pipe(

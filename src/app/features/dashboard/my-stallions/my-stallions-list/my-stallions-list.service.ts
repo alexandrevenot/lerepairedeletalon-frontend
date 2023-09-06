@@ -26,7 +26,7 @@ export class MyStallionsListService {
 
     getStallionsList() {
         return this.http.get<getStallionsListArray>(
-            "http://localhost:3001/stallions/get-my-stallions"
+            "http://localhost:3001/stallions/my-stallions"
         ).pipe(
             catchError((error: HttpErrorResponse) => {
                 return this.handleError(error);

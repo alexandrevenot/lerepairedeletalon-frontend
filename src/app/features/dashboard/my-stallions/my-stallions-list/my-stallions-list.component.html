@@ -1,8 +1,9 @@
-<div class="columns">
-    <div class="column is-11 is-offset-1">
-        <h2 class="title is-2 mb-6">Liste de mes étalons</h2>
+<h3 class="subtitle is-3 has-text-weight-semibold">Liste de mes étalons</h3>
+
+<section class="section">
+    <div class="container">
         <div class="box has-text-centered" *ngFor="let i of getNumberArray(nbOfStallions)">
             <app-dashboard-stallion-box [item]="items[i]"></app-dashboard-stallion-box>
         </div>
     </div>
-</div>
+</section>
