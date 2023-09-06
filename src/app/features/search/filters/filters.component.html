@@ -1,12 +1,43 @@
 <h4 class="subtitle is-4 has-text-weight-bold mb-6">Critères de recherche</h4>
 
 <form [formGroup]="filterForm">
+
+    <div class="field">
+        <button class="button is-fullwidth is-justify-content-flex-start" [ngClass]="filterIsSelected['price'] ? 'is-active' : ''" (click)="swapFilter('price')">
+            <span class="icon">
+                <i class="fa fa-chevron-up" [ngClass]="filterIsSelected['price'] ? '' : 'fa-rotate-180'"></i>
+            </span>
+            <span class="has-text-weight-semibold">Prix</span>
+        </button>
+        <div class="content px-3 py-3">
+            <div class="columns" *ngIf="filterIsSelected['price']">
+                <div class="column">
+                    <p class="control has-icons-right">
+                        <input class="input" type="text" placeholder="Min." formControlName="lowestPrice">
+                        <span class="icon is-small is-right">
+                            <i class="fas fa-euro"></i>
+                        </span>
+                    </p>
+                </div>
+
+                <div class="column">
+                    <p class="control has-icons-right">
+                        <input class="input" type="text" placeholder="Max." formControlName="highestPrice">
+                        <span class="icon is-small is-right">
+                            <i class="fas fa-euro"></i>
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="field">
         <button class="button is-fullwidth is-justify-content-flex-start" [ngClass]="filterIsSelected['breed'] ? 'is-active' : ''" (click)="swapFilter('breed')">
             <span class="icon">
                 <i class="fa fa-chevron-up" [ngClass]="filterIsSelected['breed'] ? '' : 'fa-rotate-180'"></i>
             </span>
-            <span class="has-text-weight-semibold">Race</span>
+            <span class="has-text-weight-semibold">Race de l'étalon</span>
         </button>
         <div class="content px-3 py-3">
             <div *ngIf="filterIsSelected['breed']">
@@ -14,6 +45,25 @@
                     <label class="checkbox">
                         <input type="checkbox" id={{breed}} (change)="updateCheckbox('breed', $event)" [checked]="selectedBreeds[breed]">
                         {{ breed }}
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="field">
+        <button class="button is-fullwidth is-justify-content-flex-start" [ngClass]="filterIsSelected['productionBreed'] ? 'is-active' : ''" (click)="swapFilter('productionBreed')">
+            <span class="icon">
+                <i class="fa fa-chevron-up" [ngClass]="filterIsSelected['productionBreed'] ? '' : 'fa-rotate-180'"></i>
+            </span>
+            <span class="has-text-weight-semibold">Race de production</span>
+        </button>
+        <div class="content px-3 py-3">
+            <div *ngIf="filterIsSelected['productionBreed']">
+                <div *ngFor="let productionBreed of availableBreeds">
+                    <label class="checkbox">
+                        <input type="checkbox" id={{productionBreed}} (change)="updateCheckbox('productionBreed', $event)" [checked]="selectedProductionBreeds[productionBreed]">
+                        {{ productionBreed }}
                     </label>
                 </div>
             </div>
@@ -53,36 +103,6 @@
                         <input type="checkbox" id={{color}} (change)="updateCheckbox('color', $event)" [checked]="selectedColors[color]">
                         {{ color }}
                     </label>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="field">
-        <button class="button is-fullwidth is-justify-content-flex-start" [ngClass]="filterIsSelected['price'] ? 'is-active' : ''" (click)="swapFilter('price')">
-            <span class="icon">
-                <i class="fa fa-chevron-up" [ngClass]="filterIsSelected['price'] ? '' : 'fa-rotate-180'"></i>
-            </span>
-            <span class="has-text-weight-semibold">Prix</span>
-        </button>
-        <div class="content px-3 py-3">
-            <div class="columns" *ngIf="filterIsSelected['price']">
-                <div class="column">
-                    <p class="control has-icons-right">
-                        <input class="input" type="text" placeholder="Min." formControlName="lowestPrice">
-                        <span class="icon is-small is-right">
-                            <i class="fas fa-euro"></i>
-                        </span>
-                    </p>
-                </div>
-
-                <div class="column">
-                    <p class="control has-icons-right">
-                        <input class="input" type="text" placeholder="Max." formControlName="highestPrice">
-                        <span class="icon is-small is-right">
-                            <i class="fas fa-euro"></i>
-                        </span>
-                    </p>
                 </div>
             </div>
         </div>

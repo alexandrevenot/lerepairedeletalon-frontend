@@ -39,6 +39,13 @@ export class StallionPanelService {
       }
     }
 
+    let productionBreeds: string[] = [];
+    for (const productionBreed in filters.productionBreeds) {
+      if (filters.productionBreeds[productionBreed]) {
+        productionBreeds.push(productionBreed);
+      }
+    }
+
     let colors: string[] = [];
     for (const color in filters.colors) {
       if (filters.colors[color]) {
@@ -61,6 +68,11 @@ export class StallionPanelService {
     for (const breed of breeds) {
       params = params.append('breeds', breed)
     }
+
+    for (const productionBreed of productionBreeds) {
+      params = params.append('production_breeds', productionBreed)
+    }
+
     for (const color of colors) {
       params = params.append('colors', color)
     }

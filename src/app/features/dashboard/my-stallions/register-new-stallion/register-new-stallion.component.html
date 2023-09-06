@@ -1,6 +1,4 @@
-<section class="section">
-  <h3 class="subtitle is-3 has-text-weight-bold">Ajouter un nouvel étalon</h3>
-</section>
+<h3 class="subtitle is-3 has-text-weight-semibold">Ajouter un nouvel étalon</h3>
 
 <section class="section">
   <form [formGroup]="registerNewStallionForm" enctype="multipart/form-data">
@@ -49,32 +47,6 @@
           </div>
         </div>
       </div>
-    </div>
-
-    <div class="field">
-      <label class="label has-text-weight-semibold has-text-grey">Carnet de saillies <small>(Formats acceptés: PNG, PDF, JPEG, JPG)</small></label>
-      <div class="file is-primary">
-        <label class="file-label">
-          <div class="control">
-            <input class="file-input" type="file" name="resume" (change)="fetchCSaillies($event)" accept=".png,.pdf,.jpeg,.jpg">
-          </div>
-          <span class="file-cta">
-            <span class="file-icon">
-              <i class="fas fa-cloud-upload-alt"></i>
-            </span>
-            <span class="file-label" *ngIf="!cSaillies">
-              Sélectionner un fichier 
-            </span>
-            <span class="file-label" *ngIf="cSaillies">
-              Fichier sélectionné
-            </span>
-          </span>
-          <span class="file-name" *ngIf="cSaillies">
-            {{cSaillies.name}}
-          </span>
-        </label>
-      </div>
-      <p class="help has-text-danger">{{ cSailliesMessage.value }}</p>
     </div>
 
     <div class="field mt-6">
@@ -300,13 +272,73 @@
       </div>
     </div>
 
-    <h4 class="subtitle is-4">Seconde partie: caractéristiques de la saillie</h4> 
+    <h4 class="subtitle is-4">Seconde partie: caractéristiques de la saillie</h4>
+
+    <div class="field">
+      <h5 class="subtitle is-5 has-text-weight-bold">Races de production</h5>
+      <label class="label has-text-weight-semibold has-text-grey">Indiquez les races dans lesquelles votre étalon est approuvé à produire.</label>
+      <div class="columns">
+        <div class="column">
+          <div *ngFor="let productionBreed of objectKeys(availableBreeds, 'list', 3)[0]">
+            <label class="checkbox">
+              <input type="checkbox" [id]="productionBreed" (change)="updateProductionBreeds($event)">
+              {{productionBreed}}
+            </label>
+          </div>
+        </div>
+
+        <div class="column">
+          <div *ngFor="let productionBreed of objectKeys(availableBreeds, 'list', 3)[1]">
+            <label class="checkbox">
+              <input type="checkbox" [id]="productionBreed" (change)="updateProductionBreeds($event)">
+              {{productionBreed}}
+            </label>
+          </div>
+        </div>
+
+        <div class="column">
+          <div *ngFor="let productionBreed of objectKeys(availableBreeds, 'list', 3)[2]">
+            <label class="checkbox">
+              <input type="checkbox" [id]="productionBreed" (change)="updateProductionBreeds($event)">
+              {{productionBreed}}
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="field py-4">
+      <label class="label has-text-weight-semibold has-text-grey">Carnet de saillies <small>(Formats acceptés: PNG, PDF, JPEG, JPG)</small></label>
+      <div class="file is-primary">
+        <label class="file-label">
+          <div class="control">
+            <input class="file-input" type="file" name="resume" (change)="fetchCSaillies($event)" accept=".png,.pdf,.jpeg,.jpg">
+          </div>
+          <span class="file-cta">
+            <span class="file-icon">
+              <i class="fas fa-cloud-upload-alt"></i>
+            </span>
+            <span class="file-label" *ngIf="!cSaillies">
+              Sélectionner un fichier 
+            </span>
+            <span class="file-label" *ngIf="cSaillies">
+              Fichier sélectionné
+            </span>
+          </span>
+          <span class="file-name" *ngIf="cSaillies">
+            {{cSaillies.name}}
+          </span>
+        </label>
+      </div>
+      <p class="help has-text-danger">{{ cSailliesMessage.value }}</p>
+    </div>
+
     <div class="field">
       <h5 class="subtitle is-5 has-text-weight-bold">Type de saillie</h5>
       <label class="label has-text-weight-semibold has-text-grey">Indiquez quel(s) type(s) de saillie sont proposés pour votre étalon.</label>
       <div class="columns">
         <div class="column">
-          <div *ngFor="let coverType of objectKeys(coverTypes, 'first')">
+          <div *ngFor="let coverType of objectKeys(coverTypes, 'obj', 2)[0]">
             <label class="checkbox">
               <input type="checkbox" [id]="coverType" (change)="updateRType($event)">
               {{availableCoverTypes[coverType]}}
@@ -315,7 +347,7 @@
         </div>
 
         <div class="column">
-          <div *ngFor="let coverType of objectKeys(coverTypes, 'last')">
+          <div *ngFor="let coverType of objectKeys(coverTypes, 'obj', 2)[1]">
             <label class="checkbox">
               <input type="checkbox" [id]="coverType" (change)="updateRType($event)">
               {{availableCoverTypes[coverType]}}
@@ -373,7 +405,7 @@
         <textarea class="textarea" [ngClass]="{
           'is-success': isFilledInForm('coverAdditionalInfo') && triggerEmptyMandatoryFields['status'],
           'is-danger': !isFilledInForm('coverAdditionalInfo') && triggerEmptyMandatoryFields['status']
-          }" formControlName="coverAdditionalInfo"></textarea>
+          }" placeholder="Ajoutez ici les informations additionnelles sur les saillies..." formControlName="coverAdditionalInfo"></textarea>
       </div>
     </div>
 

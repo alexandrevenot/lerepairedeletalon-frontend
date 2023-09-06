@@ -3,10 +3,10 @@ import { catchError, throwError } from 'rxjs';
 
 export function getStallionPhoto(httpClient: HttpClient, photoId: string) {
     let params = new HttpParams()
-    .set('id', photoId);
+    .set('photo_id', photoId);
   
     return httpClient.get(
-      "http://localhost:3001/stallions/get-stallion-photo",
+      "http://localhost:3001/stallions/stallion-photo",
       {params, responseType: 'blob'}
     ).pipe(
       catchError((error: HttpErrorResponse) => {

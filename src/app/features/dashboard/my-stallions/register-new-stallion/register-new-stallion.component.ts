@@ -40,6 +40,7 @@ export class RegisterNewStallionComponent implements OnInit {
     lat: 0,
     lng: 0
   };
+  public productionBreeds: {[key: string]: boolean} = {};
 
   // form values variables
   public registerNewStallionForm!: FormGroup;
@@ -94,7 +95,7 @@ export class RegisterNewStallionComponent implements OnInit {
       coverAdditionalInfo: ['', Validators.required]
     })
 
-    for (const coverType of this.objectKeys(this.availableCoverTypes, 'all')) {
+    for (const coverType of this.objectKeys(this.availableCoverTypes, 'obj', 1)[0]) {
       this.registerNewStallionForm.addControl(coverType + 'Price', new FormControl({value: '', disabled: false}));
       this.registerNewStallionForm.addControl(coverType + 'Place', new FormControl(''));
     }
@@ -102,6 +103,10 @@ export class RegisterNewStallionComponent implements OnInit {
     for (const key in availableCoverTypes) {
       this.coverTypes[key] = false;
       this.coverTypesForWhichCenterIsNotFilled[key] = false;
+    }
+
+    for (const key in availableBreeds) {
+      this.productionBreeds[key] = false;
     }
 
     this.breed = "Sélectionner";
@@ -149,6 +154,10 @@ export class RegisterNewStallionComponent implements OnInit {
     this.photosURLs.splice(index, 1);
   }
 
+  updateProductionBreeds(event: any) {
+    this.productionBreeds[event.target.id] = event.target.checked;
+  }
+
   updateRType(event: any) {
     this.coverTypes[event.target.id] = event.target.checked;
   }
@@ -162,15 +171,39 @@ export class RegisterNewStallionComponent implements OnInit {
     }
   }
 
-  // utility functions on form values fetching
-  objectKeys(obj: Record<string, any>, part: 'first' | 'last' | 'all'): string[] {
-    if (part === 'first') {
-      return Object.keys(obj).slice(0, Math.ceil(Object.keys(obj).length / 2));
-    } else if (part === 'last') {
-      return Object.keys(obj).slice(Math.ceil(Object.keys(obj).length / 2), Object.keys(obj).length);
-    } else {
-      return Object.keys(obj).slice(0, Object.keys(obj).length);
+  objectKeys(variable: Record<string, any> | Array<string>, varType: 'obj' | 'list', number_of_columns: number): Array<Array<string>> {
+    let columns = []
+
+    if (varType == 'obj') {
+      variable = Object.keys(variable);
     }
+
+    if (number_of_columns === 1) {
+      columns.push(variable.slice(0, variable.length));
+      return columns;
+    }
+
+    columns.push(variable.slice(0, Math.ceil(variable.length / number_of_columns)))
+
+    if (number_of_columns > 2) {
+      for (let i = 1; i < number_of_columns - 1; i++) {
+        columns.push(variable.slice(Math.ceil((variable.length / number_of_columns)*i), Math.ceil((variable.length / number_of_columns)*(i+1))))
+      }
+    }
+
+    columns.push(variable.slice(variable.length - Math.ceil(variable.length / number_of_columns), variable.length))
+
+    return columns;
+  }
+
+  getSelectedProductionBreeds() {
+    let list = [];
+    for (let key of Object.keys(this.productionBreeds)) {
+      if (this.productionBreeds[key]) {
+        list.push(key);
+      }
+    }
+    return list;
   }
 
   getSelectedRTypes() {
@@ -267,7 +300,7 @@ export class RegisterNewStallionComponent implements OnInit {
     }
 
     let avCTNb = 0;
-    for (const coverType of this.objectKeys(this.availableCoverTypes, 'all')) {
+    for (const coverType of this.objectKeys(this.availableCoverTypes, 'obj', 1)[0]) {
       const priceCtrl = this.registerNewStallionForm.get(coverType + 'Price');
       const placeCtrl = this.registerNewStallionForm.get(coverType + 'Place');
       if (priceCtrl && priceCtrl.value > 0) {
@@ -298,7 +331,8 @@ export class RegisterNewStallionComponent implements OnInit {
       this.color,
       this.cSaillies,
       this.photos,
-      this.coverTypes,
+      this.getSelectedRTypes(),
+      this.getSelectedProductionBreeds(),
       this.submitted,
       this.registerMessage,
       this.triggerEmptyMandatoryFields

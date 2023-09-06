@@ -42,6 +42,7 @@ export class StallionProfileComponent implements OnInit{
   public coverAdditionalInfo: string = "";
   public stallionAdditionalInfo: string = "";
   public prices: Array<Record<string, any>> = [];
+  public productionBreeds: Array<string> = [];
   public owner: string = "";
 
   // parsed data
@@ -121,9 +122,9 @@ export class StallionProfileComponent implements OnInit{
         this.nSire = content.n_sire;
         this.mainDesc = content.main_desc.replace(/(\r\n|\r|\n)/g, '<br>');
         this.color = content.color;
-        this.birthdate = content.birthdate;
+        this.age = (content.age < 2) ? content.age.toString() + " an" : content.age.toString() + " ans";
         this.height = content.height;
-        this.pedigree = content.pedigree.split('~');
+        this.pedigree = content.pedigree;
         this.pedigreePO = content.pedigree_po.replace(/(\r\n|\r|\n)/g, '<br>');
         this.offspring = content.offspring.replace(/(\r\n|\r|\n)/g, '<br>');
         this.performance = content.performance.replace(/(\r\n|\r|\n)/g, '<br>');
@@ -133,8 +134,8 @@ export class StallionProfileComponent implements OnInit{
         this.regName = content.reg_name;
         this.coverAdditionalInfo = content.cover_additional_info.replace(/(\r\n|\r|\n)/g, '<br>');
         this.prices = content.prices;
+        this.productionBreeds = content.production_breeds;
         this.location = this.city + ", " + this.depName + ", " + this.regName
-        this.age = this.calculateAge(this.birthdate);
         this.heightTagValue = this.height + " centimètres au garrot"
         for (const d of this.prices) {
           this.coverTypes.push(d['cover_type']);
@@ -147,6 +148,7 @@ export class StallionProfileComponent implements OnInit{
         }
   
         for (const [index, photoId] of content.photos.entries()) {
+          console.log(photoId)
           this.stallionProfileService.getPicture(photoId)
           .subscribe(response => {
             const reader = new FileReader();
@@ -161,24 +163,6 @@ export class StallionProfileComponent implements OnInit{
   }
   
   // stallion profile functions
-  calculateAge(dateString: string): string {
-    const birthDate = new Date(dateString);
-    const today = new Date();
-  
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-  
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
-  
-    if (age === 1) {
-      return age.toString() + " an"
-    } else {
-      return age.toString() + " ans"
-    }
-  }
-
   getNbOfPhotos() {
     return Object.keys(this.photos).length
   }

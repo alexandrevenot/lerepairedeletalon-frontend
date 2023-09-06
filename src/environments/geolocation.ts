@@ -37,7 +37,7 @@ export class GeolocationService {
     }
 
     return this.http.get<getCityData>(
-      "http://localhost:3001/geoloc/get-city",
+      "http://localhost:3001/geoloc/city",
       { params }
     ).pipe(
         catchError((error: HttpErrorResponse) => {

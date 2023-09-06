@@ -58,6 +58,15 @@
         </div>
 
         <div class="content py-4">
+            <h4 class="subtitle is-4 has-text-weight-bold">Races de production</h4>
+            <div class="content has-text-weight-semibold">
+                <div class="tags are-large">
+                    <span class="tag is-rounded" *ngFor="let productionBreed of productionBreeds">{{productionBreed}}</span>       
+                </div>
+            </div>
+        </div>
+
+        <div class="content py-4">
             <h4 class="subtitle is-4 has-text-weight-bold">Conditions de saillie</h4>
             <div class="columns pb-4" *ngFor="let coverType of coverTypes">
                 <div class="column">

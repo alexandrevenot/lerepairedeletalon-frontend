@@ -26,6 +26,7 @@ export class StallionPanelComponent implements OnInit, OnChanges {
   @Input() filters: updateFilterData = {
     form: {},
     breeds: {},
+    productionBreeds: {},
     colors: {},
     distance: {
       max: 0,
