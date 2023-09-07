@@ -41,7 +41,7 @@ export class AuthInterceptor implements HttpInterceptor {
       return next.handle(req).pipe(
         catchError((err: HttpErrorResponse) => {
           if (err && err.status === 401 && err.error.detail === 'token not found in the request') {
-            if (!req.url.includes('get-user')) {
+            if (!req.url.includes('user-name')) {
               this.router.navigate(['/login']);
             }
             return throwError(() => err);
