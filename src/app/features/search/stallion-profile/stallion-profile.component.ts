@@ -132,7 +132,7 @@ export class StallionProfileComponent implements OnInit{
         this.pedigreePO = content.pedigree_po.replace(/(\r\n|\r|\n)/g, '<br>');
         this.offspring = content.offspring.replace(/(\r\n|\r|\n)/g, '<br>');
         this.performance = content.performance.replace(/(\r\n|\r|\n)/g, '<br>');
-        this.stallionAdditionalInfo = content.cover_additional_info.replace(/(\r\n|\r|\n)/g, '<br>');
+        this.stallionAdditionalInfo = content.stallion_additional_info.replace(/(\r\n|\r|\n)/g, '<br>');
         this.city = content.city;
         this.depName = content.dep_name;
         this.regName = content.reg_name;
