@@ -25,7 +25,7 @@ export class StallionPanelItemComponent implements OnInit{
 
 
   ngOnInit() {
-    this.location = (this.item.city + ", " + this.item.depName + ", " + this.item.regName).slice(0, 15 ) + '...';
+    this.location = (this.item.city + ", " + this.item.depName + ", " + this.item.regName).slice(0, 14) + '...';
   }
 
   handleClick(){
