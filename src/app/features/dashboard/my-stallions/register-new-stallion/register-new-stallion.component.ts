@@ -1,7 +1,7 @@
 import { Component, OnInit  } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { RegisterNewStallionService } from './register-new-stallion.service';
-import { availableBreeds, availableColors, availableCoverTypes, coverPlaceNames, getNumberArray, photosMaxSizeInBytes } from 'src/environments/environment';
+import { getAvailableBreeds, breedsRecord, availableColors, availableCoverTypes, coverPlaceNames, getNumberArray, photosMaxSizeInBytes, splitListOrKeysList, balancePaymentConditions } from 'src/environments/environment';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { GeolocationService, getCityData, getCityItem } from 'src/environments/geolocation';
 
@@ -13,42 +13,49 @@ import { GeolocationService, getCityData, getCityItem } from 'src/environments/g
 })
 export class RegisterNewStallionComponent implements OnInit {
   // imported variables and functions
-  public availableBreeds = availableBreeds;
+  public breedsRecord = breedsRecord;
+  public availableBreedTypes = Object.keys(breedsRecord);
+  public availableBreeds = getAvailableBreeds();
   public availableColors = availableColors;
   public availableCoverTypes = availableCoverTypes;
   public coverPlaceNames = coverPlaceNames;
   public photosMaxSizeInBytes = photosMaxSizeInBytes;
   public getNumberArray = getNumberArray;
+  public splitListOrKeysList = splitListOrKeysList;
+  public balancePaymentConditions = balancePaymentConditions;
 
-  // utility variables
-  public coverTypes: {[key: string]: boolean} = {};
-  public coverTypesForWhichCenterIsNotFilled: Record<string, boolean> = {};
-  public submitted!: {[key: string]: boolean};
-  public registerMessage!: FormControl;
-  public photosMessage!: FormControl;
-  public cSailliesMessage!: FormControl;
-  public triggerEmptyMandatoryFields: {[key: string]: boolean} = {status: false};
+  // helpers
+  public submitHelper: FormControl = new FormControl('');
+  public photosHelper: FormControl= new FormControl('');
+  public cSailliesHelper: FormControl= new FormControl('');
+  public locationHelper: FormControl = new FormControl('');
+
+  // form validation status
+  public submitted: Record<string, boolean> = {status: false};
+  public triggerEmptyMandatoryFields: Record<string, boolean> = {status: false};
+  public locationSearchSuccess: Record<string, boolean> = {status: false};
+  public isLookingForLocation: boolean = false;
+  public locationIsValidated: boolean = false;
+
+  // register new stallion form variables
+  public coverTypes: Record<string, boolean> = {};
+  public productionBreeds: Record<string, boolean> = {};
+  public cSaillies!: File;
+  public photos: File[] = [];
+
+  // tools variables
+  public photosURLs: SafeUrl[] = [];
   public locations: getCityItem[] = [];
   public locationTagValues: string[] = [];
-  public isLookingForLocation: boolean = false;
-  public locationSearchSuccess: {[key: string]: boolean} = {status: false};
-  public locationMessage!: FormControl;
-  public locationIsValidated: boolean = false;
   public selectedLocation: getCityItem = {
     city_name: "",
     postal_code: "",
     lat: 0,
     lng: 0
   };
-  public productionBreeds: {[key: string]: boolean} = {};
 
   // form values variables
   public registerNewStallionForm!: FormGroup;
-  public breed!: string;
-  public color!: string;
-  public cSaillies!: File;
-  public photos: File[] = [];
-  public photosURLs: SafeUrl[] = [];
 
   constructor(
     private registerNewStallionService: RegisterNewStallionService,
@@ -57,76 +64,76 @@ export class RegisterNewStallionComponent implements OnInit {
     private sanitizer: DomSanitizer
     ) {}
   
-  ngOnInit(): void {
-    // utility variables init
-    this.submitted = {status: false};
-    this.registerMessage = new FormControl('');
-    this.photosMessage = new FormControl('');
-    this.cSailliesMessage = new FormControl('');
-    this.locationMessage = new FormControl('');
-  
-    // form values variables init
+  ngOnInit(): void {  
     this.registerNewStallionForm = this.formBuilder.group({
       name: ['', Validators.required],
+      breed: ['Sélectionner', Validators.required],
       nSIRE: ['', Validators.required],
       mainDesc: ['', Validators.required],
-      birthdate: ['', Validators.required],
+      color: ['Sélectionner', Validators.required],
       height: ['', Validators.required],
-      offspring: [''],
-      performance: [''],
-      p1: [''],
-      p2: [''],
-      p3: [''],
-      p4: [''],
-      p5: [''],
-      p6: [''],
-      p7: [''],
-      p8: [''],
-      p9: [''],
-      p10: [''],
-      p11: [''],
-      p12: [''],
-      p13: [''],
-      p14: [''],
-      pedigreePO: [''],
-      stallionAdditionalInfo: [''],
+      birthdate: ['', Validators.required],
+      p1: '',
+      p2: '',
+      p3: '',
+      p4: '',
+      p5: '',
+      p6: '',
+      p7: '',
+      p8: '',
+      p9: '',
+      p10: '',
+      p11: '',
+      p12: '',
+      p13: '',
+      p14: '',
+      coverAdditionalInfo: '',
+      performance: '',
+      pedigreePO: '',
+      stallionAdditionalInfo: '',
+      offspring: '',
       location: ['', Validators.required],
-      postalCode: [''],
-      coverAdditionalInfo: ['', Validators.required]
+      postalCode: '',
     })
 
-    for (const coverType of this.objectKeys(this.availableCoverTypes, 'obj', 1)[0]) {
-      this.registerNewStallionForm.addControl(coverType + 'Price', new FormControl({value: '', disabled: false}));
+    for (const coverType of Object.keys(this.availableCoverTypes)) {
+      this.registerNewStallionForm.addControl(coverType + 'Price', new FormControl(''));
       this.registerNewStallionForm.addControl(coverType + 'Place', new FormControl(''));
+      this.registerNewStallionForm.addControl(coverType + 'SelectedBalancePaymentCondition', new FormControl(''));
+      this.registerNewStallionForm.addControl(coverType + 'AdvancePercentage', new FormControl(''));
+      this.registerNewStallionForm.addControl(coverType + 'SelectedLeftStrawsOwner', new FormControl(''));
+      if (['iac', 'iart'].includes(coverType)) {
+        this.registerNewStallionForm.get(coverType + 'Place')?.disable();
+      }
+      this.coverTypes[coverType] = false;
     }
-    
-    for (const key in availableCoverTypes) {
-      this.coverTypes[key] = false;
-      this.coverTypesForWhichCenterIsNotFilled[key] = false;
-    }
-
-    for (const key in availableBreeds) {
-      this.productionBreeds[key] = false;
-    }
-
-    this.breed = "Sélectionner";
-    this.color = "Sélectionner";
   }
 
-  // fetching form values
-  updateSelect(type: 'color' | 'breed', event: any) {
-    this[type] = event.target.value;
+  // checkboxes
+  updateCheckbox(checkboxType: 'productionBreeds' | 'coverTypes', event: any) {
+    this[checkboxType][event.target.id] = event.target.checked;
   }
 
+  getSelectedCheckboxes(checkboxType: 'coverTypes' | 'productionBreeds') {
+    let list = [];
+    for (let key of Object.keys(this[checkboxType])) {
+      if (this[checkboxType][key]) {
+        list.push(key);
+      }
+    }
+    return list;
+  }
+
+  // files
   fetchCSaillies(event: any) {
     this.cSaillies = event.target.files[0];
-    this.cSailliesMessage.setValue("");
+    this.cSailliesHelper.setValue('');
   }
 
   fetchPhotos(event: any) {
     const selectedFile: File = event.target.files[0];
     if (selectedFile && selectedFile.size > photosMaxSizeInBytes) {
-      this.photosMessage.setValue('La taille de chaque photo doit être inférieure à 4Mo.');
+      this.photosHelper.setValue('La taille de chaque photo doit être inférieure à 4Mo.');
       return
     }
 
@@ -135,17 +142,11 @@ export class RegisterNewStallionComponent implements OnInit {
     const img = new Image();
     img.src = URL.createObjectURL(selectedFile);
 
-    img.onload = () => {
-      const width: number = img.width;
-      const height: number = img.height;
-  
+    img.onload = () => {  
       URL.revokeObjectURL(img.src);
       
       this.photosURLs.push(this.sanitizer.bypassSecurityTrustUrl(img.src));
-      let value = this.photosMessage.value;
-      if (value != "") {
-        this.photosMessage.setValue('');
-      }
+      this.photosHelper.setValue('');
     };
   }
 
@@ -154,96 +155,22 @@ export class RegisterNewStallionComponent implements OnInit {
     this.photosURLs.splice(index, 1);
   }
 
-  updateProductionBreeds(event: any) {
-    this.productionBreeds[event.target.id] = event.target.checked;
-  }
-
-  updateRType(event: any) {
-    this.coverTypes[event.target.id] = event.target.checked;
-  }
-
-  updateCoverTypesForWhichCenterIsNotFilled(event: any) {
-    this.coverTypesForWhichCenterIsNotFilled[event.target.id] = event.target.checked;
-    if (event.target.checked) {
-      this.registerNewStallionForm.get(event.target.id + 'Place')?.disable();
-    } else {
-      this.registerNewStallionForm.get(event.target.id + 'Place')?.enable();
-    }
-  }
-
-  objectKeys(variable: Record<string, any> | Array<string>, varType: 'obj' | 'list', number_of_columns: number): Array<Array<string>> {
-    let columns = []
-
-    if (varType == 'obj') {
-      variable = Object.keys(variable);
-    }
-
-    if (number_of_columns === 1) {
-      columns.push(variable.slice(0, variable.length));
-      return columns;
-    }
-
-    columns.push(variable.slice(0, Math.ceil(variable.length / number_of_columns)))
-
-    if (number_of_columns > 2) {
-      for (let i = 1; i < number_of_columns - 1; i++) {
-        columns.push(variable.slice(Math.ceil((variable.length / number_of_columns)*i), Math.ceil((variable.length / number_of_columns)*(i+1))))
-      }
-    }
-
-    columns.push(variable.slice(variable.length - Math.ceil(variable.length / number_of_columns), variable.length))
-
-    return columns;
-  }
-
-  getSelectedProductionBreeds() {
-    let list = [];
-    for (let key of Object.keys(this.productionBreeds)) {
-      if (this.productionBreeds[key]) {
-        list.push(key);
-      }
-    }
-    return list;
-  }
-
-  getSelectedRTypes() {
-    let list = [];
-    for (let key of Object.keys(this.coverTypes)) {
-      if (this.coverTypes[key]) {
-        list.push(key);
-      }
-    }
-    return list;
-  }
-
-  isFilledInForm(field: string) {
-    return this.registerNewStallionForm.getRawValue()[field];
-  }
-
-  dropdownIsSelected(field: 'breed' | 'color') {
-    if (field === 'breed') {
-      return this.breed != "Sélectionner";
-    } else {
-      return this.color != "Sélectionner";
-    }
-  }
-
   // geoloc
   findCity() {
     this.isLookingForLocation = true;
     this.locations.splice(0, this.locations.length);
     this.locationTagValues.splice(0, this.locationTagValues.length);
     this.geolocationService.getCity(
-      this.registerNewStallionForm.getRawValue().location,
-      this.registerNewStallionForm.getRawValue().postalCode,
+      this.registerNewStallionForm.get('location')?.value,
+      this.registerNewStallionForm.get('postalCode')?.value,
       this.locationSearchSuccess,
-      this.locationMessage)
+      this.locationHelper)
     .subscribe((data: getCityData) => {
       for (let item of data.content) {
         this.locations.push(item);
         this.locationTagValues.push(item.city_name + " (" + item.postal_code + ") ?")
       }
-      this.locationMessage.setValue("");
+      this.locationHelper.setValue("");
       this.locationSearchSuccess['status'] = true;
     })
   }
@@ -262,11 +189,24 @@ export class RegisterNewStallionComponent implements OnInit {
     if (locationControl) {
       locationControl.setValue(this.locationTagValues[index].slice(0, -2));
     }
-    this.locationMessage.setValue("");
+    this.locationHelper.setValue("");
     this.isLookingForLocation = false;
     this.selectedLocation = this.locations[index];
     this.locationTagValues.splice(0, this.locationTagValues.length);
     this.locationIsValidated = true;
+  }
+
+  // checking form validity
+  isFilledInForm(field: string) {
+    return this.registerNewStallionForm.getRawValue()[field];
+  }
+
+  dropdownIsSelected(field: 'breed' | 'color') {
+    if (field === 'breed') {
+      return this.registerNewStallionForm.get('breed')?.value && (this.registerNewStallionForm.get('breed')?.value != "Sélectionner");
+    } else {
+      return this.registerNewStallionForm.get('color')?.value && (this.registerNewStallionForm.get('color')?.value != "Sélectionner");
+    }
   }
 
   public findInvalidControls() {
@@ -280,18 +220,18 @@ export class RegisterNewStallionComponent implements OnInit {
     return invalid;
   }
 
-  // final submit function
   onSubmit() {
+    console.log(this.registerNewStallionForm.getRawValue())
     // data validation
     let shouldThrowError = false;
 
     if (this.photos.length === 0) {
-      this.photosMessage.setValue("Il faut au minimum une photo.");
+      this.photosHelper.setValue("Il faut au minimum une photo.");
       shouldThrowError = true;
     }
 
     if (!this.cSaillies) {
-      this.cSailliesMessage.setValue("Une photo du carnet de saillies est obligatoire.");
+      this.cSailliesHelper.setValue("Une photo du carnet de saillies est obligatoire.");
       shouldThrowError = true;
     }
 
@@ -300,12 +240,12 @@ export class RegisterNewStallionComponent implements OnInit {
     }
 
     let avCTNb = 0;
-    for (const coverType of this.objectKeys(this.availableCoverTypes, 'obj', 1)[0]) {
+    for (const coverType of Object.keys(this.availableCoverTypes)) {
       const priceCtrl = this.registerNewStallionForm.get(coverType + 'Price');
       const placeCtrl = this.registerNewStallionForm.get(coverType + 'Place');
       if (priceCtrl && priceCtrl.value > 0) {
         avCTNb++;
-        if ((!placeCtrl || !placeCtrl.value) && !this.coverTypesForWhichCenterIsNotFilled[coverType]) {
+        if ((!placeCtrl || !placeCtrl.value) && !['iart', 'iac'].includes(coverType)) {
           shouldThrowError = true;
         }
       }
@@ -317,29 +257,26 @@ export class RegisterNewStallionComponent implements OnInit {
     // if data is not validated
     if (shouldThrowError) {
       this.triggerEmptyMandatoryFields['status'] = true;
-      this.registerMessage.setValue('Une erreur est survenue. Merci de réessayer.');
+      this.submitHelper.setValue('Une erreur est survenue. Merci de réessayer.');
       throw new Error("Incomplete form");
     }
 
     // post request
     this.submitted['status'] = true;
-    console.log(this.registerNewStallionForm.getRawValue());
     return this.registerNewStallionService.postRegisterNewStallion(
       this.registerNewStallionForm.getRawValue(),
       this.selectedLocation,
-      this.breed,
-      this.color,
       this.cSaillies,
       this.photos,
-      this.getSelectedRTypes(),
-      this.getSelectedProductionBreeds(),
+      this.getSelectedCheckboxes('coverTypes'),
+      this.getSelectedCheckboxes('productionBreeds'),
       this.submitted,
-      this.registerMessage,
+      this.submitHelper,
       this.triggerEmptyMandatoryFields
       ).subscribe(() => {
         this.submitted['status'] = false;
         this.triggerEmptyMandatoryFields['status'] = false;
-        this.registerMessage.setValue('Étalon ajouté avec succès.');
+        this.submitHelper.setValue('Étalon ajouté avec succès.');
       })
   }
 

@@ -46,13 +46,6 @@ export class StallionPanelService {
       }
     }
 
-    let colors: string[] = [];
-    for (const color in filters.colors) {
-      if (filters.colors[color]) {
-        colors.push(color);
-      }
-    }
-
     let coverTypes: string[] = [];
     for (const coverType in filters.coverTypes) {
       if (filters.coverTypes[coverType]) {
@@ -73,10 +66,6 @@ export class StallionPanelService {
       params = params.append('production_breeds', productionBreed)
     }
 
-    for (const color of colors) {
-      params = params.append('colors', color)
-    }
-
     for (const coverType of coverTypes) {
       params = params.append('cover_types', coverType)
     }
@@ -87,6 +76,14 @@ export class StallionPanelService {
 
     if (typeof filters.form['highestPrice'] === "string" && filters.form['highestPrice'].length > 0) {
       params = params.append('max_price', filters.form['highestPrice'])
+    }
+
+    if (typeof filters.form['lowestHeight'] === "string" && filters.form['lowestHeight'].length > 0) {
+      params = params.append('min_height', filters.form['lowestHeight'])
+    }
+
+    if (typeof filters.form['highestHeight'] === "string" && filters.form['highestHeight'].length > 0) {
+      params = params.append('max_height', filters.form['highestHeight'])
     }
     
     if (filters.distance.max > 0) {

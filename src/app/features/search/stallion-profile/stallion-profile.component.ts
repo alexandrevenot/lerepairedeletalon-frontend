@@ -1,7 +1,7 @@
 import { Component, OnInit, createPlatform } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { StallionProfileService, returnedStallion } from './stallion-profile.service'
-import { getNumberArray, availableCoverTypes, availableBreeds, coverPlaceNames } from '../../../../environments/environment'
+import { getNumberArray, availableCoverTypes, getAvailableBreeds, coverPlaceNames, balancePaymentConditions } from '../../../../environments/environment'
 import { ActivatedRoute } from '@angular/router';
 import { PricingService, checkoutResponse } from 'src/environments/pricing';
 
@@ -20,7 +20,8 @@ export class StallionProfileComponent implements OnInit{
   public getNumberArray = getNumberArray;
   public availableCoverTypes = availableCoverTypes;
   public coverPlaceNames = coverPlaceNames;
-  public availableBreeds = availableBreeds;
+  public availableBreeds = getAvailableBreeds();
+  public balancePaymentConditionsCorresp = balancePaymentConditions;
 
   // raw data
   public name: string = "";
@@ -51,6 +52,9 @@ export class StallionProfileComponent implements OnInit{
   public heightTagValue: string = "";
   public coverTypes: Array<string> = [];
   public coverPlaces: Record<string, string> = {};
+  public advancePercentages: Record<string, number> = {};
+  public balancePaymentConditions: Record<string, string> = {};
+  public leftStrawsOwner: Record<string, string> = {};
   public hasPedigree: boolean = false;
 
   // form data
@@ -140,6 +144,9 @@ export class StallionProfileComponent implements OnInit{
         for (const d of this.prices) {
           this.coverTypes.push(d['cover_type']);
           this.coverPlaces[d['cover_type']] = d['cover_place'];
+          this.advancePercentages[d['cover_type']] = d['advance_percentage']
+          this.balancePaymentConditions[d['cover_type']] = d['balance_payment_condition']
+          this.leftStrawsOwner[d['cover_type']] = d['left_straws_owner']
         }
         for (const parent of this.pedigree) {
           if (parent != "") {

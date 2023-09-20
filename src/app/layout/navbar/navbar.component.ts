@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavbarService, returnUser } from './navbar.service';
+import { NavbarService, connectionStatus } from './navbar.service';
 import { AuthService } from 'src/app/core/auth/auth.service';
 
 @Component({
@@ -7,14 +7,13 @@ import { AuthService } from 'src/app/core/auth/auth.service';
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css'],
   providers: [
-    NavbarService,
     AuthService
   ]
 })
 export class NavbarComponent implements OnInit {
 
-  public firstname: string | null = null;
-  public lastname: string | null = null;
+  public firstname: string = "";
+  public lastname: string = "";
   public userIsLoggedIn: boolean = false;
 
   constructor (
@@ -23,16 +22,14 @@ export class NavbarComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.navbarService.getUser()
-    .subscribe((data: returnUser) => {
-      if (data.firstname && data.lastname) {
-        this.firstname = data.firstname;
-        this.lastname = data.lastname;
-        this.userIsLoggedIn = true;
-      } else {
-        this.userIsLoggedIn = false;
-      }
+    this.navbarService.loadNavbarEvent
+    .subscribe((data: connectionStatus) => {
+      this.firstname = data.firstname;
+      this.lastname = data.lastname;
+      this.userIsLoggedIn = data.userIsLoggedIn;
     })
+
+    this.navbarService.loadNavbar();
   }
 
   disconnectUser() {
