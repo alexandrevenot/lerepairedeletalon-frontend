@@ -15,7 +15,6 @@ export interface GetCoverInfo {
     contact_email: string;
     cover_type: string;
     cover_place: string;
-    cover_place_is_offered: boolean;
     price: number;
     buyer_message: string;
     timestamps: Record<string, string>;

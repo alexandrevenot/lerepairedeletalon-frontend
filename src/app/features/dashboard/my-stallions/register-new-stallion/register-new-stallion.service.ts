@@ -19,26 +19,23 @@ export class RegisterNewStallionService {
   }
 
   postRegisterNewStallion(
-    form: { [key: string]: string },
+    form: Record<string, string>,
     location: getCityItem,
-    breed: string,
-    color: string,
     cSaillies: File,
     photos: File[],
     coverTypes: Array<string>,
     productionBreeds: Array<string>,
-    submitted: {[key: string]: boolean},
+    submitted: Record<string, boolean>,
     message: FormControl<any>,
-    triggerEmptyMandatoryFields: {[key: string]: boolean}
+    triggerEmptyMandatoryFields: Record<string, boolean>
     ) {
-
     const formData = new FormData();
+    
     formData.append('lat', location.lat.toString());
     formData.append('lng', location.lng.toString());
     formData.append('city', location.city_name);
     formData.append('postal_code', location.postal_code);
-    formData.append('breed', breed);
-    formData.append('color', color);
+
     photos.forEach((file) => { formData.append('photos', file); });
     formData.append('c_saillies', cSaillies);
 
@@ -46,6 +43,9 @@ export class RegisterNewStallionService {
       formData.append('cover_types', coverType);
       formData.append('prices', form[coverType + 'Price']);
       formData.append('cover_places', form[coverType + 'Place']);
+      formData.append('balance_payment_conditions', form[coverType + 'SelectedBalancePaymentCondition']);
+      formData.append('advance_percentages', form[coverType + 'AdvancePercentage']);
+      formData.append('left_straws_owners', form[coverType + 'SelectedLeftStrawsOwner']);
     });
 
     productionBreeds.forEach((breed) => { formData.append('production_breeds', breed); });
@@ -59,6 +59,8 @@ export class RegisterNewStallionService {
 
     formData.append('name', form["name"]);
     formData.append('n_sire', form["nSIRE"]);
+    formData.append('breed', form["breed"]);
+    formData.append('color', form["color"]);
     formData.append('main_desc', form["mainDesc"]);
     formData.append('birthdate', form["birthdate"]);
     formData.append('height', form["height"]);
@@ -67,7 +69,7 @@ export class RegisterNewStallionService {
     formData.append('pedigree_po', form["pedigreePO"]);
     formData.append('stallion_additional_info', form["stallionAdditionalInfo"]);
     formData.append('cover_additional_info', form["coverAdditionalInfo"]);
-
+    console.log(formData)
     let headers = new HttpHeaders();
     headers.append('Content-Type', 'multipart/form-data');
 

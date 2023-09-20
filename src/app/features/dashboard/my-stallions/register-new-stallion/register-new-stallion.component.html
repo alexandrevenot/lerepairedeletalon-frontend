@@ -1,7 +1,7 @@
 <h3 class="subtitle is-3 has-text-weight-semibold">Ajouter un nouvel étalon</h3>
 
 <section class="section">
-  <form [formGroup]="registerNewStallionForm" enctype="multipart/form-data">
+  <form [formGroup]="registerNewStallionForm">
     <h4 class="subtitle is-4">Première partie: profil de l'étalon</h4>
 
     <h5 class="subtitle is-5 has-text-weight-bold">Identification de l'étalon</h5>
@@ -27,7 +27,7 @@
             'is-success': dropdownIsSelected('breed') && triggerEmptyMandatoryFields['status'],
             'is-danger': !dropdownIsSelected('breed') && triggerEmptyMandatoryFields['status']
             }">
-            <select (change)="updateSelect('breed', $event)">
+            <select formControlName="breed">
               <option>Sélectionner</option>
               <option *ngFor="let breed of availableBreeds">{{breed}}</option>
             </select>
@@ -71,7 +71,7 @@
           </label>
         </span>
       </div>
-      <p class="help has-text-danger">{{ photosMessage.value }}</p>
+      <p class="help has-text-danger">{{ photosHelper.value }}</p>
     </div>
 
     <div class="field">
@@ -94,7 +94,7 @@
               'is-success': dropdownIsSelected('color') && triggerEmptyMandatoryFields['status'],
               'is-danger': !dropdownIsSelected('color') && triggerEmptyMandatoryFields['status']
               }">
-              <select (change)="updateSelect('color', $event)">
+              <select formControlName="color">
                 <option>Sélectionner</option>
                 <option *ngFor="let color of availableColors">{{color}}</option>
               </select>
@@ -110,7 +110,7 @@
           <input class="input" [ngClass]="{
             'is-success': isFilledInForm('height') && triggerEmptyMandatoryFields['status'],
             'is-danger': !isFilledInForm('height') && triggerEmptyMandatoryFields['status']
-            }" type="text" placeholder="180" formControlName="height">
+            }" type="text" placeholder="160" formControlName="height">
           </div>
         </div>
       </div>
@@ -122,7 +122,7 @@
           <input class="input" [ngClass]="{
             'is-success': isFilledInForm('birthdate') && triggerEmptyMandatoryFields['status'],
             'is-danger': !isFilledInForm('birthdate') && triggerEmptyMandatoryFields['status']
-            }" type="text" placeholder="01/01/2000" formControlName="birthdate">
+            }" type="text" placeholder="01/01/2015" formControlName="birthdate">
           </div>
         </div>
       </div>
@@ -172,7 +172,7 @@
       </div>
     </div>
     
-    <p class="help has-text-danger">{{ locationMessage.value }}</p>
+    <p class="help has-text-danger">{{ locationHelper.value }}</p>
     <div class="tags" *ngIf="locationSearchSuccess['status'] && isLookingForLocation">
       <span class="tag is-medium is-clickable" *ngFor="let index of getNumberArray(locationTagValues.length)" (click)="confirmLocationValue(index)">{{locationTagValues[index]}}</span>
     </div>
@@ -277,33 +277,39 @@
     <div class="field">
       <h5 class="subtitle is-5 has-text-weight-bold">Races de production</h5>
       <label class="label has-text-weight-semibold has-text-grey">Indiquez les races dans lesquelles votre étalon est approuvé à produire.</label>
-      <div class="columns">
-        <div class="column">
-          <div *ngFor="let productionBreed of objectKeys(availableBreeds, 'list', 3)[0]">
-            <label class="checkbox">
-              <input type="checkbox" [id]="productionBreed" (change)="updateProductionBreeds($event)">
-              {{productionBreed}}
-            </label>
+
+      <div *ngFor="let key of availableBreedTypes">
+        <p class="has-text-weight-bold pt-4">{{key}}</p>
+
+        <div class="columns">
+          <div class="column">
+            <div *ngFor="let productionBreed of splitListOrKeysList(breedsRecord[key], 'list', 3)[0]">
+              <label class="checkbox">
+                <input type="checkbox" [id]="productionBreed" (change)="updateCheckbox('productionBreeds', $event)">
+                {{productionBreed}}
+              </label>
+            </div>
+          </div>
+
+          <div class="column">
+            <div *ngFor="let productionBreed of splitListOrKeysList(breedsRecord[key], 'list', 3)[1]">
+              <label class="checkbox">
+                <input type="checkbox" [id]="productionBreed" (change)="updateCheckbox('productionBreeds', $event)">
+                {{productionBreed}}
+              </label>
+            </div>
+          </div>
+
+          <div class="column">
+            <div *ngFor="let productionBreed of splitListOrKeysList(breedsRecord[key], 'list', 3)[2]">
+              <label class="checkbox">
+                <input type="checkbox" [id]="productionBreed" (change)="updateCheckbox('productionBreeds', $event)">
+                {{productionBreed}}
+              </label>
+            </div>
           </div>
         </div>
 
-        <div class="column">
-          <div *ngFor="let productionBreed of objectKeys(availableBreeds, 'list', 3)[1]">
-            <label class="checkbox">
-              <input type="checkbox" [id]="productionBreed" (change)="updateProductionBreeds($event)">
-              {{productionBreed}}
-            </label>
-          </div>
-        </div>
-
-        <div class="column">
-          <div *ngFor="let productionBreed of objectKeys(availableBreeds, 'list', 3)[2]">
-            <label class="checkbox">
-              <input type="checkbox" [id]="productionBreed" (change)="updateProductionBreeds($event)">
-              {{productionBreed}}
-            </label>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -330,7 +336,7 @@
           </span>
         </label>
       </div>
-      <p class="help has-text-danger">{{ cSailliesMessage.value }}</p>
+      <p class="help has-text-danger">{{ cSailliesHelper.value }}</p>
     </div>
 
     <div class="field">
@@ -338,18 +344,18 @@
       <label class="label has-text-weight-semibold has-text-grey">Indiquez quel(s) type(s) de saillie sont proposés pour votre étalon.</label>
       <div class="columns">
         <div class="column">
-          <div *ngFor="let coverType of objectKeys(coverTypes, 'obj', 2)[0]">
+          <div *ngFor="let coverType of splitListOrKeysList(coverTypes, 'obj', 2)[0]">
             <label class="checkbox">
-              <input type="checkbox" [id]="coverType" (change)="updateRType($event)">
+              <input type="checkbox" [id]="coverType" (change)="updateCheckbox('coverTypes', $event)">
               {{availableCoverTypes[coverType]}}
             </label>
           </div>
         </div>
 
         <div class="column">
-          <div *ngFor="let coverType of objectKeys(coverTypes, 'obj', 2)[1]">
+          <div *ngFor="let coverType of splitListOrKeysList(coverTypes, 'obj', 2)[1]">
             <label class="checkbox">
-              <input type="checkbox" [id]="coverType" (change)="updateRType($event)">
+              <input type="checkbox" [id]="coverType" (change)="updateCheckbox('coverTypes', $event)">
               {{availableCoverTypes[coverType]}}
             </label>
           </div>
@@ -357,23 +363,22 @@
       </div>
     </div>
 
-    <h5 class="subtitle is-5 has-text-weight-bold mt-5">Prix</h5>
+    <h5 class="subtitle is-5 has-text-weight-bold mt-5">Caractéristiques des saillies</h5>
     <label class="label has-text-weight-semibold" [ngClass]="{
-      'has-text-grey': getSelectedRTypes().length > 0 && triggerEmptyMandatoryFields['status'],
-      'has-text-danger': !(getSelectedRTypes().length > 0) && triggerEmptyMandatoryFields['status']
-      }" *ngIf="getSelectedRTypes().length === 0">
+      'has-text-grey': getSelectedCheckboxes('coverTypes').length > 0 && triggerEmptyMandatoryFields['status'],
+      'has-text-danger': !(getSelectedCheckboxes('coverTypes').length > 0) && triggerEmptyMandatoryFields['status']
+      }" *ngIf="getSelectedCheckboxes('coverTypes').length === 0">
       Commencez par sélectionner un type de saillie disponible pour votre étalon.
     </label>
 
-
-    <div class="py-4" *ngFor="let coverType of getSelectedRTypes()">
+    <div class="box py-4" *ngFor="let coverType of getSelectedCheckboxes('coverTypes')">
       <label class="label has-text-weight-bold">Si l'acheteur choisit une {{availableCoverTypes[coverType]}} :</label>
       <div class="columns is-align-items-end">
-        <div class="column is-3">
+        <div class="column">
           <div class="field">
             <label class="label has-text-weight-semibold has-text-grey">Indiquez le prix de la saillie.</label>
             <div class="control has-icons-right">
-              <input class="input" type="text" formControlName="{{coverType}}Price">
+              <input class="input" type="text" placeholder="400" formControlName="{{coverType}}Price">
               <span class="icon is-small is-right">
                 <i class="fas fa-euro"></i>
               </span>
@@ -383,19 +388,38 @@
 
         <div class="column">
           <div class="field">
-            <label class="label has-text-weight-semibold has-text-grey">Indiquez l'adresse du {{coverPlaceNames[coverType]}}.</label>
+            <label class="label has-text-weight-semibold has-text-grey">{{['iai', 'lib', 'hand'].includes(coverType)? "Indiquez l'adresse du " + coverPlaceNames[coverType] : "L'acheteur proposera un " + coverPlaceNames[coverType]}}</label>
             <div class="control">
               <input class="input" type="text" formControlName="{{coverType}}Place">
             </div>
           </div>
         </div>
+      </div>
 
-        <div class="column">
-          <label class="checkbox has-text-weight-semibold has-text-grey">
-              <input type="checkbox" [id]="coverType" (change)="updateCoverTypesForWhichCenterIsNotFilled($event)">
-              Je ne souhaite pas imposer de {{coverPlaceNames[coverType]}} à l'acheteur, je le définirai avec lui plus tard.
-          </label>
+      <div class="field pt-4">
+        <label class="label has-text-weight-semibold has-text-grey">Quel pourcentage de la saillie doit constituer l'acompte? <small>(Min. 15%, Max. 50%)</small></label>
+        <div class="control has-icons-right">
+          <input class="input" type="text" placeholder="50" formControlName="{{coverType}}AdvancePercentage">
+          <span class="icon is-small is-right">
+            <i class="fas fa-percentage"></i>
+          </span>
         </div>
+      </div>
+
+      <label class="label has-text-weight-semibold has-text-grey">Dans quel cas l'acheteur doit-il payer le solde de la saillie?</label>
+      <div class="control" *ngFor="let balancePaymentCondition of splitListOrKeysList(balancePaymentConditions, 'obj', 1)[0]">
+        <label class="radio has-text-weight-semibold">
+          <input type="radio" [value]="balancePaymentCondition" [formControlName]="coverType + 'SelectedBalancePaymentCondition'">
+          {{balancePaymentConditions[balancePaymentCondition]}}
+        </label>
+      </div>
+
+      <label class="label has-text-weight-semibold has-text-grey pt-4" *ngIf="['iart', 'iac'].includes(coverType)">De qui les paillettes non utilisées restent-elles la propriété?</label>
+      <div class="control" *ngIf="['iart', 'iac'].includes(coverType)">
+        <label class="radio has-text-weight-semibold" *ngFor="let leftStrawsOwner of ['buyer', 'seller']">
+          <input type="radio" [value]="leftStrawsOwner" [formControlName]="coverType + 'SelectedLeftStrawsOwner'">
+          {{leftStrawsOwner === "seller"? "Vous": "L'acheteur"}}
+        </label>
       </div>
     </div>
 
@@ -416,7 +440,7 @@
       <div class="control">
         <button class="button is-light">Annuler</button>
       </div>
-      <p class="help">{{ registerMessage.value }}</p>
+      <p class="help">{{ submitHelper.value }}</p>
     </div>
   </form>
 </section>

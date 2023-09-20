@@ -1,6 +1,6 @@
 import { Component, Input, EventEmitter, Output, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
-import { availableBreeds, availableColors, availableCoverTypes, getNumberArray } from '../../../../environments/environment';
+import { breedsRecord, getAvailableBreeds, availableCoverTypes, getNumberArray } from '../../../../environments/environment';
 import { GeolocationService, getCityData, getCityItem } from 'src/environments/geolocation';
 
 interface distanceData {
@@ -13,7 +13,6 @@ export interface updateFilterData {
   form: { [key: string]: string | null },
   breeds: { [key: string]: boolean },
   productionBreeds: Record<string, boolean>,
-  colors: { [key: string]: boolean },
   distance: distanceData,
   coverTypes: { [key: string]: boolean }
 }
@@ -30,8 +29,9 @@ export class FiltersComponent implements OnInit {
   @Output() updateFiltersEvent = new EventEmitter<updateFilterData>();
 
   // imports
-  availableBreeds = availableBreeds;
-  availableColors = availableColors;
+  breedsRecord = breedsRecord;
+  availableBreedTypes = Object.keys(breedsRecord);
+  availableBreeds = getAvailableBreeds();
   availableCoverTypes = availableCoverTypes;
   public getNumberArrayF = getNumberArray;
 
@@ -39,7 +39,6 @@ export class FiltersComponent implements OnInit {
 
   selectedBreeds: { [key: string]: boolean } = {};
   selectedProductionBreeds: Record<string, boolean> = {};
-  selectedColors: { [key: string]: boolean } = {};
   selectedCoverTypes: { [key: string]: boolean } = {};
   availableCoverTypesL: string[] = [];
 
@@ -66,7 +65,7 @@ export class FiltersComponent implements OnInit {
   filterIsSelected: { [key: string]: boolean } = {
     'breed': false,
     'productionBreed': false,
-    'color': false,
+    'height': false,
     'price': false,
     'distance': false,
     'coverType': false
@@ -84,10 +83,6 @@ export class FiltersComponent implements OnInit {
       this.selectedProductionBreeds[elt] = false;
     })
 
-    this.availableColors.forEach((elt) => {
-      this.selectedColors[elt] = false;
-    })
-
     Object.keys(this.availableCoverTypes).forEach((elt) => {
       this.availableCoverTypesL.push(elt);
       this.selectedCoverTypes[elt] = false;
@@ -98,6 +93,8 @@ export class FiltersComponent implements OnInit {
     this.filterForm = this.formBuilder.group({
       lowestPrice: [''],
       highestPrice: [''],
+      lowestHeight: [''],
+      highestHeight: [''],
       location: [''],
       postalCode: ['']
     });
@@ -109,10 +106,8 @@ export class FiltersComponent implements OnInit {
     this.filterIsSelected[field] = !this.filterIsSelected[field] 
   }
 
-  updateCheckbox(type: 'color' | 'breed' | 'coverType' | 'productionBreed', event: any) {
-    if (type == 'color') {
-      this.selectedColors[event.target.id] = event.target.checked;
-    } else if (type == 'breed') {
+  updateCheckbox(type: 'breed' | 'coverType' | 'productionBreed', event: any) {
+    if (type == 'breed') {
       this.selectedBreeds[event.target.id] = event.target.checked;
     } else if (type == 'productionBreed') {
       this.selectedProductionBreeds[event.target.id] = event.target.checked;
@@ -171,10 +166,6 @@ export class FiltersComponent implements OnInit {
       this.selectedProductionBreeds[elt] = false;
     });
 
-    this.availableColors.forEach((elt) => {
-      this.selectedColors[elt] = false;
-    });
-
     this.resetCity();
 
     const lowestPriceControl = this.filterForm.get('lowestPrice');
@@ -187,11 +178,23 @@ export class FiltersComponent implements OnInit {
       highestPriceControl.setValue("");
     }
 
+    const lowestHeightControl = this.filterForm.get('lowestHeight');
+    if (lowestHeightControl) {
+      lowestHeightControl.setValue("");
+    }
+
+    const highestHeightControl = this.filterForm.get('highestHeight');
+    if (highestHeightControl) {
+      highestHeightControl.setValue("");
+    }
+
     this.distanceControl.setValue("");
 
     Object.keys(this.availableCoverTypes).forEach((elt) => {
       this.selectedCoverTypes[elt] = false;
     });
+
+    this.onSubmit()
   }
 
   onSubmit() {
@@ -209,7 +212,6 @@ export class FiltersComponent implements OnInit {
       form: this.filterForm.getRawValue(),
       breeds: this.selectedBreeds,
       productionBreeds: this.selectedProductionBreeds,
-      colors: this.selectedColors,
       distance: this.distance,
       coverTypes: this.selectedCoverTypes
     });

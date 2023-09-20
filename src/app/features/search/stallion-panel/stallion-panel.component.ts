@@ -27,7 +27,6 @@ export class StallionPanelComponent implements OnInit, OnChanges {
     form: {},
     breeds: {},
     productionBreeds: {},
-    colors: {},
     distance: {
       max: 0,
       lat: 0,

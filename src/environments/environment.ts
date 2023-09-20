@@ -1,61 +1,80 @@
-export const availableBreeds = [
-  'AQPS',
-  'Anglo-Arabe',
-  'Arabe',
-  'Ardennais',
-  'Auxois',
-  'Barbe',
-  'Baudet du Poitou',
-  'Boulonnais',
-  'Breton',
-  'Camargue',
-  'Cheval Castillonnais',
-  'Cheval Corse',
-  'Cheval Miniature Français',
-  'Cheval de Dressage Français',
-  'Cheval de Mérens',
-  'Cheval de Race Auvergne',
-  'Cheval de Sport Anglo-Normand',
-  'Cheval du Vercors de Barraquand',
-  'Cob Normand',
-  'Comtois',
-  'Connemara',
-  'Criollo',
-  'Crème',
-  'Dartmoor',
-  'Fjord',
-  'Franches-Montagnes',
-  'Haflinger',
-  'Henson',
-  'Highland',
-  'Irish Cob',
-  'Islandais',
-  'Landais',
-  'Lipizzan',
-  'Lusitanien',
-  'New-Forest',
-  'Percheron',
-  'Poitevin Mulassier',
-  'Poney Français de Selle',
-  'Pottok',
-  'Pur Sang Anglais',
-  'Selle Français',
-  'Shagya',
-  'Shetland',
-  'Trait du Nord',
-  'Trakehner',
-  'Trotteur Français',
-  'Welsh',
-  'Âne Bourbonnais',
-  'Âne Corse',
-  'Âne Grand Noir du Berry',
-  'Âne Normand',
-  'Âne de Provence',
-  'Âne des Pyrénées',
-  'Âne du Cotentin',
-];
+export const breedsRecord: Record<string, Array<string>> = {
+  "Chevaux de sang": [
+    'AQPS',
+    'Anglo-Arabe',
+    'Camargue',
+    'Cheval Castillonnais',
+    'Cheval Corse',
+    'Cheval de Race Auvergne',
+    'Cheval de Dressage Français',
+    'Cheval de Sport Anglo-Normand',
+    'Cheval du Vercors de Barraquand',
+    'Henson',
+    'Cheval de Mérens',
+    'Cheval Miniature Français',
+    'Selle Français',
+    'Trotteur Français',
+    'Arabe',
+    'Barbe',
+    'Crème',
+    'Criollo',
+    'Irish Cob',
+    'Islandais',
+    'Lipizzan',
+    'Lusitanien',
+    'Pur Sang Anglais',
+    'Shagya',
+    'Trakehner'
+  ],
+  "Poneys": [
+    'Poney Français de Selle',
+    'Pottok',
+    'Landais',
+    'Connemara',
+    'Dartmoor',
+    'Fjord',
+    'Haflinger',
+    'Highland',
+    'New-Forest',
+    'Shetland',
+    'Welsh'
+  ],
+  "Chevaux de trait": [
+    'Ardennais',
+    'Auxois',
+    'Boulonnais',
+    'Breton',
+    'Cob Normand',
+    'Comtois',
+    'Percheron',
+    'Poitevin Mulassier',
+    'Trait du Nord',
+    'Franches-Montagnes'
+  ],
+  "Ânes": [
+    'Âne Bourbonnais',
+    'Âne Corse',
+    'Âne Grand Noir du Berry',
+    'Âne Normand',
+    'Âne de Provence',
+    'Âne des Pyrénées',
+    'Âne du Cotentin',
+    'Baudet du Poitou'
+  ]
+}
 
-export const availableColors = [
+export function getAvailableBreeds() {
+  let breeds: Array<string> = []
+  Object.keys(breedsRecord).forEach((elt: string) => {
+    breedsRecord[elt].forEach((breed: string) => {
+      breeds.push(breed);
+    });
+  });
+  
+  return breeds
+}
+
+export const availableColors: Array<string> = [
   'Noir',
   'Noir pangaré',
   'Bai',
@@ -79,11 +98,11 @@ export function getNumberArray(n: number): number[] {
     }
   }
 
-export const availableCoverTypes: {[key: string]: string} = {
+export const availableCoverTypes: Record<string,string> = {
     "lib": "Monte en liberté",
     "hand": "Monte en main",
     "iai": "Insémination artificielle immédiate",
-    "iarp": "Insémination artificielle réfrigérée sur place",
+    "iart": "Insémination artificielle réfrigérée transportée",
     "iac": "Insémination artificielle congelée"
 }
 
@@ -91,11 +110,11 @@ export const coverPlaceNames: Record<string, string> = {
   "lib": "centre de pension",
   "hand": "centre de pension",
   "iai": "centre d'insémination",
-  "iarp": "centre d'insémination",
+  "iart": "centre d'insémination",
   "iac": "centre d'insémination"
 }
 
-export const statusMapping: {[key: string]: string} = {
+export const statusMapping: Record<string,string> = {
   offered: "Proposée",
   approved: "Acceptée",
   signingstarted: "Procédure de signature engagée",
@@ -105,7 +124,7 @@ export const statusMapping: {[key: string]: string} = {
   fullypaid: "Solde payé par l'acheteur"
 }
 
-export const statusCommentaryMapping: {[key: string]: string} = {
+export const statusCommentaryMapping: Record<string,string> = {
   offered: "en attente d'acceptation",
   approved: "en attente de signature",
   signingstarted: "en attente de signature côté acheteur",
@@ -115,7 +134,7 @@ export const statusCommentaryMapping: {[key: string]: string} = {
   fullypaid: "saillie terminée"
 }
 
-export const statusHelper: {[key: string]: string} = {
+export const statusHelper: Record<string,string> = {
   offered: "is-warning",
   approved: "is-success",
   signingstarted: "is-warning",
@@ -126,3 +145,35 @@ export const statusHelper: {[key: string]: string} = {
 }
 
 export const photosMaxSizeInBytes: number = 4 * 1024 * 1024; // 4 Mo
+
+export function splitListOrKeysList(variable: Record<string, any> | Array<string>, varType: 'obj' | 'list', number_of_columns: number): Array<Array<string>> {
+  let columns = []
+
+  if (varType == 'obj') {
+    variable = Object.keys(variable);
+  }
+
+  if (number_of_columns === 1) {
+    columns.push(variable.slice(0, variable.length));
+    return columns;
+  }
+
+  columns.push(variable.slice(0, Math.ceil(variable.length / number_of_columns)))
+
+  if (number_of_columns > 2) {
+    for (let i = 1; i < number_of_columns - 1; i++) {
+      columns.push(variable.slice(Math.ceil((variable.length / number_of_columns)*i), Math.ceil((variable.length / number_of_columns)*(i+1))))
+    }
+  }
+
+  columns.push(variable.slice(variable.length - Math.floor(variable.length / number_of_columns), variable.length))
+
+  return columns;
+}
+
+export const balancePaymentConditions: Record<string, string> = {
+  "covered": "La jument est gestante",
+  "covered_1_10": "La jument est gestante au premier octobre de l'année en cours",
+  "living_foal": "La jument obtient de la saillie un poulain vivant",
+  "living_foal_48": "La jument obtient de la saillie un poulain, et il atteint les 48 heures en vie"
+}

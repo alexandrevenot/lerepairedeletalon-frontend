@@ -87,7 +87,7 @@
 
             <div class="column">
                 <label class="label has-text-weight-semibold has-text-grey-light" *ngIf="coverPlaceNames[coverType]">{{coverPlaceNames[coverType].slice(0,1).toUpperCase()}}{{coverPlaceNames[coverType].slice(1,coverPlaceNames[coverType].length)}}</label>
-                <input class="input is-medium" [ngClass]="coverPlaceIsOffered && pov == 'seller' && status == 'offered'? 'is-warning' : 'is-primary'"  [value]="coverPlace" readonly>
+                <input class="input is-medium is-primary"  [value]="coverPlace" readonly>
             </div>
 
             <div class="column is-2">
@@ -101,10 +101,6 @@
                 </div>
             </div>
         </div>
-        <div class="notification is-warning" *ngIf="pov == 'seller' && coverPlaceIsOffered && status == 'offered'">
-            <strong>Attention:</strong> L'acheteur a proposé un {{coverPlaceNames[coverType]}}. Si celui-ci ne vous convient pas, vous en informerez l'acheteur lorsque vous prendrez contact avec lui.
-            Lorsque vous aurez trouvé un arrangement, refusez cette proposition et demandez-lui d'en faire une nouvelle, avec le bon centre cette fois.
-          </div>
 
         <h4 class="subtitle is-4 has-text-weight-bold">{{messageTitle[pov]}}</h4>
         <div class="content pb-4">

@@ -2,17 +2,21 @@ import { Component } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { LoginService } from './login.service';
 import { loginData } from './login.service';
+import { NavbarService } from 'src/app/layout/navbar/navbar.service';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
-  providers: [LoginService]
+  providers: [
+    LoginService
+  ]
 })
 export class LoginComponent {
 
   constructor(
-    private loginService: LoginService
+    private loginService: LoginService,
+    private navbarService: NavbarService
     ) {}
   
   loginForm = new FormGroup({
@@ -36,6 +40,7 @@ export class LoginComponent {
       this.buttonIsClicked.status = false;
       localStorage.setItem("accessToken", data.accessToken);
       localStorage.setItem("refreshToken", data.refreshToken);
+      this.navbarService.loadNavbar();
       this.message.setValue('Connexion réussie.');
     })
   }

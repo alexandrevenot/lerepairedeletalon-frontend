@@ -38,8 +38,6 @@ export class CoverPageComponent implements OnInit{
   public status: string = "";
   public pov: string = "";
 
-  public coverPlaceIsOffered: boolean = false;
-
   public messageTitle: Record<string, string> = {
     "seller": "Message de l'acheteur",
     "buyer": "Le message que vous avez laissé"
@@ -126,7 +124,6 @@ export class CoverPageComponent implements OnInit{
       this.status = data.status;
       this.pov = data.pov;
 
-      this.coverPlaceIsOffered = data.cover_place_is_offered;
       this.notesFormControl.setValue(data.notes);
       this.lastSavedNotesValue = data.notes;
       this.notesFormControl.value;

@@ -12,21 +12,29 @@
         <div class="content px-3 py-3">
             <div class="columns" *ngIf="filterIsSelected['price']">
                 <div class="column">
-                    <p class="control has-icons-right">
-                        <input class="input" type="text" placeholder="Min." formControlName="lowestPrice">
-                        <span class="icon is-small is-right">
-                            <i class="fas fa-euro"></i>
-                        </span>
-                    </p>
+                    <div class="field has-addons">
+                        <p class="control is-expanded">
+                          <input class="input" type="text" placeholder="Min." formControlName="lowestPrice">
+                        </p>
+                        <p class="control">
+                          <a class="button is-static">
+                            €
+                          </a>
+                        </p>
+                    </div>
                 </div>
 
                 <div class="column">
-                    <p class="control has-icons-right">
-                        <input class="input" type="text" placeholder="Max." formControlName="highestPrice">
-                        <span class="icon is-small is-right">
-                            <i class="fas fa-euro"></i>
-                        </span>
-                    </p>
+                    <div class="field has-addons">
+                        <p class="control is-expanded">
+                          <input class="input" type="text" placeholder="Max." formControlName="highestPrice">
+                        </p>
+                        <p class="control">
+                          <a class="button is-static">
+                            €
+                          </a>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -41,11 +49,14 @@
         </button>
         <div class="content px-3 py-3">
             <div *ngIf="filterIsSelected['breed']">
-                <div *ngFor="let breed of availableBreeds">
-                    <label class="checkbox">
-                        <input type="checkbox" id={{breed}} (change)="updateCheckbox('breed', $event)" [checked]="selectedBreeds[breed]">
-                        {{ breed }}
-                    </label>
+                <div *ngFor="let key of availableBreedTypes">
+                    <p class="has-text-weight-bold pt-4">{{key}}</p>
+                    <div *ngFor="let breed of breedsRecord[key]">
+                        <label class="checkbox">
+                            <input type="checkbox" id={{breed}} (change)="updateCheckbox('breed', $event)" [checked]="selectedBreeds[breed]">
+                            {{ breed }}
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -60,11 +71,52 @@
         </button>
         <div class="content px-3 py-3">
             <div *ngIf="filterIsSelected['productionBreed']">
-                <div *ngFor="let productionBreed of availableBreeds">
-                    <label class="checkbox">
-                        <input type="checkbox" id={{productionBreed}} (change)="updateCheckbox('productionBreed', $event)" [checked]="selectedProductionBreeds[productionBreed]">
-                        {{ productionBreed }}
-                    </label>
+                <div *ngFor="let key of availableBreedTypes">
+                    <p class="has-text-weight-bold pt-4">{{key}}</p>
+                    <div *ngFor="let productionBreed of breedsRecord[key]">
+                        <label class="checkbox">
+                            <input type="checkbox" id={{productionBreed}} (change)="updateCheckbox('productionBreed', $event)" [checked]="selectedProductionBreeds[productionBreed]">
+                            {{ productionBreed }}
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="field">
+        <button class="button is-fullwidth is-justify-content-flex-start" [ngClass]="filterIsSelected['height'] ? 'is-active' : ''" (click)="swapFilter('height')">
+            <span class="icon">
+                <i class="fa fa-chevron-up" [ngClass]="filterIsSelected['height'] ? '' : 'fa-rotate-180'"></i>
+            </span>
+            <span class="has-text-weight-semibold">Taille au garrot de l'étalon</span>
+        </button>
+        <div class="content px-3 py-3">
+            <div class="columns" *ngIf="filterIsSelected['height']">
+                <div class="column">
+                    <div class="field has-addons">
+                        <p class="control is-expanded">
+                          <input class="input" type="text" placeholder="Min." formControlName="lowestHeight">
+                        </p>
+                        <p class="control">
+                          <a class="button is-static">
+                            cm
+                          </a>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="field has-addons">
+                        <p class="control is-expanded">
+                          <input class="input" type="text" placeholder="Max." formControlName="highestHeight">
+                        </p>
+                        <p class="control">
+                          <a class="button is-static">
+                            cm
+                          </a>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -83,25 +135,6 @@
                     <label class="checkbox">
                         <input type="checkbox" id={{coverType}} (change)="updateCheckbox('coverType', $event)" [checked]="selectedCoverTypes[coverType]">
                         {{ availableCoverTypes[coverType] }}
-                    </label>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="field">
-        <button class="button is-fullwidth is-justify-content-flex-start" [ngClass]="filterIsSelected['color'] ? 'is-active' : ''" (click)="swapFilter('color')">
-            <span class="icon">
-                <i class="fa fa-chevron-up" [ngClass]="filterIsSelected['color'] ? '' : 'fa-rotate-180'"></i>
-            </span>
-            <span class="has-text-weight-semibold">Robe</span>
-        </button>
-        <div class="content px-3 py-3">
-            <div *ngIf="filterIsSelected['color']">
-                <div *ngFor="let color of availableColors">
-                    <label class="checkbox">
-                        <input type="checkbox" id={{color}} (change)="updateCheckbox('color', $event)" [checked]="selectedColors[color]">
-                        {{ color }}
                     </label>
                 </div>
             </div>
