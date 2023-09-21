@@ -74,22 +74,6 @@ export function getAvailableBreeds() {
   return breeds
 }
 
-export const availableColors: Array<string> = [
-  'Noir',
-  'Noir pangaré',
-  'Bai',
-  'Isabelle',
-  'Souris',
-  'Alezan',
-  'Alezan brûlé',
-  'Café au lait',
-  'Palomino',
-  'Blanc',
-  'Gris',
-  'Crème',
-  'Chocolat'
-];
-
 export function getNumberArray(n: number): number[] {
   if (n >=0 ) {
       return Array(Math.ceil(n)).fill(0).map((_, index) => index);

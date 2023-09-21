@@ -90,15 +90,10 @@
         <div class="field">
           <label class="label has-text-weight-semibold has-text-grey">Robe</label>
           <div class="control">
-            <div class="select" [ngClass]="{
-              'is-success': dropdownIsSelected('color') && triggerEmptyMandatoryFields['status'],
-              'is-danger': !dropdownIsSelected('color') && triggerEmptyMandatoryFields['status']
-              }">
-              <select formControlName="color">
-                <option>Sélectionner</option>
-                <option *ngFor="let color of availableColors">{{color}}</option>
-              </select>
-            </div>
+            <input class="input" [ngClass]="{
+              'is-success': isFilledInForm('color') && triggerEmptyMandatoryFields['status'],
+              'is-danger': !isFilledInForm('color') && triggerEmptyMandatoryFields['status']
+              }" type="text" placeholder="Noir pie tobiano" formControlName="color">
           </div>
         </div>
       </div>

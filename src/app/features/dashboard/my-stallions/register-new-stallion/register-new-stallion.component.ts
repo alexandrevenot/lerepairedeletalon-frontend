@@ -1,7 +1,7 @@
 import { Component, OnInit  } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { RegisterNewStallionService } from './register-new-stallion.service';
-import { getAvailableBreeds, breedsRecord, availableColors, availableCoverTypes, coverPlaceNames, getNumberArray, photosMaxSizeInBytes, splitListOrKeysList, balancePaymentConditions } from 'src/environments/environment';
+import { getAvailableBreeds, breedsRecord, availableCoverTypes, coverPlaceNames, getNumberArray, photosMaxSizeInBytes, splitListOrKeysList, balancePaymentConditions } from 'src/environments/environment';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { GeolocationService, getCityData, getCityItem } from 'src/environments/geolocation';
 
@@ -16,7 +16,6 @@ export class RegisterNewStallionComponent implements OnInit {
   public breedsRecord = breedsRecord;
   public availableBreedTypes = Object.keys(breedsRecord);
   public availableBreeds = getAvailableBreeds();
-  public availableColors = availableColors;
   public availableCoverTypes = availableCoverTypes;
   public coverPlaceNames = coverPlaceNames;
   public photosMaxSizeInBytes = photosMaxSizeInBytes;
@@ -70,7 +69,7 @@ export class RegisterNewStallionComponent implements OnInit {
       breed: ['Sélectionner', Validators.required],
       nSIRE: ['', Validators.required],
       mainDesc: ['', Validators.required],
-      color: ['Sélectionner', Validators.required],
+      color: ['', Validators.required],
       height: ['', Validators.required],
       birthdate: ['', Validators.required],
       p1: '',
@@ -201,11 +200,11 @@ export class RegisterNewStallionComponent implements OnInit {
     return this.registerNewStallionForm.getRawValue()[field];
   }
 
-  dropdownIsSelected(field: 'breed' | 'color') {
+  dropdownIsSelected(field: 'breed') {
     if (field === 'breed') {
       return this.registerNewStallionForm.get('breed')?.value && (this.registerNewStallionForm.get('breed')?.value != "Sélectionner");
     } else {
-      return this.registerNewStallionForm.get('color')?.value && (this.registerNewStallionForm.get('color')?.value != "Sélectionner");
+      return false;
     }
   }
 
