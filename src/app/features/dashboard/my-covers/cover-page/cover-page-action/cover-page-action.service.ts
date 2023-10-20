@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse, HttpParams } from "@angular/common/http";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { catchError, throwError } from "rxjs";
 
@@ -23,12 +23,8 @@ export class CoverPageActionService {
     }
 
     getSignUrl(coverId: string) {
-        let params = new HttpParams()
-        .set('cover_id', coverId);
-
         return this.http.get<GetSignUrl>(
-            "http://localhost:3001/contracts/sign-page-url",
-            { params }
+            `http://localhost:3001/contracts/sign-page-url/${coverId}`
         ).pipe(
             catchError((error: HttpErrorResponse) => {
                 return this.handleError(error);
@@ -37,12 +33,8 @@ export class CoverPageActionService {
     }
 
     getCheckout(coverId: string) {
-        let params = new HttpParams()
-        .set('cover_id', coverId);
-
         return this.http.get<GetCheckout>(
-            "http://localhost:3001/covers/checkout",
-            { params }
+            `http://localhost:3001/pricing/checkout/${coverId}`
         ).pipe(
             catchError((error: HttpErrorResponse) => {
                 return this.handleError(error);
@@ -51,13 +43,9 @@ export class CoverPageActionService {
     }
 
     stepForwardPayment(coverId: string) {
-        const body: Record<string, string> = {
-            cover_id: coverId
-        }
-
         return this.http.post(
-            "http://localhost:3001/covers/step-forward-payment",
-            body
+            `http://localhost:3001/covers/step-forward-payment/${coverId}`,
+            {}
         ).pipe(
             catchError((error: HttpErrorResponse) => {
                 return this.handleError(error);

@@ -60,6 +60,10 @@ export const breedsRecord: Record<string, Array<string>> = {
     'Âne des Pyrénées',
     'Âne du Cotentin',
     'Baudet du Poitou'
+  ],
+  "Autres": [
+    "Origines Constatées",
+    "Origines Non Constatées"
   ]
 }
 
@@ -99,7 +103,7 @@ export const coverPlaceNames: Record<string, string> = {
 }
 
 export const statusMapping: Record<string,string> = {
-  offered: "Proposée",
+  requested: "Demandée",
   approved: "Acceptée",
   signingstarted: "Procédure de signature engagée",
   buyersigned: "Contrat signé par l'acheteur",
@@ -109,7 +113,7 @@ export const statusMapping: Record<string,string> = {
 }
 
 export const statusCommentaryMapping: Record<string,string> = {
-  offered: "en attente d'acceptation",
+  requested: "en attente d'acceptation",
   approved: "en attente de signature",
   signingstarted: "en attente de signature côté acheteur",
   buyersigned: "en attente de signature côté vendeur",
@@ -119,7 +123,7 @@ export const statusCommentaryMapping: Record<string,string> = {
 }
 
 export const statusHelper: Record<string,string> = {
-  offered: "is-warning",
+  requested: "is-warning",
   approved: "is-success",
   signingstarted: "is-warning",
   buyersigned: "is-warning",
@@ -160,4 +164,26 @@ export const balancePaymentConditions: Record<string, string> = {
   "covered_1_10": "La jument est gestante au premier octobre de l'année en cours",
   "living_foal": "La jument obtient de la saillie un poulain vivant",
   "living_foal_48": "La jument obtient de la saillie un poulain, et il atteint les 48 heures en vie"
+}
+
+export const stds: Record<string, string> = {
+  "metrite" : "Métrite contagieuse",
+  "arterite": "Artérite virale",
+  "anemie": "Anémie infectieuse"
+}
+
+export const vaccines: Record<string, string> = {
+  "rhino": "Rhinopneumonie",
+  "grippe": "Grippe",
+  "tetanos": "Tétanos"
+}
+
+export const hostingTypes: Record<string, string> = {
+  "meadow": "Au pré",
+  "collective": "En box collectif",
+  "private": "En box privé"
+}
+
+export function deepCopy(object: Record<any, any>) {
+  return JSON.parse(JSON.stringify(object));
 }

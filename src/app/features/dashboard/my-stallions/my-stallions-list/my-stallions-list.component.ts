@@ -1,6 +1,7 @@
 import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import { MyStallionsListService, getStallionsListArray } from './my-stallions-list.service'
 import { getNumberArray } from 'src/environments/environment';
+import { PhotosService } from 'src/environments/photos';
 
 export interface StallionBoxItem {
   id: string | null;
@@ -21,9 +22,10 @@ export class MyStallionsListComponent implements OnInit {
   public getNumberArray = getNumberArray;
   public items: StallionBoxItem[] = [];
 
-  constructor (private myStallionsListService: MyStallionsListService) {
-
-  }
+  constructor (
+    private myStallionsListService: MyStallionsListService,
+    private photosService: PhotosService
+    ) {}
   
   ngOnInit(): void {
     this.loadStallionBoxes();
@@ -44,7 +46,7 @@ export class MyStallionsListComponent implements OnInit {
 
         const index: number = this.items.length - 1;
 
-        this.myStallionsListService.getProfilePicture(item.photoId)
+        this.photosService.getPhoto(item.photoId)
         .subscribe(response => {
           const reader = new FileReader();
           reader.onloadend = () => {

@@ -1,15 +1,18 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, throwError } from 'rxjs';
 import { FormControl } from '@angular/forms';
+import { IACSpecs, IAISpecs, IARTSpecs, LIBandHANDSpecs, SingularStallionSTDSpecs } from '../../dashboard/my-stallions/register-new-stallion/register-new-stallion.service';
 
-interface CoverSpecs {
-    cover_type: string;
-    cover_place: string;
-    price: number;
+export interface CoverSpecs {
+    lib: LIBandHANDSpecs | null;
+    hand: LIBandHANDSpecs | null;
+    iai: IAISpecs | null;
+    iart: IARTSpecs | null;
+    iac: IACSpecs | null;
 }
 
-interface stallionProfile {
+export interface stallionProfile {
     owner: string;
     name: string;
     breed: string;
@@ -23,18 +26,17 @@ interface stallionProfile {
     performance: string;
     pedigree: Array<string>;
     pedigree_po: string;
+    crossbreeding_advice: string;
     stallion_additional_info: string;
-    prices: Array<CoverSpecs>
+    cover_specs: CoverSpecs;
     production_breeds: Array<string>;
     cover_additional_info: string;
     city: string;
     postal_code: string;
     dep_name: string;
     reg_name: string;
-}
-
-export interface returnedStallion {
-    stallionProfile: stallionProfile
+    stallion_std_negative_tests: Record<string, SingularStallionSTDSpecs>;
+    stallion_vaccines: Array<string>;
 }
 
 @Injectable()
@@ -47,31 +49,13 @@ export class StallionProfileService {
     }
     
     getStallionProfile(stallionId: string) {
-        let params = new HttpParams()
-        .set('stallion_id', stallionId)
-
-        return this.http.get<returnedStallion>(
-            "http://localhost:3001/stallions/stallion-profile-information",
-            { params }
+        return this.http.get<stallionProfile>(
+            `http://localhost:3001/stallions/stallion/${stallionId}`
         ).pipe(
             catchError((error: HttpErrorResponse) => {
                 return this.handleError(error);
             })
         )
-    }
-
-    getPicture(photoId: string) {
-        let params = new HttpParams()
-        .set('photo_id', photoId)
-
-        return this.http.get(
-            "http://localhost:3001/stallions/stallion-photo",
-            {params, responseType: 'blob'}
-          ).pipe(
-            catchError((error: HttpErrorResponse) => {
-              return this.handleError(error);
-          })
-          )
     }
 
     handleCreateCoverError(error: HttpErrorResponse, messageFormControl: FormControl) {
@@ -105,11 +89,11 @@ export class StallionProfileService {
             mare_breed: form['mareBreed'],
             cover_type: form['selectedCoverType'],
             message: form['messageToVendor'],
-            offered_cover_place: form['offeredCoverPlace']
+            provided_cover_place: form['providedCoverPlace']
         }
 
         return this.http.post(
-            "http://localhost:3001/covers/create-cover",
+            "http://localhost:3001/covers/cover",
             body
         ).pipe(
             catchError((error: HttpErrorResponse) => {

@@ -56,7 +56,7 @@ export class FiltersComponent implements OnInit {
   public isLookingForLocation: boolean = false;
   public locationSearchSuccess: {[key: string]: boolean} = {status: false};
   public selectedLocation: getCityItem = {
-    city_name: "",
+    city: "",
     postal_code: "",
     lat: 0,
     lng: 0
@@ -95,8 +95,7 @@ export class FiltersComponent implements OnInit {
       highestPrice: [''],
       lowestHeight: [''],
       highestHeight: [''],
-      location: [''],
-      postalCode: ['']
+      location: ['']
     });
     
     this.distanceControl = new FormControl('');
@@ -123,13 +122,12 @@ export class FiltersComponent implements OnInit {
     this.locationTagValues.splice(0, this.locationTagValues.length);
     this.geolocationService.getCity(
       this.filterForm.getRawValue().location,
-      this.filterForm.getRawValue().postalCode,
       this.locationSearchSuccess,
       this.locationMessage)
     .subscribe((data: getCityData) => {
       for (let item of data.content) {
         this.locations.push(item);
-        this.locationTagValues.push(item.city_name + " (" + item.postal_code + ") ?")
+        this.locationTagValues.push(item.city + " (" + item.postal_code + ") ?")
       }
       this.locationMessage.setValue("");
       this.locationSearchSuccess['status'] = true;
