@@ -1,9 +1,95 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { FormControl} from '@angular/forms';
 import { throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, switchMap } from 'rxjs/operators';
 import { getCityItem } from 'src/environments/geolocation';
+import { deepCopy } from 'src/environments/environment';
+
+interface FinalStallionFields {
+  name: string;
+  breed: string;
+  n_sire: string;
+  birthdate: string;
+}
+
+export interface SingularStallionSTDSpecs {
+  test_date: string;
+}
+
+export interface SingularHostingSpecs {
+  price: number;
+}
+
+export interface SingularMareSTDSpecs {
+  test_oldness: number;
+}
+
+export interface LIBandHANDSpecs {
+  price: number;
+  balance_payment_condition: string;
+  advance_percentage: number;
+  cover_place: string;
+  maximum_nb_of_attempts: number;
+  hosting_specs: Record<string, SingularHostingSpecs>;
+  demanded_std_negative_tests: Record<string, SingularMareSTDSpecs>;
+  demanded_vaccines: Array<string>;
+}
+
+export interface IAISpecs {
+  price: number;
+  balance_payment_condition: string;
+  advance_percentage: number;
+  cover_place: string;
+  maximum_nb_of_attempts: number;
+  hosting_specs: Record<string, SingularHostingSpecs>;
+}
+
+export interface IARTSpecs {
+  price: number;
+  balance_payment_condition: string;
+  advance_percentage: number;
+  nb_provided_straws: number;
+}
+
+export interface IACSpecs {
+  price: number;
+  balance_payment_condition: string;
+  advance_percentage: number;
+  nb_provided_straws: number;
+  left_straws_owner: string;
+}
+
+interface EditableStallionFields {
+  main_desc: string;
+  color: string;
+  height: number;
+  lat: number;
+  lng: number;
+  city: string;
+  postal_code: string;
+  production_breeds: Array<string>;
+  cover_specs: Record<string, LIBandHANDSpecs | IAISpecs | IARTSpecs | IACSpecs>;
+  pedigree: Array<string>;
+  pedigree_po: string;
+  cover_additional_info: string;
+  performance: string;
+  stallion_additional_info: string;
+  stallion_std_negative_tests: Record<string, SingularStallionSTDSpecs>;
+  stallion_vaccines: Array<string>;
+  offspring: string;
+  crossbreeding_advice: string;
+}
+
+interface RegisterNewStallionBody {
+  final_fields_body: FinalStallionFields;
+  editable_fields_body: EditableStallionFields;
+}
+
+export interface RegisterNewStallionResponse {
+  message: string;
+  stallion_id: string;
+}
 
 @Injectable()
 export class RegisterNewStallionService {
@@ -18,72 +104,154 @@ export class RegisterNewStallionService {
     return throwError(() => new Error());
   }
 
-  postRegisterNewStallion(
-    form: Record<string, string>,
-    location: getCityItem,
-    cSaillies: File,
+  uploadFiles(
+    verificationFile: File,
     photos: File[],
-    coverTypes: Array<string>,
-    productionBreeds: Array<string>,
+    stallionId: string,
     submitted: Record<string, boolean>,
     message: FormControl<any>,
     triggerEmptyMandatoryFields: Record<string, boolean>
-    ) {
+  ) {
     const formData = new FormData();
-    
-    formData.append('lat', location.lat.toString());
-    formData.append('lng', location.lng.toString());
-    formData.append('city', location.city_name);
-    formData.append('postal_code', location.postal_code);
-
     photos.forEach((file) => { formData.append('photos', file); });
-    formData.append('c_saillies', cSaillies);
+    formData.append('verification_file', verificationFile);
 
-    coverTypes.forEach((coverType) => {
-      formData.append('cover_types', coverType);
-      formData.append('prices', form[coverType + 'Price']);
-      formData.append('cover_places', form[coverType + 'Place']);
-      formData.append('balance_payment_conditions', form[coverType + 'SelectedBalancePaymentCondition']);
-      formData.append('advance_percentages', form[coverType + 'AdvancePercentage']);
-      formData.append('left_straws_owners', form[coverType + 'SelectedLeftStrawsOwner']);
-    });
-
-    productionBreeds.forEach((breed) => { formData.append('production_breeds', breed); });
-
-    const pedigreeL: string[] = [];
-    for (let i = 1; i <= 14; i++) {
-    const key = `p${i}`;
-    pedigreeL.push(form[key]);
-    }
-    pedigreeL.forEach((parent) => { formData.append('pedigree', parent); });
-
-    formData.append('name', form["name"]);
-    formData.append('n_sire', form["nSIRE"]);
-    formData.append('breed', form["breed"]);
-    formData.append('color', form["color"]);
-    formData.append('main_desc', form["mainDesc"]);
-    formData.append('birthdate', form["birthdate"]);
-    formData.append('height', form["height"]);
-    formData.append('offspring', form["offspring"]);
-    formData.append('performance', form["performance"]);
-    formData.append('pedigree_po', form["pedigreePO"]);
-    formData.append('stallion_additional_info', form["stallionAdditionalInfo"]);
-    formData.append('cover_additional_info', form["coverAdditionalInfo"]);
-    console.log(formData)
     let headers = new HttpHeaders();
     headers.append('Content-Type', 'multipart/form-data');
 
     return this.http.post(
-      "http://localhost:3001/stallions/register-new-stallion",
+      `http://localhost:3001/stallions/stallion-files/${stallionId}`,
       formData,
       {headers}
-      ).pipe(
-        catchError((error: HttpErrorResponse) => {
-            submitted["status"] = false; 
-            triggerEmptyMandatoryFields['status'] = true;
+    ).pipe(
+      catchError((error: HttpErrorResponse) => {
+        submitted["status"] = false; 
+        triggerEmptyMandatoryFields['status'] = true;
+        return this.http.delete(
+          `http://localhost:3001/stallions/stallion/${stallionId}`
+        ).pipe(
+          switchMap(() => {
             return this.handleRegisterError(error, message);
-        })
-      );
+          }),
+          catchError((error: HttpErrorResponse) => {
+            return this.handleRegisterError(error, message);
+          })
+        );
+      })
+    );
   }
 
+  registerNewStallion(
+    form: Record<string, string>,
+    location: getCityItem,
+    coverTypes: Array<string>,
+    productionBreeds: Array<string>,
+    stallionStdNegativeTests: Array<string>,
+    stallionVaccines: Array<string>,
+    hostingTypes: Record<string, Record<string, boolean>>,
+    mareSTDs: Record<string, Record<string, boolean>>,
+    mareVaccines: Record<string, Record<string, boolean>>,
+    submitted: Record<string, boolean>,
+    message: FormControl<any>,
+    triggerEmptyMandatoryFields: Record<string, boolean>
+  ) {
+
+    const finalStallionFields: FinalStallionFields = {
+      name: form["name"],
+      breed: form["breed"],
+      n_sire: form["nSIRE"],
+      birthdate: form["birthdate"],
+    }
+    
+    let pedigreeL: string[] = [];
+    for (let i = 1; i <= 14; i++) {
+      const key = `p${i}`;
+      pedigreeL.push(form[key]);
+    }
+
+    let stallionSTDSpecs: Record<string, SingularStallionSTDSpecs> = {};
+    stallionStdNegativeTests.forEach((std) => {
+      stallionSTDSpecs[std] = {
+        'test_date': form[std + 'StallionTestDate']
+      }
+    })
+
+    let coverSpecs: Record<string, LIBandHANDSpecs | IAISpecs | IARTSpecs | IACSpecs> = {};
+    for (let coverType of coverTypes) {
+      let content: Record<string, any> = {};
+
+      content['price'] = parseInt(form[coverType + 'Price']);
+      content['balance_payment_condition'] = form[coverType + 'BalancePaymentCondition'];
+      content['advance_percentage'] = parseInt(form[coverType + 'AdvancePercentage']);
+
+      if (['lib', 'hand', 'iai'].includes(coverType)) {
+        content['cover_place'] = form[coverType + 'CoverPlace'];
+        content['maximum_nb_of_attempts'] = form[coverType + 'MaximumNumberOfAttempts']
+        let hostingSpecs: Record<string, SingularHostingSpecs | null> = {};
+        for (let [hostingType, value] of Object.entries(hostingTypes[coverType])) {
+          if (value) {
+            hostingSpecs[hostingType] = {price: parseInt(form[coverType + hostingType + 'Price'])};
+          }
+        }
+        content["hosting_specs"] = deepCopy(hostingSpecs);
+
+        let mareSTDSpecs: Record<string, SingularMareSTDSpecs | null> = {};
+        for (let [std, value] of Object.entries(mareSTDs[coverType])) {
+          if (value) {
+            mareSTDSpecs[std] = {test_oldness: parseInt(form[coverType + std + 'MareTestOldness'])};
+          }
+        }
+        content["demanded_std_negative_tests"] = deepCopy(mareSTDSpecs);
+
+        content["demanded_vaccines"] = Object.keys(mareVaccines[coverType]).filter(key => mareVaccines[coverType][key]);
+      }
+
+      if (['iart', 'iac'].includes(coverType)) {
+        content['nb_provided_straws'] = parseInt(form[coverType + 'NbProvidedStraws']);
+      }
+
+      if ('iac' === coverType) {
+        content['left_straws_owner'] = form[coverType + 'LeftStrawsOwner'];
+      }
+
+      coverSpecs[coverType] = deepCopy(content);
+    }
+
+    const editableFieldsBody: EditableStallionFields = {
+      main_desc: form["mainDesc"],
+      color: form["color"],
+      height: parseFloat(form["height"]),
+      lat: location.lat,
+      lng: location.lng,
+      city: location.city,
+      postal_code: location.postal_code,
+      production_breeds: productionBreeds,
+      cover_specs: coverSpecs,
+      pedigree: pedigreeL,
+      pedigree_po: form["pedigreePO"],
+      cover_additional_info: form["coverAdditionalInfo"],
+      performance: form["performance"],
+      stallion_additional_info: form["stallionAdditionalInfo"],
+      stallion_std_negative_tests: stallionSTDSpecs,
+      stallion_vaccines: stallionVaccines,
+      offspring: form["offspring"],
+      crossbreeding_advice: form["crossbreedingAdvice"],
+    }
+
+    const completeBody: RegisterNewStallionBody = {
+      editable_fields_body: editableFieldsBody,
+      final_fields_body: finalStallionFields
+    }
+
+    return this.http.post<RegisterNewStallionResponse>(
+      "http://localhost:3001/stallions/stallion",
+      completeBody,
+    ).pipe(
+      catchError((error: HttpErrorResponse) => {
+        submitted["status"] = false; 
+        triggerEmptyMandatoryFields['status'] = true;
+        return this.handleRegisterError(error, message);
+      })
+    )
+  }
 }

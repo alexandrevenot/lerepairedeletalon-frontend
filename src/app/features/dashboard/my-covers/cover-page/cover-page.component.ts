@@ -34,7 +34,7 @@ export class CoverPageComponent implements OnInit{
   public coverPlace: string = "";
   public price: number = 0;
   public messageFromBuyer: string = "";
-  public timestamps: Record<string, string> = {};
+  public timestamps: Array<Record<string, string>> = [];
   public status: string = "";
   public pov: string = "";
 
@@ -58,42 +58,46 @@ export class CoverPageComponent implements OnInit{
   public actions: Record<string, Record<string, Record<string, string>>> = {
     seller: {
       green: {
-        offered: "Accepter la proposition",
+        requested: "Accepter la proposition",
         approved: "",
         signingstarted: "",
         buyersigned: "Signer le contrat",
         sellersigned: "",
         downpaid: "",
-        fullypaid: ""
+        fullypaid: "",
+        denied: ""
       },
       red: {
-        offered: "Refuser la proposition",
-        approved: "Annuler la proposition",
-        signingstarted: "Annuler la procédure de signature",
-        buyersigned: "Annuler la procédure de signature",
-        sellersigned: "Demander la non-réalisation de la saillie",
-        downpaid: "Demander la déclaration de la saillie comme échouée",
-        fullypaid: ""
+        requested: "Refuser la proposition",
+        approved: "Revenir à 'Proposée'",
+        signingstarted: "",
+        buyersigned: "",
+        sellersigned: "",
+        downpaid: "",
+        fullypaid: "",
+        denied: "Revenir à 'Proposée'"
       }
     },
     buyer: {
       green: {
-        offered: "",
-        approved: "Engager la procédure de signature",
+        requested: "",
+        approved: "Signer le contrat",
         signingstarted: "Signer le contrat",
         buyersigned: "",
         sellersigned: "Payer l'acompte de la saillie",
         downpaid: "Payer le solde de la saillie",
-        fullypaid: ""
+        fullypaid: "",
+        denied: ""
       },
       red: {
-        offered: "Annuler la proposition",
-        approved: "Annuler la proposition",
-        signingstarted: "Annuler la procédure de signature",
-        buyersigned: "Annuler la procédure de signature",
-        sellersigned: "Demander la non-réalisation de la saillie",
-        downpaid: "Demander la déclaration de la saillie comme échouée",
-        fullypaid: ""
+        requested: "",
+        approved: "",
+        signingstarted: "",
+        buyersigned: "",
+        sellersigned: "",
+        downpaid: "",
+        fullypaid: "",
+        denied: ""
       }
     }
   }
@@ -151,14 +155,7 @@ export class CoverPageComponent implements OnInit{
 
   // cover management
   acceptProposal() {
-    this.coverPageService.answerProposal(this.coverId)
-    .subscribe(() => {
-      this.loadCoverInfo();
-    })
-  }
-
-  createContract() {
-    this.coverPageService.createContract(this.coverId)
+    this.coverPageService.stepForwardCover(this.coverId, 'approved')
     .subscribe(() => {
       this.loadCoverInfo();
     })
@@ -166,11 +163,9 @@ export class CoverPageComponent implements OnInit{
 
   // common cover management methods
   green(status: string, pov: string) {
-    if (status == "offered" && pov == "seller") {
+    if (status == "requested" && pov == "seller") {
       this.acceptProposal();
-    } else if (status  == "approved" && pov == "buyer") {
-      this.createContract();
-    } else if ((status == "signingstarted" && pov == "buyer") || (status == "buyersigned" && pov == "seller")) {
+    } else if ((["signingstarted", "approved"].includes(status) && pov == "buyer") || (status == "buyersigned" && pov == "seller")) {
       this.goToCoverPageActionEvent.emit({coverId: this.coverId, coverActionType: "signature"});
     } else if (["sellersigned", "downpaid"].includes(status) && pov == "buyer") {
       this.goToCoverPageActionEvent.emit({coverId: this.coverId, coverActionType: "payment"});

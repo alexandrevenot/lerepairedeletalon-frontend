@@ -44,7 +44,7 @@
 
         <h4 class="subtitle is-4 has-text-weight-bold">{{messageContact[pov]}}</h4>
 
-        <label class="label has-text-weight-semibold has-text-grey-light" *ngIf="status == 'offered' && pov == 'buyer'? 'Masqué' : ''">Le numéro de téléphone et l'adresse mail du vendeur restent masqués tant que la saille n'a pas été acceptée.</label>
+        <label class="label has-text-weight-semibold has-text-grey-light" *ngIf="status == 'requested' && pov == 'buyer'? 'Masqué' : ''">Le numéro de téléphone et l'adresse mail du vendeur restent masqués tant que la saillie n'a pas été acceptée.</label>
 
         <div class="columns pb-4">
             <div class="column">
@@ -60,7 +60,7 @@
             <div class="column">
                 <label class="label has-text-weight-semibold has-text-grey-light">Numéro de téléphone</label>
                 <div class="control has-icons-left">
-                    <input class="input is-medium is-primary" [value]="contactPhoneNumber" readonly [disabled]="status == 'offered' && pov == 'buyer'">
+                    <input class="input is-medium is-primary" [value]="contactPhoneNumber" readonly [disabled]="status == 'requested' && pov == 'buyer'">
                     <span class="icon is-medium is-left">
                         <i class="fa-solid fa-phone" style="color: hsl(0, 0%, 71%);"></i>
                     </span>
@@ -70,7 +70,7 @@
             <div class="column">
                 <label class="label has-text-weight-semibold has-text-grey-light">Adresse mail</label>
                 <div class="control has-icons-left">
-                    <input class="input is-medium is-primary" [value]="contactEmail" readonly [disabled]="status == 'offered' && pov == 'buyer'">
+                    <input class="input is-medium is-primary" [value]="contactEmail" readonly [disabled]="status == 'requested' && pov == 'buyer'">
                     <span class="icon is-medium is-left">
                         <i class="fa-solid fa-envelope" style="color: hsl(0, 0%, 71%);"></i>
                     </span>
@@ -125,9 +125,9 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr *ngFor="let status of statusList.slice(0, statusList.length)">
-                    <td>{{statusMappingObject[status]}}</td>
-                    <td>{{timestamps[status]}}</td>
+                <tr *ngFor="let timestamp of timestamps">
+                    <td>{{statusMappingObject[timestamp['status']]}}</td>
+                    <td>{{timestamp['timestamp']}}</td>
                 </tr>
                 </tbody>
             </table>

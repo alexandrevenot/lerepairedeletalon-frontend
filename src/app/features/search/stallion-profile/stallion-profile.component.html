@@ -47,7 +47,7 @@
         </div>
 
         <div class="content py-4">
-            <h4 class="subtitle is-4 has-text-weight-bold">Informations basiques</h4>
+            <h4 class="subtitle is-4 has-text-weight-bold">Informations de base</h4>
             <div class="content has-text-weight-semibold">
                 <div class="tags are-large">
                     <span class="tag is-rounded">{{color}}</span>
@@ -63,40 +63,6 @@
                 <div class="tags are-large">
                     <span class="tag is-rounded" *ngFor="let productionBreed of productionBreeds">{{productionBreed}}</span>
                 </div>
-            </div>
-        </div>
-
-        <div class="content py-4">
-            <h4 class="subtitle is-4 has-text-weight-bold">Types de saillies proposés et conditions</h4>
-            <div class="box" *ngFor="let coverType of coverTypes">
-                <h5 class="subtitle is-5 has-text-weight-bold coverTypesList">{{availableCoverTypes[coverType]}}</h5>
-
-                <div class="block">
-                    <label class="label has-text-weight-semibold has-text-grey-light">{{coverPlaceNames[coverType].slice(0,1).toUpperCase()}}{{coverPlaceNames[coverType].slice(1,coverPlaceNames[coverType].length)}}</label>
-                    <p class="has-text-weight-semibold" [ngClass]="!coverPlaces[coverType]? 'has-text-warning':''">{{coverPlaces[coverType]? coverPlaces[coverType] : 'Le ' + coverPlaceNames[coverType] + ' est à proposer au vendeur.'}}</p>
-                </div>
-
-                <div class="block">
-                    <label class="label has-text-weight-semibold has-text-grey-light">Pourcentage du prix total que représente l'acompte</label>
-                    <p class="has-text-weight-semibold">L'acompte représente {{advancePercentages[coverType]}}% du prix total</p>
-                </div>
-
-                <div class="block">
-                    <label class="label has-text-weight-semibold has-text-grey-light">Cas dans lesquels le solde de la saillie doit être payé</label>
-                    <ul class="has-text-weight-semibold">
-                        <li>La jument est vendue pendant la gestation</li>
-                        <li>{{balancePaymentConditionsCorresp[balancePaymentConditions[coverType]]}}</li>
-                    </ul>
-                </div>
-
-                <div class="block" *ngIf="leftStrawsOwner[coverType]">
-                    <label class="label has-text-weight-semibold has-text-grey-light">De qui les paillettes non-utilisées sont-elles la propriété?</label>
-                    <p class="has-text-weight-semibold">Les paillettes non-utilisées {{(leftStrawsOwner[coverType] == 'seller')? 'restent la propriété du vendeur' : "sont la propriété de l'acheteur"}}</p>
-                </div>
-            </div>
-
-            <div class="content has-text-weight-semibold is-size-5 has-text-justified">
-                <p [innerHTML]="coverAdditionalInfo"></p>
             </div>
         </div>
 
@@ -143,6 +109,48 @@
           </div>
         </div>
 
+        <div class="content py-4">
+            <h4 class="subtitle is-4 has-text-weight-bold">Vaccins de l'étalon à jour</h4>
+            <div class="has-text-weight-semibold is-size-5 py-3" *ngFor="let vaccine of availableVaccines">
+                <span class="icon-text">
+                    <span class="icon" [ngClass]="stallionVaccines.includes(vaccine)? 'has-text-success' : 'has-text-danger'">
+                        <i class="fas" [ngClass]="stallionVaccines.includes(vaccine)? 'fa-check-square' : 'fa-ban'"></i>
+                    </span>
+                    <span>{{vaccines[vaccine]}}</span>
+                </span>
+            </div>
+        </div>
+
+        <div class="content py-4">
+            <h4 class="subtitle is-4 has-text-weight-bold">Tests des MST de l'étalon</h4>
+            <div class="columns" *ngFor="let std of availableSTDS">
+                <div class="column">
+                    <div class="control has-text-weight-semibold is-size-5">
+                        <span class="icon-text">
+                            <span class="icon" [ngClass]="stallionSTDNegativeTests.includes(std)? 'has-text-success' : 'has-text-danger'">
+                                <i class="fas" [ngClass]="stallionSTDNegativeTests.includes(std)? 'fa-check-square' : 'fa-ban'"></i>
+                            </span>
+                            <span>{{stds[std]}}</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="control">
+                        <span class="has-text-weight-semibold has-text-grey-light pr-4">Date du test:</span>
+                        <span class="has-text-weight-semibold is-size-5">{{stallionSTDNegativeTests.includes(std)? stallionSTDNegativeTestsTD[std] : '-'}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content py-4" *ngIf="crossbreedingAdvice">
+            <h4 class="subtitle is-4 has-text-weight-bold">Conseils de croisement</h4>
+            <div class="content has-text-weight-semibold is-size-5 has-text-justified">
+                <p [innerHTML]="crossbreedingAdvice"></p>
+            </div>
+        </div>
+
         <div class="content py-4" *ngIf="offspring">
             <h4 class="subtitle is-4 has-text-weight-bold">Autres produits de l'étalon</h4>
             <div class="content has-text-weight-semibold is-size-5 has-text-justified">
@@ -171,6 +179,70 @@
             </div>
         </div>
 
+        <div class="content py-4">
+            <h4 class="subtitle is-4 has-text-weight-bold">Types de saillies proposés et conditions</h4>
+            <div class="box" *ngFor="let coverType of coverTypes">
+                <div class="content">
+                    <span class="tag is-success is-large">{{availableCoverTypes[coverType]}}</span>
+                </div>
+
+                <div class="block" *ngIf="['lib', 'hand', 'iai'].includes(coverType)">
+                    <label class="label has-text-weight-semibold has-text-grey-light">{{coverPlaceNames[coverType].slice(0,1).toUpperCase()}}{{coverPlaceNames[coverType].slice(1,coverPlaceNames[coverType].length)}}</label>
+                    <p class="has-text-weight-semibold">{{coverSpecs[coverType]['cover_place']}}</p>
+                </div>
+
+                <div class="block">
+                    <label class="label has-text-weight-semibold has-text-grey-light">Acompte</label>
+                    <p class="has-text-weight-semibold">L'acompte représente {{coverSpecs[coverType]['advance_percentage']}}% du prix total</p>
+                </div>
+
+                <div class="block">
+                    <label class="label has-text-weight-semibold has-text-grey-light">La saillie est considérée comme réussie quand...</label>
+                    <p class="has-text-weight-semibold">{{balancePaymentConditionsCorresp[coverSpecs[coverType]['balance_payment_condition']]}}</p>
+                </div>
+
+                <div class="block" *ngIf="['iac', 'iart'].includes(coverType)">
+                    <label class="label has-text-weight-semibold has-text-grey-light">Combien de paillettes sont fournies?</label>
+                    <p class="has-text-weight-semibold">{{coverSpecs[coverType]['nb_provided_straws']}}</p>
+                </div>
+
+                <div class="block" *ngIf="['iac'].includes(coverType)">
+                    <label class="label has-text-weight-semibold has-text-grey-light">De qui les paillettes non-utilisées sont-elles la propriété?</label>
+                    <p class="has-text-weight-semibold">Les paillettes non-utilisées {{(coverSpecs[coverType]['left_straws_owner'] == 'seller')? 'restent la propriété du vendeur' : "sont la propriété de l'acheteur"}}</p>
+                </div>
+
+                <div class="block" *ngIf="['lib', 'hand', 'iai'].includes(coverType)">
+                    <label class="label has-text-weight-semibold has-text-grey-light">Sur combien de chaleurs au maximum des tentatives de saillies seront réalisées?</label>
+                    <p class="has-text-weight-semibold">{{coverSpecs[coverType]['maximum_nb_of_attempts']}}</p>
+                </div>
+
+                <div class="block"  *ngIf="['lib', 'hand'].includes(coverType)">
+                    <label class="label has-text-weight-semibold has-text-grey-light">Pour quelles maladies sexuellement transmissibles la jument devra-t-elle être testée?</label>
+                    <ul class="has-text-weight-semibold">
+                        <li *ngFor="let std of getNonNullKeys(coverSpecs[coverType]['demanded_std_negative_tests'])">{{stds[std]}}, {{coverSpecs[coverType]['demanded_std_negative_tests'][std]['test_oldness']}} jours avant</li>
+                    </ul>
+                </div>
+
+                <div class="block"  *ngIf="['lib', 'hand'].includes(coverType)">
+                    <label class="label has-text-weight-semibold has-text-grey-light">Contre quelles maladies la jument devra-t-elle avoir ses vaccins à jour?</label>
+                    <ul class="has-text-weight-semibold">
+                        <li *ngFor="let vaccine of coverSpecs[coverType]['demanded_vaccines']">{{vaccines[vaccine]}}</li>
+                    </ul>
+                </div>
+
+                <div class="block"  *ngIf="['lib', 'hand', 'iai'].includes(coverType)">
+                    <label class="label has-text-weight-semibold has-text-grey-light">Comment la jument pourra-t-elle être hébergée?</label>
+                    <ul class="has-text-weight-semibold">
+                        <li *ngFor="let hostingType of getNonNullKeys(coverSpecs[coverType]['hosting_specs'])">{{hostingTypes[hostingType]}}, au prix de {{coverSpecs[coverType]['hosting_specs'][hostingType]['price']}}€ par jour</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="content has-text-weight-semibold is-size-5 has-text-justified">
+                <p [innerHTML]="coverAdditionalInfo"></p>
+            </div>
+        </div>
+
         <figure class="image py-4" *ngFor="let i of getNumberArray(getNbOfPhotos() - 1)">
             <img [src]="photos[i+1]" alt="Photo numéro {{i}} de l'étalon">
         </figure>
@@ -191,7 +263,7 @@
                     <label class="label has-text-grey-light has-text-weight-semibold">Nom</label>
                     <div class="field">
                         <p class="control is-expanded">
-                          <input class="input" type="text" placeholder="Bernadette de Normandie" formControlName="mareName">
+                          <input class="input" type="text" placeholder="Marjoline" formControlName="mareName">
                         </p>
                       </div>
                 </div>
@@ -206,16 +278,11 @@
                 </div>
 
                 <div class="column">
-                    <label class="label has-text-grey-light has-text-weight-semibold">Race</label>
+                    <label class="label has-text-grey-light has-text-weight-semibold">Origines</label>
                     <div class="field">
-                        <div class="control is-expanded">
-                            <div class="select is-fullwidth">
-                                <select formControlName="mareBreed">
-                                    <option>Race</option>
-                                    <option *ngFor="let breed of availableBreeds">{{breed}}</option>
-                                </select>
-                            </div>
-                        </div>
+                        <p class="control is-expanded">
+                            <input class="input" type="text" placeholder="Selle Français" formControlName="mareBreed">
+                          </p>
                     </div>
                 </div>
             </div>
@@ -237,7 +304,7 @@
                 </div>
             </div>
 
-            <div class="columns is-align-items-end" *ngIf="coverPlaces[selectedCoverTypeValue] === ''">
+            <div class="columns is-align-items-end" *ngIf="['iac', 'iart'].includes(selectedCoverTypeValue)">
                 <div class="column is-2 has-text-right">
                     <label class="label pb-4">Vous demandez</label>
                 </div>
@@ -246,7 +313,7 @@
                     <label class="label has-text-grey-light has-text-weight-semibold">{{'Adresse complète du ' + coverPlaceNames[selectedCoverTypeValue]}}</label>
                     <div class="field">
                         <p class="control is-expanded">
-                          <input class="input" type="text" placeholder="Le Haras du Fleuve, 790 route de ..." formControlName="offeredCoverPlace">
+                          <input class="input" type="text" placeholder="Le Haras du Fleuve, 790 route de ..." formControlName="providedCoverPlace">
                         </p>
                     </div>
                 </div>

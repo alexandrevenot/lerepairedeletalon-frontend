@@ -1,9 +1,10 @@
-import { Component, OnInit, createPlatform } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
-import { StallionProfileService, returnedStallion } from './stallion-profile.service'
-import { getNumberArray, availableCoverTypes, getAvailableBreeds, coverPlaceNames, balancePaymentConditions } from '../../../../environments/environment'
+import { StallionProfileService, stallionProfile } from './stallion-profile.service'
+import { getNumberArray, availableCoverTypes, getAvailableBreeds, coverPlaceNames, balancePaymentConditions, stds, vaccines, hostingTypes } from '../../../../environments/environment'
 import { ActivatedRoute } from '@angular/router';
 import { PricingService, checkoutResponse } from 'src/environments/pricing';
+import { PhotosService } from 'src/environments/photos';
 
 @Component({
   selector: 'app-stallion-profile',
@@ -22,6 +23,11 @@ export class StallionProfileComponent implements OnInit{
   public coverPlaceNames = coverPlaceNames;
   public availableBreeds = getAvailableBreeds();
   public balancePaymentConditionsCorresp = balancePaymentConditions;
+  public stds = stds;
+  public availableSTDS = Object.keys(this.stds);
+  public vaccines = vaccines;
+  public availableVaccines = Object.keys(this.vaccines);
+  public hostingTypes = hostingTypes;
 
   // raw data
   public name: string = "";
@@ -42,20 +48,20 @@ export class StallionProfileComponent implements OnInit{
   public regName: string = "";
   public coverAdditionalInfo: string = "";
   public stallionAdditionalInfo: string = "";
-  public prices: Array<Record<string, any>> = [];
+  public coverSpecs: any = {};
   public productionBreeds: Array<string> = [];
   public owner: string = "";
+  public stallionVaccines: Array<string> = [];
+  public crossbreedingAdvice: string = "";
 
   // parsed data
   public location: string = "";
   public age: string = "";
   public heightTagValue: string = "";
   public coverTypes: Array<string> = [];
-  public coverPlaces: Record<string, string> = {};
-  public advancePercentages: Record<string, number> = {};
-  public balancePaymentConditions: Record<string, string> = {};
-  public leftStrawsOwner: Record<string, string> = {};
   public hasPedigree: boolean = false;
+  public stallionSTDNegativeTests: Array<string> = [];
+  public stallionSTDNegativeTestsTD: Record<string, string> = {};
 
   // form data
   public askForMatingForm!: FormGroup;
@@ -75,7 +81,8 @@ export class StallionProfileComponent implements OnInit{
     private stallionProfileService: StallionProfileService,
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
-    private pricingService: PricingService
+    private pricingService: PricingService,
+    private photosService: PhotosService
   ) {}
 
   ngOnInit() {
@@ -85,7 +92,7 @@ export class StallionProfileComponent implements OnInit{
       mareBreed: ['', Validators.required],
       selectedCoverType: ['', Validators.required],
       messageToVendor: ['', Validators.required],
-      offeredCoverPlace: ['']
+      providedCoverPlace: ['']
     });
 
     this.sendFormMessage = new FormControl('');
@@ -97,8 +104,8 @@ export class StallionProfileComponent implements OnInit{
 
         this.selectedCoverTypeValue = value;
 
-        if (this.coverPlaces[value] != ""){
-          this.askForMatingForm.get('offeredCoverPlace')?.setValue("");
+        if (['iart', 'iac'].includes(value)){
+          this.askForMatingForm.get('providedCoverPlace')?.setValue("");
         }
 
         this.pricingService.getCheckout(this.getPriceOfCoverType(value))
@@ -110,7 +117,6 @@ export class StallionProfileComponent implements OnInit{
       });
     }
 
-
     this.route.queryParams.subscribe(params => {
       const stallionId = params['id'];
       this.itemId = stallionId;
@@ -118,8 +124,7 @@ export class StallionProfileComponent implements OnInit{
 
     if (typeof this.itemId === "string"){
       this.stallionProfileService.getStallionProfile(this.itemId)
-      .subscribe((data: returnedStallion) => {
-        const content = data.stallionProfile;
+      .subscribe((content: stallionProfile) => {
         this.owner = content.owner;
         this.name = content.name;
         this.breed = content.breed;
@@ -133,20 +138,27 @@ export class StallionProfileComponent implements OnInit{
         this.offspring = content.offspring.replace(/(\r\n|\r|\n)/g, '<br>');
         this.performance = content.performance.replace(/(\r\n|\r|\n)/g, '<br>');
         this.stallionAdditionalInfo = content.stallion_additional_info.replace(/(\r\n|\r|\n)/g, '<br>');
+        this.crossbreedingAdvice = content.crossbreeding_advice.replace(/(\r\n|\r|\n)/g, '<br>');
         this.city = content.city;
         this.depName = content.dep_name;
         this.regName = content.reg_name;
         this.coverAdditionalInfo = content.cover_additional_info.replace(/(\r\n|\r|\n)/g, '<br>');
-        this.prices = content.prices;
+        this.coverSpecs = content.cover_specs;
         this.productionBreeds = content.production_breeds;
+        this.stallionVaccines = content.stallion_vaccines;
+        for (let std of this.availableSTDS) {
+          if (Object.keys(content.stallion_std_negative_tests).includes(std)
+          && content.stallion_std_negative_tests[std]) {
+            this.stallionSTDNegativeTests.push(std);
+            this.stallionSTDNegativeTestsTD[std] = content.stallion_std_negative_tests[std]['test_date']
+          }
+        }
         this.location = this.city + ", " + this.depName + ", " + this.regName
         this.heightTagValue = this.height + " centimètres au garrot"
-        for (const d of this.prices) {
-          this.coverTypes.push(d['cover_type']);
-          this.coverPlaces[d['cover_type']] = d['cover_place'];
-          this.advancePercentages[d['cover_type']] = d['advance_percentage']
-          this.balancePaymentConditions[d['cover_type']] = d['balance_payment_condition']
-          this.leftStrawsOwner[d['cover_type']] = d['left_straws_owner']
+        for (const [key, value] of Object.entries(this.coverSpecs)) {
+          if (value) {
+            this.coverTypes.push(key);
+          }
         }
         for (const parent of this.pedigree) {
           if (parent != "") {
@@ -155,8 +167,7 @@ export class StallionProfileComponent implements OnInit{
         }
   
         for (const [index, photoId] of content.photos.entries()) {
-          console.log(photoId)
-          this.stallionProfileService.getPicture(photoId)
+          this.photosService.getPhoto(photoId)
           .subscribe(response => {
             const reader = new FileReader();
             reader.onloadend = () => {
@@ -169,24 +180,33 @@ export class StallionProfileComponent implements OnInit{
     }
   }
   
+  getNonNullKeys(obj: any) {
+    let toReturn = [];
+    for (let [key, value] of Object.entries(obj)) {
+      if (value) {
+        toReturn.push(key);
+      }
+    }
+    return toReturn;
+  }
+
   // stallion profile functions
   getNbOfPhotos() {
     return Object.keys(this.photos).length
   }
 
   // demand functions
-  getPriceOfCoverType(coverType: string) {
-    for (const d of this.prices) {
-      if (d['cover_type'] == coverType) {
-        return d['price']
-      }
+  getPriceOfCoverType(coverType: string){
+    if (this.coverSpecs[coverType] != null) {
+      return this.coverSpecs[coverType].price
+    } else {
+      return 0
     }
-    return 0
   }
 
   sendDemandClick() {
     console.log(this.askForMatingForm.getRawValue())
-    if (!this.askForMatingForm.valid || (this.coverPlaces[this.selectedCoverTypeValue] == '' && this.askForMatingForm.get('offeredCoverPlace')?.getRawValue() == '')) {
+    if (!this.askForMatingForm.valid || (['iart', 'iac'].includes(this.selectedCoverTypeValue) && this.askForMatingForm.get('providedCoverPlace')?.getRawValue() == '')) {
       this.formNotValid = true;
       this.sendFormMessage.setValue("Remplissez s'il vous plaît tous les champs du formulaire de demande.");
       return

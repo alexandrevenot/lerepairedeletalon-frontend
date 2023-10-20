@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { throwError, catchError } from 'rxjs';
-import { getStallionPhoto } from '../../../../../environments/httpCommonMethods'
 
 interface getStallionsListItem {
     id: string;
@@ -16,8 +15,6 @@ export interface getStallionsListArray {
 
 @Injectable()
 export class MyStallionsListService {
-    public getStallionPhoto = getStallionPhoto;
-
     constructor(private http: HttpClient) { }
 
     handleError(error: HttpErrorResponse) {
@@ -32,9 +29,5 @@ export class MyStallionsListService {
                 return this.handleError(error);
             })
         )
-    }
-
-    getProfilePicture(photoId: string) {
-        return this.getStallionPhoto(this.http, photoId)
     }
 }

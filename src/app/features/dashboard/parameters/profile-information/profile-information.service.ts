@@ -55,7 +55,7 @@ export class ProfileInformationService {
 
     getProfileInformation(exists: Record<string, boolean>){
         return this.http.get<ProfileInformation>(
-            "http://localhost:3001/auth/profile-information"
+            "http://localhost:3001/auth/contracts-identity"
         ).pipe(
             catchError((error: HttpErrorResponse) => {
                 return this.handleGetProfileInfoError(error, exists);

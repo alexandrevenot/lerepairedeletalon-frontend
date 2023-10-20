@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse, HttpParams } from "@angular/common/http";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { FormControl } from "@angular/forms";
 import { catchError, throwError } from "rxjs";
@@ -17,7 +17,7 @@ export interface GetCoverInfo {
     cover_place: string;
     price: number;
     buyer_message: string;
-    timestamps: Record<string, string>;
+    timestamps: Array<Record<string, string>>;
     notes: string;
     status: string;
     pov: string;
@@ -33,12 +33,8 @@ export class CoverPageService {
     }
 
     getCoverInfo(coverId: string) {
-        let params = new HttpParams()
-        .set('cover_id', coverId);
-
         return this.http.get<GetCoverInfo>(
-            "http://localhost:3001/covers/cover-information",
-            { params }
+            `http://localhost:3001/covers/cover/${coverId}`
         ).pipe(
             catchError((error: HttpErrorResponse) => {
                 return this.handleError(error);
@@ -48,11 +44,10 @@ export class CoverPageService {
 
     updateNotes(coverId: string, notes: string, message: FormControl, success: Record<string, boolean>) {
         const body: Record<string, string> = {
-            cover_id: coverId,
             notes: notes
         }
         return this.http.put(
-            "http://localhost:3001/covers/update-notes",
+            `http://localhost:3001/covers/cover-notes/${coverId}`,
             body
         ).pipe(
             catchError((error: HttpErrorResponse) => {
@@ -63,27 +58,12 @@ export class CoverPageService {
         )
     }
 
-    answerProposal(coverId: string, refuse: boolean = false) {
+    stepForwardCover(coverId: string, nextStatus: string) {
         const body: Record<string, any> = {
-            cover_id: coverId,
-            refuse: refuse
+            next_status: nextStatus
         }
         return this.http.post(
-            "http://localhost:3001/covers/step-forward-cover",
-            body
-        ).pipe(
-            catchError((error: HttpErrorResponse) => {
-                return this.handleError(error);
-            })
-        )
-    }
-
-    createContract(coverId: string) {
-        const body: Record<string, string> = {
-            cover_id: coverId
-        }
-        return this.http.post(
-            "http://localhost:3001/contracts/engage-signature-process",
+            `http://localhost:3001/covers/step-forward-cover/${coverId}`,
             body
         ).pipe(
             catchError((error: HttpErrorResponse) => {

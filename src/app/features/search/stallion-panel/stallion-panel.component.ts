@@ -2,6 +2,7 @@ import { Component, OnInit, HostListener, Input, OnChanges, SimpleChanges, Outpu
 import { StallionPanelService, searchData } from './stallion-panel.service';
 import { getNumberArray } from '../../../../environments/environment';
 import { updateFilterData } from '../filters/filters.component'
+import { PhotosService } from 'src/environments/photos';
 
 export interface Item {
   id: string;
@@ -38,7 +39,8 @@ export class StallionPanelComponent implements OnInit, OnChanges {
   @Output() clickedOnProfileEvent = new EventEmitter();
 
   constructor(
-    private stallionPanelService: StallionPanelService
+    private stallionPanelService: StallionPanelService,
+    private photosService: PhotosService
   ) {}
   
   public getNumberArrayF = getNumberArray;
@@ -111,7 +113,7 @@ export class StallionPanelComponent implements OnInit, OnChanges {
         const index: number = this.items.length - 1;
 
         // pp
-        this.stallionPanelService.getProfilePicture(item.photo_id)
+        this.photosService.getPhoto(item.photo_id)
         .subscribe(response => {
           const reader = new FileReader();
           reader.onloadend = () => {
