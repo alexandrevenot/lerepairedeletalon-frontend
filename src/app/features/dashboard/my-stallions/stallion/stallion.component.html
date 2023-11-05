@@ -1,7 +1,7 @@
-<h3 class="subtitle is-3 has-text-weight-semibold">Ajouter un nouvel étalon</h3>
+<h3 class="subtitle is-3 has-text-weight-semibold">{{title}}</h3>
 
 <section class="section">
-  <form [formGroup]="registerNewStallionForm">
+  <form [formGroup]="stallionForm">
     <h4 class="subtitle is-4">Première partie: profil de l'étalon</h4>
 
     <h5 class="subtitle is-5 has-text-weight-bold">Identification de l'étalon</h5>
@@ -40,7 +40,7 @@
             <input class="input" type="text" placeholder="" formControlName="breed">
           </div>
         </div>
-        <div class="column">
+        <div class="column" *ngIf="stallionComponentInput.mode === 'creation'">
           <label class="label has-text-weight-semibold has-text-grey">{{stallionHasUnregisteredBreed? '': 'Stud-book absent de la liste?'}}</label>
           <div class="control" *ngIf="!stallionHasUnregisteredBreed">
             <button class="button is-primary" (click)="swapStallionHasUnregisteredBreed()">
@@ -78,7 +78,7 @@
       </div>
     </div>
 
-    <div class="field py-4">
+    <div class="field py-4" *ngIf="stallionComponentInput.mode === 'creation'">
       <label class="label has-text-weight-semibold has-text-grey">Test négatif de l'étalon pour métrite, artérite ou anémie <small>(Formats acceptés: PNG, PDF, JPEG, JPG)</small></label>
       <div class="file is-primary">
         <label class="file-label">
@@ -106,7 +106,7 @@
 
     <div class="field py-3">
       <h5 class="subtitle is-5 has-text-weight-bold mb-3">Photos</h5>
-      <label class="label has-text-weight-normal has-text-grey-light">La première photo ajoutée, la plus à gauche de la liste, sera considérée comme la photo principale.</label>
+      <label class="label has-text-weight-normal has-text-grey-light">La première photo ajoutée, celle à l'extrémité gauche de la liste, sera considérée comme la photo principale.</label>
 
       <div class="photo-container">
         <figure class="image" *ngFor="let i of getNumberArray(photosURLs.length)">
@@ -297,7 +297,7 @@
         <div class="columns is-align-items-center">
           <div class="column">
             <label class="checkbox">
-              <input type="checkbox" [id]="std" (change)="updateCheckbox('stallionStdNegativeTests', $event)">
+              <input type="checkbox" [id]="std" (change)="updateCheckbox('stallionStdNegativeTests', $event)" [checked]="isChecked('stallionStdNegativeTests', std)">
               {{stdsRecord[std]}}
             </label>
           </div>
@@ -319,7 +319,7 @@
         <div class="column">
           <div *ngFor="let vaccine of splitListOrKeysList(vaccinesRecord, 'obj', 3)[0]">
             <label class="checkbox">
-              <input type="checkbox" [id]="vaccine" (change)="updateCheckbox('stallionVaccines', $event)">
+              <input type="checkbox" [id]="vaccine" (change)="updateCheckbox('stallionVaccines', $event)" [checked]="isChecked('stallionVaccines', vaccine)">
               {{vaccinesRecord[vaccine]}}
             </label>
           </div>
@@ -328,7 +328,7 @@
         <div class="column">
           <div *ngFor="let vaccine of splitListOrKeysList(vaccinesRecord, 'obj', 3)[1]">
             <label class="checkbox">
-              <input type="checkbox" [id]="vaccine" (change)="updateCheckbox('stallionVaccines', $event)">
+              <input type="checkbox" [id]="vaccine" (change)="updateCheckbox('stallionVaccines', $event)" [checked]="isChecked('stallionVaccines', vaccine)">
               {{vaccinesRecord[vaccine]}}
             </label>
           </div>
@@ -337,7 +337,7 @@
         <div class="column">
           <div *ngFor="let vaccine of splitListOrKeysList(vaccinesRecord, 'obj', 3)[2]">
             <label class="checkbox">
-              <input type="checkbox" [id]="vaccine" (change)="updateCheckbox('stallionVaccines', $event)">
+              <input type="checkbox" [id]="vaccine" (change)="updateCheckbox('stallionVaccines', $event)" [checked]="isChecked('stallionVaccines', vaccine)">
               {{vaccinesRecord[vaccine]}}
             </label>
           </div>
@@ -386,7 +386,7 @@
           <div class="column">
             <div *ngFor="let productionBreed of splitListOrKeysList(breedsRecord[key], 'list', 3)[0]">
               <label class="checkbox">
-                <input type="checkbox" [id]="productionBreed" (change)="updateCheckbox('productionBreeds', $event)">
+                <input type="checkbox" [id]="productionBreed" (change)="updateCheckbox('productionBreeds', $event)" [checked]="isChecked('productionBreeds', productionBreed)">
                 {{productionBreed}}
               </label>
             </div>
@@ -395,7 +395,7 @@
           <div class="column">
             <div *ngFor="let productionBreed of splitListOrKeysList(breedsRecord[key], 'list', 3)[1]">
               <label class="checkbox">
-                <input type="checkbox" [id]="productionBreed" (change)="updateCheckbox('productionBreeds', $event)">
+                <input type="checkbox" [id]="productionBreed" (change)="updateCheckbox('productionBreeds', $event)" [checked]="isChecked('productionBreeds', productionBreed)">
                 {{productionBreed}}
               </label>
             </div>
@@ -404,7 +404,7 @@
           <div class="column">
             <div *ngFor="let productionBreed of splitListOrKeysList(breedsRecord[key], 'list', 3)[2]">
               <label class="checkbox">
-                <input type="checkbox" [id]="productionBreed" (change)="updateCheckbox('productionBreeds', $event)">
+                <input type="checkbox" [id]="productionBreed" (change)="updateCheckbox('productionBreeds', $event)" [checked]="isChecked('productionBreeds', productionBreed)">
                 {{productionBreed}}
               </label>
             </div>
@@ -464,7 +464,7 @@
         <div class="column">
           <div *ngFor="let coverType of splitListOrKeysList(coverTypes, 'obj', 2)[0]">
             <label class="checkbox">
-              <input type="checkbox" [id]="coverType" (change)="updateCheckbox('coverTypes', $event)">
+              <input type="checkbox" [id]="coverType" (change)="updateCheckbox('coverTypes', $event)" [checked]="isChecked('coverTypes', coverType)">
               {{availableCoverTypes[coverType]}}
             </label>
           </div>
@@ -473,7 +473,7 @@
         <div class="column">
           <div *ngFor="let coverType of splitListOrKeysList(coverTypes, 'obj', 2)[1]">
             <label class="checkbox">
-              <input type="checkbox" [id]="coverType" (change)="updateCheckbox('coverTypes', $event)">
+              <input type="checkbox" [id]="coverType" (change)="updateCheckbox('coverTypes', $event)" [checked]="isChecked('coverTypes', coverType)">
               {{availableCoverTypes[coverType]}}
             </label>
           </div>
@@ -560,7 +560,8 @@
           <div class="columns is-align-items-center">
             <div class="column">
               <label class="checkbox has-text-weight-semibold">
-                  <input type="checkbox" [id]="std" (change)="updateNestedCheckbox(coverType, coverType + std + 'MareTestOldness', 'mareSTDs', $event)">
+                  <input type="checkbox" [id]="std" (change)="updateNestedCheckbox(coverType, coverType + std + 'MareTestOldness', 'mareSTDs', $event)"
+                    [checked]="isCheckedNested(coverType, 'mareSTDs', std)">
                 {{stdsRecord[std]}}
               </label>
             </div>
@@ -588,7 +589,8 @@
           <div class="column">
             <div *ngFor="let vaccine of splitListOrKeysList(vaccinesRecord, 'obj', 3)[0]">
               <label class="checkbox">
-                <input type="checkbox" [id]="vaccine" (change)="updateNestedCheckbox(coverType, '', 'mareVaccines', $event)">
+                <input type="checkbox" [id]="vaccine" (change)="updateNestedCheckbox(coverType, '', 'mareVaccines', $event)"
+                  [checked]="isCheckedNested(coverType, 'mareVaccines', vaccine)">
                 {{vaccinesRecord[vaccine]}}
               </label>
             </div>
@@ -597,7 +599,8 @@
           <div class="column">
             <div *ngFor="let vaccine of splitListOrKeysList(vaccinesRecord, 'obj', 3)[1]">
               <label class="checkbox">
-                <input type="checkbox" [id]="vaccine" (change)="updateNestedCheckbox(coverType, '', 'mareVaccines', $event)">
+                <input type="checkbox" [id]="vaccine" (change)="updateNestedCheckbox(coverType, '', 'mareVaccines', $event)"
+                  [checked]="isCheckedNested(coverType, 'mareVaccines', vaccine)">
                 {{vaccinesRecord[vaccine]}}
               </label>
             </div>
@@ -606,7 +609,8 @@
           <div class="column">
             <div *ngFor="let vaccine of splitListOrKeysList(vaccinesRecord, 'obj', 3)[2]">
               <label class="checkbox">
-                <input type="checkbox" [id]="vaccine" (change)="updateNestedCheckbox(coverType, '', 'mareVaccines', $event)">
+                <input type="checkbox" [id]="vaccine" (change)="updateNestedCheckbox(coverType, '', 'mareVaccines', $event)"
+                  [checked]="isCheckedNested(coverType, 'mareVaccines', vaccine)">
                 {{vaccinesRecord[vaccine]}}
               </label>
             </div>
@@ -621,7 +625,8 @@
           <div class="columns is-align-items-center">
             <div class="column">
               <label class="checkbox has-text-weight-semibold">
-                <input type="checkbox" [id]="hostingType" (change)="updateNestedCheckbox(coverType, coverType + hostingType + 'Price', 'hostingTypes', $event)">
+                <input type="checkbox" [id]="hostingType" (change)="updateNestedCheckbox(coverType, coverType + hostingType + 'Price', 'hostingTypes', $event)"
+                  [checked]="isCheckedNested(coverType, 'hostingTypes', hostingType)">
                 {{hostingTypesRecord[hostingType]}}
               </label>
             </div>
@@ -656,10 +661,11 @@
 
     <div class="field is-grouped mt-6">
       <div class="control">
-        <button class="button is-primary" type="button" (click)="onSubmit()" [ngClass]="submitted['status'] ? 'is-loading' : ''">Ajouter l'étalon</button>
+        <button class="button is-primary" type="button" (click)="onSubmit()" [ngClass]="submitted['status'] ? 'is-loading' : ''">
+          {{stallionComponentInput.mode === "creation"? "Ajouter l'étalon": "Enregistrer les changements"}}</button>
       </div>
       <div class="control">
-        <button class="button is-light">Annuler</button>
+        <button class="button is-light" (click)="getBackToDashboard()">Annuler</button>
       </div>
       <p class="help">{{ submitHelper.value }}</p>
     </div>

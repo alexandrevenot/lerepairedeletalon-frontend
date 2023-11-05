@@ -1,24 +1,57 @@
+<div class="dropdown options-icon" [ngClass]="optionsIsClicked? 'is-active': ''">
+    <div class="dropdown-trigger">
+        <button class="button is-white mb-3 options-button"
+        (click)="swapDropdownActivation()">
+            <span class="icon">
+                <i class="fas fa-ellipsis-vertical"></i>
+            </span>
+        </button>
+    </div>
+    <div class="dropdown-menu" id="dropdown-menu" role="menu">
+      <div class="dropdown-content">
+        <a class="dropdown-item has-text-left"
+        (click)="editStallion()">
+            Éditer le profil
+        </a>
+        <a class="dropdown-item has-text-left"
+        (click)="makeStallionHidden()" *ngIf="item.profileStatus === 'visible'">
+            Rendre invisible
+        </a>
+        <a class="dropdown-item has-text-left"
+        (click)="makeStallionVisible()" *ngIf="item.profileStatus === 'hidden'">
+            Rendre visible
+        </a>
+        <a class="dropdown-item delete-stallion has-text-left"
+        (click)="triggerStallionDeletionModal()">
+            Supprimer l'étalon
+        </a>
+      </div>
+    </div>
+</div>
+
 <div class="columns is-vcentered">
     <div class="column">
         <h4 class="title is-4">{{ item.name }}</h4>
-        <div class="block has-text-grey">
-            {{ item.breed }}
+        <div class="modal" [ngClass]="stallionDeletionModalIsActive? 'is-active': ''">
+            <div class="modal-background" (click)="closeStallionDeletionModal()"></div>
+            <div class="modal-content">
+                <header class="modal-card-head">
+                    <p class="modal-card-title">Êtes-vous sûr de vouloir supprimer cet étalon?</p>
+                    <button class="delete" aria-label="close" (click)="closeStallionDeletionModal()"></button>
+                </header>
+                <section class="modal-card-body">
+                    <p>Toute suppression est définitive, vous ne pourrez pas revenir en arrière ensuite.</p>
+                    <p>Les saillies dans lesquelles l'étalon est déjà impliqué ne seront pas supprimées.</p>
+                </section>
+                <footer class="modal-card-foot is-justify-content-center">
+                    <div class="buttons">
+                        <a class="button is-danger" (click)="deleteStallion()">Supprimer l'étalon</a>
+                        <a class="button" (click)="closeStallionDeletionModal()">Annuler</a>
+                    </div>
+                </footer>
+            </div>
         </div>
-    </div>
-    <div class="column">
-        <div>
-            <button class="button is-outlined mb-3">
-                <span class="icon">
-                    <i class="far fa-pen-to-square"></i>
-                </span>
-                <span>
-                    Éditer le profil
-                </span>
-            </button>
-        </div>
-        <div class="block has-text-grey is-size-7">
-            Dernière modification le 14/04/2023 à 16h10
-        </div>
+        <h5 class="subtitle is-5 has-text-grey-light">{{ item.breed }}</h5>
     </div>
     <div class="column">
         <figure class="image is-16by9">
@@ -27,17 +60,12 @@
     </div>
     <div class="column">
         <div class="block has-text-grey mb-2">
-            Statut:
+            Statut du profil:
         </div>
         <div class="block">
-            <span class="tag is-medium is-success">En ligne</span>
+            <span class="tag is-medium" [ngClass]="item.profileStatus == 'visible'? 'is-success': 'is-warning'">
+                {{profileStatuses[item.profileStatus]}}</span>
         </div>
     </div>
-    <div class="column is-1">
-        <button class="button is-white mb-6">
-            <span class="icon">
-                <i class="fas fa-ellipsis-vertical"></i>
-            </span>
-        </button>
-    </div>
 </div>
+
