@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { StallionComponentInput } from './my-stallions/stallion/stallion.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -16,6 +17,10 @@ export class DashboardComponent implements OnInit{
   // specific variables
   selectedCoverId: string = "";
   selectedCoverActionType: string = "";
+  stallionComponentInput: StallionComponentInput = {
+    mode: 'creation',
+    stallionId: null
+  };
 
   isExpandable: Record<string, Record<string, boolean>> = {
     seller: {
@@ -50,13 +55,38 @@ export class DashboardComponent implements OnInit{
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       const coverId = params['coverId'];
-      if (coverId) {
-        setTimeout(() => {
-          this.goToCoverPage(coverId);
-          this.router.navigate(['/dashboard']);
-        }, 2000)
+      const reload = params['reload'];
+      if (coverId != undefined) {
+        if (coverId) {
+          setTimeout(() => {
+            this.router.navigate(['/dashboard']);
+            this.goToCoverPage(coverId);
+          }, 2000)
+        }
+      } else if (reload != undefined) {
+        this.initializeVars();
+        this.router.navigate(['/dashboard']);
       }
     });
+  }
+
+  initializeVars() {
+    this.selectedComponentKey= "";
+    this.highlightedLabel= "";
+    this.selectedCategory= "";
+    this.isExpanded = {
+      seller: {
+        MyCoversComponent: false,
+        myStallionsComponent: false
+      },
+      buyer: {
+        MyCoversComponent: false,
+        myStallionsComponent: false
+      }
+    };
+
+    this.stallionComponentInput.mode = 'creation';
+    this.stallionComponentInput.stallionId = null;
   }
 
   isHighlighted(key: string, category: string) {
@@ -64,6 +94,13 @@ export class DashboardComponent implements OnInit{
   }
 
   onClick(key: string, parentKey: string | null, category: string) {
+    // special cases
+    if (this.highlightedLabel === 'stallion') {
+      this.stallionComponentInput.mode = 'creation';
+      this.stallionComponentInput.stallionId = null;
+    }
+
+    // main behavior
     this.selectedCategory = category;
     this.highlightedLabel = key;
     if (parentKey === null) { // label
@@ -86,5 +123,12 @@ export class DashboardComponent implements OnInit{
     this.selectedCoverId = params.coverId;
     this.selectedCoverActionType = params.coverActionType;
     this.selectedComponentKey = "CoverPageActionComponent";
+  }
+
+  goToStallionEdition(stallionId: string) {
+    this.stallionComponentInput.mode = 'edition';
+    this.stallionComponentInput.stallionId = stallionId;
+    this.selectedComponentKey = "myStallionsComponent";
+    this.highlightedLabel = 'stallion';
   }
 }

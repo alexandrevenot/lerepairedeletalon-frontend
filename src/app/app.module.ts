@@ -10,7 +10,7 @@ import { LoginComponent } from './features/authentication/login/login.component'
 import { httpInterceptorProviders } from './core/http-interceptors/index';
 import { AuthService } from './core/auth/auth.service';
 import { NavbarComponent } from './layout/navbar/navbar.component';
-import { RegisterNewStallionComponent } from './features/dashboard/my-stallions/register-new-stallion/register-new-stallion.component';
+import { StallionComponent } from './features/dashboard/my-stallions/stallion/stallion.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { DashboardStallionBoxComponent } from './features/dashboard/my-stallions/my-stallions-list/dashboard-stallion-box/dashboard-stallion-box.component';
 import { MyStallionsListComponent } from './features/dashboard/my-stallions/my-stallions-list/my-stallions-list.component';
@@ -31,7 +31,7 @@ import { CoverPageActionComponent } from './features/dashboard/my-covers/cover-p
     RegisterComponent,
     LoginComponent,
     NavbarComponent,
-    RegisterNewStallionComponent,
+    StallionComponent,
     DashboardComponent,
     DashboardStallionBoxComponent,
     MyStallionsListComponent,

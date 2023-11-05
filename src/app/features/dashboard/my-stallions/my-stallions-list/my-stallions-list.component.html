@@ -2,8 +2,8 @@
 
 <section class="section">
     <div class="container">
-        <div class="box has-text-centered" *ngFor="let i of getNumberArray(nbOfStallions)">
-            <app-dashboard-stallion-box [item]="items[i]"></app-dashboard-stallion-box>
+        <div class="box has-text-centered stallion-box" style="border-radius: 15px;" *ngFor="let i of getNumberArray(nbOfStallions)">
+            <app-dashboard-stallion-box [item]="items[i]" (stallionAction)="handleDashboardStallionBoxEvent($event)"></app-dashboard-stallion-box>
         </div>
     </div>
 </section>

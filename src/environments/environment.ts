@@ -187,3 +187,9 @@ export const hostingTypes: Record<string, string> = {
 export function deepCopy(object: Record<any, any>) {
   return JSON.parse(JSON.stringify(object));
 }
+
+export const profileStatuses: Record<string, string> = {
+  "visible": "En ligne",
+  "hidden": "Invisible",
+  "to_be_validated": "En attente de validation"
+}

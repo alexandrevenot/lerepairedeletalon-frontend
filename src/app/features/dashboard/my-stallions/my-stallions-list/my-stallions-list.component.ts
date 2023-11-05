@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { MyStallionsListService, getStallionsListArray } from './my-stallions-list.service'
 import { getNumberArray } from 'src/environments/environment';
 import { PhotosService } from 'src/environments/photos';
@@ -8,6 +8,8 @@ export interface StallionBoxItem {
   name: string | null;
   breed: string | null;
   profilePicture: string | null;
+  lastUpdateTimestamp: string | null;
+  profileStatus: string;
 }
 
 @Component({
@@ -17,6 +19,8 @@ export interface StallionBoxItem {
   providers: [MyStallionsListService]
 })
 export class MyStallionsListComponent implements OnInit {
+
+  @Output() editStallionEvent = new EventEmitter<string>();
 
   public nbOfStallions: number = 0;
   public getNumberArray = getNumberArray;
@@ -41,12 +45,14 @@ export class MyStallionsListComponent implements OnInit {
           id: item.id,
           name: item.name,
           breed: item.breed,
-          profilePicture: null
+          profilePicture: null,
+          lastUpdateTimestamp: item.last_update_timestamp,
+          profileStatus: item.profile_status
         });
 
         const index: number = this.items.length - 1;
 
-        this.photosService.getPhoto(item.photoId)
+        this.photosService.getPhoto(item.photo_id)
         .subscribe(response => {
           const reader = new FileReader();
           reader.onloadend = () => {
@@ -58,4 +64,12 @@ export class MyStallionsListComponent implements OnInit {
     })
   }
 
+  handleDashboardStallionBoxEvent(params: {stallionId: string | null, action: 'edit' | 'reload'}) {
+    if (params.action == 'reload') {
+      this.items = [];
+      this.loadStallionBoxes();
+    } else if (typeof params.stallionId === 'string'){
+      this.editStallionEvent.emit(params.stallionId);
+    }
+  }
 }

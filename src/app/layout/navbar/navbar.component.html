@@ -1,7 +1,7 @@
 <section class="section">
   <nav class="navbar is-fixed-top px-5" role="navigation" aria-label="main navigation" >
     <div class="navbar-brand">
-      <a class="navbar-item" routerLink="/search">
+      <a class="navbar-item" (click)="navigateToSearch()">
         <img src="./assets/logo/logo-black.png" width="260" height="65">
       </a>
 
@@ -10,7 +10,7 @@
     <div class="navbar-menu">
 
       <div class="navbar-end">
-        <a class="navbar-item is-size-6" routerLink="/search">
+        <a class="navbar-item is-size-6" (click)="navigateToSearch()">
           <span class="icon-text">
             <span class="icon">
               <i class="fas fa-search"></i>
@@ -19,7 +19,7 @@
           </span>
         </a>
 
-        <a class="navbar-item is-size-6" routerLink="/dashboard" *ngIf="userIsLoggedIn">
+        <a class="navbar-item is-size-6" (click)="navigateToDashboard()" *ngIf="userIsLoggedIn">
           <span class="icon-text">
             <span class="icon">
               <i class="fas fa-desktop"></i>

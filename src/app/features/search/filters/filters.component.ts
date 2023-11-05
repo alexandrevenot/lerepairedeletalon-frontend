@@ -1,4 +1,4 @@
-import { Component, Input, EventEmitter, Output, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, Input, EventEmitter, Output, OnInit } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
 import { breedsRecord, getAvailableBreeds, availableCoverTypes, getNumberArray } from '../../../../environments/environment';
 import { GeolocationService, getCityData, getCityItem } from 'src/environments/geolocation';

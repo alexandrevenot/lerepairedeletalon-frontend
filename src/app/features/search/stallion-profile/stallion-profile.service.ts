@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, throwError } from 'rxjs';
 import { FormControl } from '@angular/forms';
-import { IACSpecs, IAISpecs, IARTSpecs, LIBandHANDSpecs, SingularStallionSTDSpecs } from '../../dashboard/my-stallions/register-new-stallion/register-new-stallion.service';
+import { IACSpecs, IAISpecs, IARTSpecs, LIBandHANDSpecs, SingularStallionSTDSpecs } from '../../dashboard/my-stallions/stallion/stallion.service';
 
 export interface CoverSpecs {
     lib: LIBandHANDSpecs | null;

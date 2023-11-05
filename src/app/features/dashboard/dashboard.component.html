@@ -25,7 +25,7 @@
                     <li><a [ngClass]="isHighlighted('myStallionsComponent', 'seller')? 'is-active' : ''" (click)="onClick('myStallionsComponent', null, 'seller')">Mes étalons</a>
                         <ul *ngIf="isExpanded['seller']['myStallionsComponent']">
                             <li><a [ngClass]="isHighlighted('stallionsList', 'seller')? 'is-active' : ''" (click)="onClick('stallionsList', 'myStallionsComponent', 'seller')">Liste de mes étalons</a></li>
-                            <li><a [ngClass]="isHighlighted('registerNewStallion', 'seller')? 'is-active' : ''" (click)="onClick('registerNewStallion', 'myStallionsComponent', 'seller')">Ajouter un nouvel étalon</a></li>
+                            <li><a [ngClass]="isHighlighted('stallion', 'seller')? 'is-active' : ''" (click)="onClick('stallion', 'myStallionsComponent', 'seller')">Ajouter un nouvel étalon</a></li>
                         </ul>
                     </li>
 
@@ -52,8 +52,8 @@
     <div class="column is-7">
         <div [ngSwitch]="selectedComponentKey">
             <ng-container *ngSwitchCase="'myStallionsComponent'">
-            <app-my-stallions-list *ngIf="highlightedLabel === 'stallionsList'"></app-my-stallions-list>
-            <app-register-new-stallion *ngIf="highlightedLabel === 'registerNewStallion'"></app-register-new-stallion>
+            <app-my-stallions-list *ngIf="highlightedLabel === 'stallionsList'" (editStallionEvent)="goToStallionEdition($event)"></app-my-stallions-list>
+            <app-stallion *ngIf="highlightedLabel === 'stallion'" [stallionComponentInput]="stallionComponentInput"></app-stallion>
             </ng-container>
 
             <ng-container *ngSwitchCase="'MyCoversComponent'">

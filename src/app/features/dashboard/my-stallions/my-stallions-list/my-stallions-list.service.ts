@@ -6,7 +6,9 @@ interface getStallionsListItem {
     id: string;
     name: string;
     breed: string;
-    photoId: string;
+    photo_id: string;
+    last_update_timestamp: string;
+    profile_status: string;
 }
 
 export interface getStallionsListArray {

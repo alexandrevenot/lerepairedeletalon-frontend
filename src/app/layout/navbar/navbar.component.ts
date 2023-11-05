@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NavbarService, connectionStatus } from './navbar.service';
 import { AuthService } from 'src/app/core/auth/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -18,7 +19,8 @@ export class NavbarComponent implements OnInit {
 
   constructor (
     private navbarService: NavbarService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -34,5 +36,13 @@ export class NavbarComponent implements OnInit {
 
   disconnectUser() {
     this.authService.disconnectUser();
+  }
+
+  navigateToDashboard() {
+    this.router.navigate(['/dashboard'], {queryParams: { reload: 'true' }});
+  }
+
+  navigateToSearch() {
+    this.router.navigate(['/search'], {queryParams: { reload: 'true' }});
   }
 }

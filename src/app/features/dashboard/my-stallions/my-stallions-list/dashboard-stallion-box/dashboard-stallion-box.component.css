@@ -1,0 +1,17 @@
+img {
+    border-radius: 15px;
+}
+
+.options-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.dropdown-item.delete-stallion:hover {
+    background-color: hsl(348, 100%, 61%);
+}
+
+.dropdown-item.delete-stallion:hover {
+    color: #ffffff;
+}
