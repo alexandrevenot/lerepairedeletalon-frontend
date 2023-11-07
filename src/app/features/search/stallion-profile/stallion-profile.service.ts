@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { catchError, throwError } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { IACSpecs, IAISpecs, IARTSpecs, LIBandHANDSpecs, SingularStallionSTDSpecs } from '../../dashboard/my-stallions/stallion/stallion.service';
@@ -49,8 +49,12 @@ export class StallionProfileService {
     }
     
     getStallionProfile(stallionId: string) {
+        const params = new HttpParams()
+        .set('mode', 'partial');
+
         return this.http.get<stallionProfile>(
-            `http://localhost:3001/stallions/stallion/${stallionId}`
+            `http://localhost:3001/stallions/stallion/${stallionId}`,
+            {params}
         ).pipe(
             catchError((error: HttpErrorResponse) => {
                 return this.handleError(error);
