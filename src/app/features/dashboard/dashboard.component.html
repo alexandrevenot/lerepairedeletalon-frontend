@@ -13,6 +13,7 @@
                             <li><a [ngClass]="isHighlighted('pendingSignature', 'buyer')? 'is-active' : ''" (click)="onClick('pendingSignature', 'MyCoversComponent', 'buyer')">En cours de signature</a></li>
                             <li><a [ngClass]="isHighlighted('onGoing', 'buyer')? 'is-active' : ''" (click)="onClick('onGoing', 'MyCoversComponent', 'buyer')">Engagées</a></li>
                             <li><a [ngClass]="isHighlighted('done', 'buyer')? 'is-active' : ''" (click)="onClick('done', 'MyCoversComponent', 'buyer')">Terminées</a></li>
+                            <li><a [ngClass]="isHighlighted('denied', 'buyer')? 'is-active' : ''" (click)="onClick('denied', 'MyCoversComponent', 'buyer')">Refusées</a></li>
                         </ul>
                     </li>
                     <li><a>Mes favoris</a></li>
@@ -35,6 +36,7 @@
                             <li><a [ngClass]="isHighlighted('pendingSignature', 'seller')? 'is-active' : ''" (click)="onClick('pendingSignature', 'MyCoversComponent', 'seller')">En cours de signature</a></li>
                             <li><a [ngClass]="isHighlighted('onGoing', 'seller')? 'is-active' : ''" (click)="onClick('onGoing', 'MyCoversComponent', 'seller')">Engagées</a></li>
                             <li><a [ngClass]="isHighlighted('done', 'seller')? 'is-active' : ''" (click)="onClick('done', 'MyCoversComponent', 'seller')">Terminées</a></li>
+                            <li><a [ngClass]="isHighlighted('denied', 'seller')? 'is-active' : ''" (click)="onClick('denied', 'MyCoversComponent', 'seller')">Refusées</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -61,11 +63,13 @@
             <app-my-covers [coverStatus]="'pendingSignature'" [pointOfView]="'seller'" *ngIf="highlightedLabel === 'pendingSignature' && selectedCategory === 'seller'" (goToCoverPageEvent)="goToCoverPage($event)"></app-my-covers>
             <app-my-covers [coverStatus]="'onGoing'" [pointOfView]="'seller'" *ngIf="highlightedLabel === 'onGoing' && selectedCategory === 'seller'" (goToCoverPageEvent)="goToCoverPage($event)"></app-my-covers>
             <app-my-covers [coverStatus]="'done'" [pointOfView]="'seller'" *ngIf="highlightedLabel === 'done' && selectedCategory === 'seller'" (goToCoverPageEvent)="goToCoverPage($event)"></app-my-covers>
+            <app-my-covers [coverStatus]="'denied'" [pointOfView]="'seller'" *ngIf="highlightedLabel === 'denied' && selectedCategory === 'seller'" (goToCoverPageEvent)="goToCoverPage($event)"></app-my-covers>
 
             <app-my-covers [coverStatus]="'pendingApproval'" [pointOfView]="'buyer'" *ngIf="highlightedLabel === 'pendingApproval' && selectedCategory === 'buyer'" (goToCoverPageEvent)="goToCoverPage($event)"></app-my-covers>
             <app-my-covers [coverStatus]="'pendingSignature'" [pointOfView]="'buyer'" *ngIf="highlightedLabel === 'pendingSignature' && selectedCategory === 'buyer'" (goToCoverPageEvent)="goToCoverPage($event)"></app-my-covers>
             <app-my-covers [coverStatus]="'onGoing'" [pointOfView]="'buyer'" *ngIf="highlightedLabel === 'onGoing' && selectedCategory === 'buyer'" (goToCoverPageEvent)="goToCoverPage($event)"></app-my-covers>
             <app-my-covers [coverStatus]="'done'" [pointOfView]="'buyer'" *ngIf="highlightedLabel === 'done' && selectedCategory === 'buyer'" (goToCoverPageEvent)="goToCoverPage($event)"></app-my-covers>
+            <app-my-covers [coverStatus]="'denied'" [pointOfView]="'buyer'" *ngIf="highlightedLabel === 'denied' && selectedCategory === 'buyer'" (goToCoverPageEvent)="goToCoverPage($event)"></app-my-covers>
             </ng-container>
             
             <ng-container *ngSwitchCase="'CoverPageComponent'">

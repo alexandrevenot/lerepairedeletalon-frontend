@@ -4,7 +4,7 @@
     <div class="container">
 
         <h4 class="subtitle is-4 has-text-weight-bold">Étalon</h4>
-        <div class="columns pb-4">
+        <div class="columns content">
 
             <div class="column">
                 <label class="label has-text-weight-semibold has-text-grey-light">Nom </label>
@@ -23,8 +23,26 @@
 
         </div>
 
-        <h4 class="subtitle is-4 has-text-weight-bold">Jument</h4>
-        <div class="columns pb-4">
+        <div class="content">
+            <label class="label has-text-weight-semibold has-text-grey-light">Races de production</label>
+            <input class="input is-medium is-primary" [value]="stallionProductionBreeds" readonly>
+        </div>
+
+        <div class="content">
+            <label class="label has-text-weight-semibold has-text-grey-light">Vaccins</label>
+            <input class="input is-medium is-primary" [value]="stallionVaccines != ''? stallionVaccines : 'Pas de vaccin déclaré à jour'" readonly>
+        </div>
+
+        <div class="content">
+            <label class="label has-text-weight-semibold has-text-grey-light">Tests MST négatifs</label>
+            <input class="input is-medium is-primary" [value]="'Pas de test MST négatif déclaré'" readonly *ngIf="stallionSTDNegativeTests.length == 0">
+            <div [ngClass]="i+1 == stallionSTDNegativeTests.length? '' : 'pb-2'" *ngFor="let std of stallionSTDNegativeTests; let i = index">
+                <input class="input is-medium is-primary" [value]="std" readonly>
+            </div>
+        </div>
+
+        <h4 class="subtitle is-4 has-text-weight-bold pt-4">Jument</h4>
+        <div class="columns content">
             <div class="column">
                 <label class="label has-text-weight-semibold has-text-grey-light">Nom</label>
                 <input class="input is-medium is-primary" [value]="mareName" readonly>
@@ -42,11 +60,11 @@
         </div>
 
 
-        <h4 class="subtitle is-4 has-text-weight-bold">{{messageContact[pov]}}</h4>
+        <h4 class="subtitle is-4 has-text-weight-bold pt-4">{{messageContact[pov]}}</h4>
 
-        <label class="label has-text-weight-semibold has-text-grey-light" *ngIf="status == 'requested' && pov == 'buyer'? 'Masqué' : ''">Le numéro de téléphone et l'adresse mail du vendeur restent masqués tant que la saillie n'a pas été acceptée.</label>
+        <label class="label has-text-weight-semibold has-text-grey-light" *ngIf="['requested', 'denied'].includes(status) && pov == 'buyer'? 'Masqué' : ''">Le numéro de téléphone et l'adresse mail du vendeur restent masqués tant que la saillie n'a pas été acceptée.</label>
 
-        <div class="columns pb-4">
+        <div class="columns content">
             <div class="column">
                 <label class="label has-text-weight-semibold has-text-grey-light">Nom</label>
                 <div class="control has-icons-left">
@@ -60,7 +78,7 @@
             <div class="column">
                 <label class="label has-text-weight-semibold has-text-grey-light">Numéro de téléphone</label>
                 <div class="control has-icons-left">
-                    <input class="input is-medium is-primary" [value]="contactPhoneNumber" readonly [disabled]="status == 'requested' && pov == 'buyer'">
+                    <input class="input is-medium is-primary" [value]="contactPhoneNumber" readonly [disabled]="['requested', 'denied'].includes(status) && pov == 'buyer'">
                     <span class="icon is-medium is-left">
                         <i class="fa-solid fa-phone" style="color: hsl(0, 0%, 71%);"></i>
                     </span>
@@ -70,7 +88,7 @@
             <div class="column">
                 <label class="label has-text-weight-semibold has-text-grey-light">Adresse mail</label>
                 <div class="control has-icons-left">
-                    <input class="input is-medium is-primary" [value]="contactEmail" readonly [disabled]="status == 'requested' && pov == 'buyer'">
+                    <input class="input is-medium is-primary" [value]="contactEmail" readonly [disabled]="['requested', 'denied'].includes(status) && pov == 'buyer'">
                     <span class="icon is-medium is-left">
                         <i class="fa-solid fa-envelope" style="color: hsl(0, 0%, 71%);"></i>
                     </span>
@@ -78,8 +96,8 @@
             </div>
         </div>
 
-        <h4 class="subtitle is-4 has-text-weight-bold">Saillie</h4>
-        <div class="columns pb-4">
+        <h4 class="subtitle is-4 has-text-weight-bold pt-4">Saillie</h4>
+        <div class="columns content">
             <div class="column">
                 <label class="label has-text-weight-semibold has-text-grey-light">Type</label>
                 <input class="input is-medium is-primary" [value]="availableCoverTypes[coverType]" readonly>
@@ -102,8 +120,53 @@
             </div>
         </div>
 
-        <h4 class="subtitle is-4 has-text-weight-bold">{{messageTitle[pov]}}</h4>
-        <div class="content pb-4">
+        <div class="content">
+            <label class="label has-text-weight-semibold has-text-grey-light">Condition de paiement du solde</label>
+            <input class="input is-medium is-primary" [value]="balancePaymentCondition" readonly>
+        </div>
+
+        <div class="content">
+            <label class="label has-text-weight-semibold has-text-grey-light">Montant de l'acompte</label>
+            <input class="input is-medium is-primary" [value]="advancePercentage" readonly>
+        </div>
+
+        <div class="content" *ngIf="['lib', 'hand', 'iai'].includes(coverType)">
+            <label class="label has-text-weight-semibold has-text-grey-light">Nombre maximum de tentatives de saillie</label>
+            <input class="input is-medium is-primary" [value]="maxNbOfAttempts" readonly>
+        </div>
+
+        <div class="content" *ngIf="['lib', 'hand'].includes(coverType)">
+            <label class="label has-text-weight-semibold has-text-grey-light">Tests MST négatifs demandés pour la jument</label>
+            <input class="input is-medium is-primary" [value]="'Aucun test MST à effectuer'" readonly *ngIf="demandedSTDNegativeTests.length == 0">
+            <div [ngClass]="i+1 == demandedSTDNegativeTests.length? '' : 'pb-2'" *ngFor="let std of demandedSTDNegativeTests; let i = index">
+                <input class="input is-medium is-primary" [value]="std" readonly>
+            </div>
+        </div>
+
+        <div class="content" *ngIf="['lib', 'hand'].includes(coverType)">
+            <label class="label has-text-weight-semibold has-text-grey-light">Vaccins à jour demandés pour la jument</label>
+            <input class="input is-medium is-primary" [value]="demandedVaccines != ''? demandedVaccines : 'Aucun vaccin demandé'" readonly>
+        </div>
+
+        <div class="content" *ngIf="['lib', 'hand', 'iai'].includes(coverType)">
+            <label class="label has-text-weight-semibold has-text-grey-light">Hébergement</label>
+            <div [ngClass]="i+1 == hostingSpecs.length? '' : 'pb-2'" *ngFor="let htype of hostingSpecs; let i = index">
+                <input class="input is-medium is-primary" [value]="htype" readonly>
+            </div>
+        </div>
+
+        <div class="content" *ngIf="['iart', 'iac'].includes(coverType)">
+            <label class="label has-text-weight-semibold has-text-grey-light">Nombre de paillettes fournies</label>
+            <input class="input is-medium is-primary" [value]="nbProvidedStraws" readonly>
+        </div>
+
+        <div class="content" *ngIf="'iac' == coverType">
+            <label class="label has-text-weight-semibold has-text-grey-light">Propriétaire des doses restantes</label>
+            <input class="input is-medium is-primary" [value]="leftStrawsOwner" readonly>
+        </div>
+
+        <h4 class="subtitle is-4 has-text-weight-bold pt-4">{{messageTitle[pov]}}</h4>
+        <div class="content content">
             <div class="content has-text-weight-semibold is-size-5 has-text-justified">
                 <span class="icon">
                     <i class="fas fa-quote-left"></i>
@@ -115,7 +178,7 @@
             </div>
         </div>
 
-        <h4 class="subtitle is-4 has-text-weight-bold">Historique des actions</h4>
+        <h4 class="subtitle is-4 has-text-weight-bold pt-4">Historique des actions</h4>
         <div class="content">
             <table>
                 <thead>
@@ -169,20 +232,83 @@
         </div>
     </div>
 </section>
+
+<section class="section" *ngIf="pov == 'seller' && ['lib', 'hand', 'iai'].includes(coverType) && status == 'requested'">
+    <div class="container">
+        <div class="box is-flex is-flex-direction-column is-align-items-center">
+            <h4 class="subtitle is-4 has-text-weight-bold">Mettre à jour la date d'arrivée de la jument</h4>
+            <label class="label has-text-weight-semibold has-text-grey-light">Date d'arrivée enregistrée</label>
+            <div class="content control has-icons-right">
+                <input class="input" [ngClass]="arrivalDate? 'is-success': 'is-warning'" [value]="arrivalDate? arrivalDate: 'Aucune'" readonly>
+                <span class="icon is-small is-right">
+                    <i class="fas" [ngClass]="arrivalDate? 'fa-check': ''"></i>
+                  </span>
+            </div>
+            <label class="label has-text-weight-semibold has-text-grey-light">Nouvelle date d'arrivée <small>(format JJ/MM/AAAA)</small></label>
+            <div class="content">
+                <div class="field is-grouped is-centered">
+                    <div class="control is-expanded">
+                      <input class="input" type="text" placeholder="15/02/2024" [formControl]="newArrivalDate">
+                    </div>
+                    <div class="control">
+                      <a class="button" (click)="triggerModal('arrivalDate')">
+                        Enregistrer
+                      </a>
+                    </div>
+                </div>
+                <p class="help is-danger pb-6" *ngIf='arrivalDateChangeFailed["value"] && displayArrivalDateHelper["value"]'>
+                    Erreur dans le format de la date, veuillez s'il vous plaît utiliser le format JJ/MM/AAAA, exemple: 15/02/2024</p>    
+                <p class="help is-success pb-6" *ngIf='!arrivalDateChangeFailed["value"] && displayArrivalDateHelper["value"]'>
+                    Parfait!</p>   
+            </div>
+
+            <h4 class="subtitle is-4 has-text-weight-bold">Augmenter ou baisser le prix</h4>
+            <label class="label has-text-weight-semibold has-text-grey-light">Prix de base actuellement utilisé</label>
+            <div class="content control has-icons-right">
+                <input class="input is-success" [value]="basePrice" readonly>
+                <span class="icon is-small is-right">
+                    <i class="fas fa-euro"></i>
+                  </span>
+            </div>
+            <label class="label has-text-weight-semibold has-text-grey-light">Nouveau prix <small>(pas de nombres à virgule)</small></label>
+            <div class="content">
+                <div class="field is-grouped is-centered">
+                    <div class="control is-expanded has-icons-right">
+                      <input class="input" type="text" placeholder="400" [formControl]="newBasePrice">
+                      <span class="icon is-right">
+                        <i class="fas fa-euro"></i>
+                      </span>
+                    </div>
+                    <div class="control">
+                      <a class="button" (click)="triggerModal('basePrice')">
+                        Enregistrer
+                      </a>
+                    </div>
+                </div>
+                <p class="help is-danger pb-6" *ngIf='basePriceChangeFailed["value"] && displayBasePriceHelper["value"]'>
+                    Erreur dans le format du nouveau prix, veuillez s'il vous plaît ne taper que des nombres sans virgule, exemple: 400</p>    
+                <p class="help is-success pb-6" *ngIf='!basePriceChangeFailed["value"] && displayBasePriceHelper["value"]'>
+                    Parfait!</p>   
+            </div>
+        </div>
+    </div>
+</section>
+
 <section class="section">
     <div class="container">
         <div class="box is-flex is-flex-direction-column is-align-items-center">
-            <h4 class="subtitle is-4 has-text-weight-bold mr-5">Statut de la saillie</h4>
+            <h4 class="subtitle is-4 has-text-weight-bold">Statut de la saillie</h4>
  
             <div class="block">
                 <span class="tag is-large" [ngClass]="statusHelperObject[status]">{{statusMappingObject[status]}}, {{statusCommentaryMappingObject[status]}}</span>
             </div>
 
 
-            <h4 class="subtitle is-4 has-text-weight-bold mr-5" *ngIf="actions[pov] && (actions[pov]['green'][status] || actions[pov]['red'][status])">Actions</h4>
+            <h4 class="subtitle is-4 has-text-weight-bold" *ngIf="actions[pov] && (actions[pov]['green'][status] || actions[pov]['red'][status])">Actions</h4>
             <div class="field is-grouped is-centered">
                 <p class="control">
-                  <button class="button is-primary is-medium" (click)="green(status, pov)" *ngIf="actions[pov] && actions[pov]['green'][status]">
+                  <button class="button is-success is-medium" (click)="green(status, pov)" *ngIf="actions[pov] && actions[pov]['green'][status]"
+                    [disabled]="pov == 'seller' && ['lib', 'hand', 'iai'].includes(coverType) && !arrivalDate">
                     <span class="icon">
                       <i class="fas fa-check"></i>
                     </span>
@@ -198,7 +324,49 @@
                     </button>
                   </p>
             </div>
-
+            <label class="label has-text-weight-semibold has-text-grey"
+            *ngIf="pov == 'seller' && ['lib', 'hand', 'iai'].includes(coverType) && !arrivalDate && status == 'requested'">
+            Vous devez indiquer une date d'arrivée de la jument au centre avant d'accepter la saillie (juste au-dessus).
+            </label>
         </div>
     </div>
 </section>
+
+<div class="modal" [ngClass]="newBasePriceModalIsActive? 'is-active': ''">
+    <div class="modal-background" (click)="closeModal('basePrice')"></div>
+    <div class="modal-content">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Êtes-vous sûr de vouloir faire cette modification?</p>
+            <button class="delete" aria-label="close" (click)="closeModal('basePrice')"></button>
+        </header>
+        <section class="modal-card-body">
+            <p>Le prix de base de la saillie passera de {{basePrice}}€ à {{valueForPutCover}}€.</p>
+            <p>Les frais de service de la plateforme seront automatiquement recalculés.</p>
+        </section>
+        <footer class="modal-card-foot is-justify-content-center">
+            <div class="buttons">
+                <a class="button is-success" (click)="saveNewBasePrice()">Valider le nouveau prix</a>
+                <a class="button" (click)="closeModal('basePrice')">Annuler</a>
+            </div>
+        </footer>
+    </div>
+</div>
+
+<div class="modal" [ngClass]="newArrivalDateModalIsActive? 'is-active': ''">
+    <div class="modal-background" (click)="closeModal('arrivalDate')"></div>
+    <div class="modal-content">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Êtes-vous sûr de vouloir faire cette modification?</p>
+            <button class="delete" aria-label="close" (click)="closeModal('arrivalDate')"></button>
+        </header>
+        <section class="modal-card-body">
+            <p>La nouvelle date d'arrivée de la jument sera le {{valueForPutCover}}.</p>
+        </section>
+        <footer class="modal-card-foot is-justify-content-center">
+            <div class="buttons">
+                <a class="button is-success" (click)="saveNewArrivalDate()">Valider la nouvelle date</a>
+                <a class="button" (click)="closeModal('arrivalDate')">Annuler</a>
+            </div>
+        </footer>
+    </div>
+</div>

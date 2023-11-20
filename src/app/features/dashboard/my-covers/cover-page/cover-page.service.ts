@@ -7,6 +7,9 @@ export interface GetCoverInfo {
     stallion_name: string;
     stallion_breed: string;
     stallion_nsire: string;
+    stallion_production_breeds: Array<string>;
+    stallion_vaccines: Array<string>;
+    stallion_std_negative_tests: any;
     mare_name: string;
     mare_breed: string;
     mare_nsire: string;
@@ -14,12 +17,15 @@ export interface GetCoverInfo {
     contact_phone_number: string;
     contact_email: string;
     cover_type: string;
-    cover_place: string;
+    cover_specs: any;
+    provided_cover_place: string;
+    arrival_date: string;
+    status: string;
     price: number;
+    base_price: number;
     buyer_message: string;
     timestamps: Array<Record<string, string>>;
     notes: string;
-    status: string;
     pov: string;
 }
 
@@ -67,6 +73,26 @@ export class CoverPageService {
             body
         ).pipe(
             catchError((error: HttpErrorResponse) => {
+                return this.handleError(error);
+            })
+        )
+    }
+
+    putCover(coverId: string, valueType: "arrivalDate" | "basePrice", value: string | number,
+        failed: Record<string, boolean>, display: Record<string, boolean>) {
+        let body: Record<string, any> = {};
+        if (valueType == "arrivalDate") {
+            body["arrival_date"] = value;
+        } else {
+            body["new_subtotal"] = value;
+        }
+        return this.http.put(
+            `http://localhost:3001/covers/cover/${coverId}`,
+            body
+        ).pipe(
+            catchError((error: HttpErrorResponse) => {
+                failed["value"] = true;
+                display["value"] = true;
                 return this.handleError(error);
             })
         )

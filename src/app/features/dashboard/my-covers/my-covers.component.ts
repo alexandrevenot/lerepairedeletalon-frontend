@@ -9,7 +9,7 @@ import { getNumberArray } from '../../../../environments/environment';
   providers: [MyCoversService]
 })
 export class MyCoversComponent implements OnInit{
-  @Input() coverStatus!: "pendingApproval" | "pendingSignature" | "onGoing" | "done";
+  @Input() coverStatus!: "pendingApproval" | "pendingSignature" | "onGoing" | "done" | "denied";
   @Input() pointOfView! : "buyer" | "seller";
 
   @Output() goToCoverPageEvent = new EventEmitter();
@@ -26,10 +26,11 @@ export class MyCoversComponent implements OnInit{
       "pendingApproval": this.pointOfView == "seller" ? "Mes demandes de saillies": "Mes saillies demandées",
       "pendingSignature": "Mes saillies en cours de signature",
       "onGoing": "Mes saillies engagées",
-      "done": "Mes saillies terminées"
+      "done": "Mes saillies terminées",
+      "denied": "Mes saillies refusées"
     };
 
-    if (["pendingApproval", "pendingSignature", "onGoing", "done"].includes(this.coverStatus)) {
+    if (["pendingApproval", "pendingSignature", "onGoing", "done", "denied"].includes(this.coverStatus)) {
       this.myCoversService.getCovers(this.coverStatus, this.pointOfView)
       .subscribe((data: coversData) => {
         for (let item of data.items) {
@@ -49,5 +50,4 @@ export class MyCoversComponent implements OnInit{
   goToCoverPage(coverId: string) {
     this.goToCoverPageEvent.emit(coverId);
   }
-
 }
