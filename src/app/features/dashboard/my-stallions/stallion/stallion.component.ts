@@ -1,4 +1,4 @@
-import { Component, Input, OnInit  } from '@angular/core';
+import { Component, HostListener, Input, OnInit  } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { PostStallionResponse, StallionService } from './stallion.service';
 import { getAvailableBreeds, breedsRecord, availableCoverTypes, coverPlaceNames, getNumberArray, photosMaxSizeInBytes, splitListOrKeysList, balancePaymentConditions, stds, vaccines, hostingTypes } from 'src/environments/environment';
@@ -83,6 +83,7 @@ export class StallionComponent implements OnInit {
     lat: 0,
     lng: 0
   };
+  public locationModalIsActive = false;
   public productionBreedsAddedByHand: Array<string> = [];
 
   // form values variables
@@ -186,7 +187,6 @@ export class StallionComponent implements OnInit {
     if (this.stallionComponentInput.stallionId) {
       this.stallionService.fetchStallionProfile(this.stallionComponentInput.stallionId)
       .subscribe((data: any) => {
-        console.log(data);
         this.stallionForm.get('name')?.setValue(data.name);
         this.stallionForm.get('name')?.disable();
         this.stallionForm.get('breed')?.setValue(data.breed);
@@ -199,7 +199,7 @@ export class StallionComponent implements OnInit {
           .subscribe(response => {
             const imageURL = URL.createObjectURL(response);
             this.photosURLs.push(this.sanitizer.bypassSecurityTrustUrl(imageURL));
-            this.photos.push(new File([response], 'Photo' + index.toString()));
+            this.photos.push(new File([response], 'Photo' + index.toString(), { type: response.type }));
           })
         }
 
@@ -390,6 +390,21 @@ export class StallionComponent implements OnInit {
   }
 
   // geoloc
+  triggerModal() {
+    this.locationModalIsActive = true;
+  }
+
+  closeModal() {
+    this.locationModalIsActive = false;
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    if (event.key === 'Escape') {
+      this.resetCity();
+    }
+  }
+
   findCity() {
     this.isLookingForLocation = true;
     this.locations.splice(0, this.locations.length);
@@ -401,10 +416,11 @@ export class StallionComponent implements OnInit {
     .subscribe((data: getCityData) => {
       for (let item of data.content) {
         this.locations.push(item);
-        this.locationTagValues.push(item.city + " (" + item.postal_code + ") ?")
+        this.locationTagValues.push(item.city + " (" + item.postal_code + ")")
       }
       this.locationHelper.setValue("");
       this.locationSearchSuccess['status'] = true;
+      this.triggerModal();
     })
   }
 
@@ -415,18 +431,20 @@ export class StallionComponent implements OnInit {
     if (locationControl) {
       locationControl.setValue("");
     }
+    this.closeModal();
   }
 
   confirmLocationValue(index: number) {
     const locationControl = this.stallionForm.get('location');
     if (locationControl) {
-      locationControl.setValue(this.locationTagValues[index].slice(0, -2));
+      locationControl.setValue(this.locationTagValues[index]);
     }
     this.locationHelper.setValue("");
     this.isLookingForLocation = false;
     this.selectedLocation = this.locations[index];
     this.locationTagValues.splice(0, this.locationTagValues.length);
     this.locationIsValidated = true;
+    this.closeModal();
   }
 
   // checking form validity
