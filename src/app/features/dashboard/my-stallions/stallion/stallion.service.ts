@@ -391,8 +391,6 @@ export class StallionService {
       crossbreeding_advice: form["crossbreedingAdvice"],
     }
 
-    console.log(editableFieldsBody);
-
     return this.http.put(
       `http://localhost:3001/stallions/stallion/${stallionId}`,
       editableFieldsBody,

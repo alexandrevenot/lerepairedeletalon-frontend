@@ -1,4 +1,4 @@
-import { Component, Input, EventEmitter, Output, OnInit } from '@angular/core';
+import { Component, Input, EventEmitter, Output, OnInit, HostListener } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
 import { breedsRecord, getAvailableBreeds, availableCoverTypes, getNumberArray } from '../../../../environments/environment';
 import { GeolocationService, getCityData, getCityItem } from 'src/environments/geolocation';
@@ -71,6 +71,8 @@ export class FiltersComponent implements OnInit {
     'coverType': false
   }
 
+  public locationModalIsActive: boolean = false;
+
   constructor(
     private geolocationService: GeolocationService,
     private formBuilder: FormBuilder
@@ -116,6 +118,21 @@ export class FiltersComponent implements OnInit {
   }
 
   // geolocation
+  triggerModal() {
+    this.locationModalIsActive = true;
+  }
+
+  closeModal() {
+    this.locationModalIsActive = false;
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    if (event.key === 'Escape') {
+      this.resetCity();
+    }
+  }
+
   findCity() {
     this.isLookingForLocation = true;
     this.locations.splice(0, this.locations.length);
@@ -127,10 +144,11 @@ export class FiltersComponent implements OnInit {
     .subscribe((data: getCityData) => {
       for (let item of data.content) {
         this.locations.push(item);
-        this.locationTagValues.push(item.city + " (" + item.postal_code + ") ?")
+        this.locationTagValues.push(item.city + " (" + item.postal_code + ")")
       }
       this.locationMessage.setValue("");
       this.locationSearchSuccess['status'] = true;
+      this.triggerModal();
     })
   }
 
@@ -141,15 +159,17 @@ export class FiltersComponent implements OnInit {
     if (locationControl) {
       locationControl.setValue("");
     }
+    this.closeModal();
   }
 
   confirmLocationValue(index: number) {
     const locationControl = this.filterForm.get('location');
     if (locationControl) {
-      locationControl.setValue(this.locationTagValues[index].slice(0, -2));
+      locationControl.setValue(this.locationTagValues[index]);
     }
     this.locationMessage.setValue("");
     this.isLookingForLocation = false;
+    this.closeModal();
     this.selectedLocation = this.locations[index];
     this.locationTagValues.splice(0, this.locationTagValues.length);
     this.locationIsValidated = true;
