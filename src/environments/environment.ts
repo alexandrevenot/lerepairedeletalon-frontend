@@ -109,7 +109,8 @@ export const statusMapping: Record<string,string> = {
   buyersigned: "Contrat signé par l'acheteur",
   sellersigned: "Contrat signé par les deux parties",
   downpaid: "Acompte payé par l'acheteur",
-  fullypaid: "Solde payé par l'acheteur"
+  fullypaid: "Solde payé par l'acheteur",
+  denied: "Refusée"
 }
 
 export const statusCommentaryMapping: Record<string,string> = {
@@ -119,7 +120,8 @@ export const statusCommentaryMapping: Record<string,string> = {
   buyersigned: "en attente de signature côté vendeur",
   sellersigned: "en attente de paiement",
   downpaid: "saillie engagée",
-  fullypaid: "saillie terminée"
+  fullypaid: "saillie terminée",
+  denied: "ne peut pas être signée"
 }
 
 export const statusHelper: Record<string,string> = {
@@ -129,7 +131,8 @@ export const statusHelper: Record<string,string> = {
   buyersigned: "is-warning",
   sellersigned: "is-success",
   downpaid: "is-success",
-  fullypaid: "is-success"
+  fullypaid: "is-success",
+  denied: "is-danger"
 }
 
 export const photosMaxSizeInBytes: number = 4 * 1024 * 1024; // 4 Mo
@@ -164,6 +167,13 @@ export const balancePaymentConditions: Record<string, string> = {
   "covered_1_10": "La jument est gestante au premier octobre de l'année en cours",
   "living_foal": "La jument obtient de la saillie un poulain vivant",
   "living_foal_48": "La jument obtient de la saillie un poulain, et il atteint les 48 heures en vie"
+}
+
+export const shortBalancePaymentConditions: Record<string, string> = {
+  "covered": "Jument gestante",
+  "covered_1_10": "Jument gestante au 01/10",
+  "living_foal": "Poulain vivant",
+  "living_foal_48": "Poulain vivant à 48h"
 }
 
 export const stds: Record<string, string> = {
