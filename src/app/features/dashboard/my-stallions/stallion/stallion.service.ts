@@ -289,7 +289,7 @@ export class StallionService {
 
   fetchStallionProfile(stallionId: string) {
     const params = new HttpParams()
-    .set('mode', 'complete');
+    .set('mode', 'for_edition');
 
     return this.http.get(
       `http://localhost:3001/stallions/stallion/${stallionId}`,

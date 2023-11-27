@@ -1,7 +1,7 @@
 <div class="tile is-ancestor is-11" *ngFor="let row of getNumberArrayF(items.length/4)">
     <div class="tile is-parent" *ngFor="let col of [0,1,2,3]">
         <article class="tile is-child card is-shadowless" [ngClass]="!items[row*4+col] ? 'is-invisible' : ''">
-            <app-stallion-panel-item [item]="items[row*4+col]? items[row*4+col] : this.emptyItem" (clickedEvent)="handleClickOnProfile(items[row*4+col].id)"></app-stallion-panel-item>
+            <app-stallion-panel-item [item]="items[row*4+col]? items[row*4+col] : this.emptyItem"></app-stallion-panel-item>
         </article>
     </div>
 </div>

@@ -12,7 +12,7 @@ export interface CoverSpecs {
     iac: IACSpecs | null;
 }
 
-export interface stallionProfile {
+export interface StallionProfile {
     owner: string;
     name: string;
     breed: string;
@@ -50,9 +50,9 @@ export class StallionProfileService {
     
     getStallionProfile(stallionId: string) {
         const params = new HttpParams()
-        .set('mode', 'partial');
+        .set('mode', 'profile');
 
-        return this.http.get<stallionProfile>(
+        return this.http.get<StallionProfile>(
             `http://localhost:3001/stallions/stallion/${stallionId}`,
             {params}
         ).pipe(

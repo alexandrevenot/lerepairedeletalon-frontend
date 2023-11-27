@@ -2,8 +2,9 @@
     <figure class="image is-4by3">
       <img [src]="item.photo" style="object-fit: cover; width: 100%; height: 100%;">
     </figure>
-    <span class="icon is-small">
-        <i class="far fa-heart fa-xl" style="color: #ffffff;"></i>
+    <span class="icon is-small" (click)="updateFavorite($event)">
+        <i class="fa-heart fa-xl" [ngClass]="item.id && favoriteStallions.includes(item.id)? 'fas': 'far'"
+          [style]="item.id && favoriteStallions.includes(item.id)? 'color: #DC143C;': 'color: #ffffff;'"></i>
       </span>
 </div>
 <div class="card-content px-0">

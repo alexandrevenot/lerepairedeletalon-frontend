@@ -8,7 +8,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './features/authentication/login/login.component';
 import { httpInterceptorProviders } from './core/http-interceptors/index';
-import { AuthService } from './core/auth/auth.service';
 import { NavbarComponent } from './layout/navbar/navbar.component';
 import { StallionComponent } from './features/dashboard/my-stallions/stallion/stallion.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
@@ -24,6 +23,8 @@ import { CoverBoxComponent } from './features/dashboard/my-covers/cover-box/cove
 import { CoverPageComponent } from './features/dashboard/my-covers/cover-page/cover-page.component';
 import { ProfileInformationComponent } from './features/dashboard/parameters/profile-information/profile-information.component';
 import { CoverPageActionComponent } from './features/dashboard/my-covers/cover-page/cover-page-action/cover-page-action.component';
+import { FavoriteStallionsComponent } from './features/dashboard/favorite-stallions/favorite-stallions.component';
+import { FavoriteStallionBoxComponent } from './features/dashboard/favorite-stallions/favorite-stallion-box/favorite-stallion-box.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,9 @@ import { CoverPageActionComponent } from './features/dashboard/my-covers/cover-p
     CoverBoxComponent,
     CoverPageComponent,
     ProfileInformationComponent,
-    CoverPageActionComponent
+    CoverPageActionComponent,
+    FavoriteStallionsComponent,
+    FavoriteStallionBoxComponent
   ],
   imports: [
     BrowserModule,
@@ -53,8 +56,7 @@ import { CoverPageActionComponent } from './features/dashboard/my-covers/cover-p
     HttpClientModule
   ],
   providers: [
-    httpInterceptorProviders,
-    AuthService
+    httpInterceptorProviders
   ],
   bootstrap: [AppComponent]
 })
