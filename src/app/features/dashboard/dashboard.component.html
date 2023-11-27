@@ -16,7 +16,7 @@
                             <li><a [ngClass]="isHighlighted('denied', 'buyer')? 'is-active' : ''" (click)="onClick('denied', 'MyCoversComponent', 'buyer')">Refusées</a></li>
                         </ul>
                     </li>
-                    <li><a>Mes favoris</a></li>
+                    <li><a [ngClass]="isHighlighted('FavoriteStallionsComponent', 'buyer')? 'is-active' : ''" (click)="onClick('FavoriteStallionsComponent', null, 'buyer')">Mes étalons favoris</a></li>
                     <li><a>Mes avis donnés</a></li>
                 </ul>
                 <p class="menu-label">
@@ -82,6 +82,10 @@
 
             <ng-container *ngSwitchCase="'ProfileInformationComponent'">
                 <app-profile-information></app-profile-information>
+            </ng-container>
+
+            <ng-container *ngSwitchCase="'FavoriteStallionsComponent'">
+                <app-favorite-stallions></app-favorite-stallions>
             </ng-container>
         </div>
     </div>

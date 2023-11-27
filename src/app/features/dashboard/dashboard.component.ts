@@ -29,7 +29,8 @@ export class DashboardComponent implements OnInit{
     },
     buyer: {
       MyCoversComponent: true,
-      myStallionsComponent: true
+      myStallionsComponent: true,
+      myFavorites: false
     },
     parameters: {
       ProfileInformationComponent: false
@@ -43,7 +44,7 @@ export class DashboardComponent implements OnInit{
     },
     buyer: {
       MyCoversComponent: false,
-      myStallionsComponent: false
+      myStallionsComponent: false,
     }
   };
   

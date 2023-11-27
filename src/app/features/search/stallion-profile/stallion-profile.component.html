@@ -12,11 +12,11 @@
 
                 <div class="column has-text-right">
                     <div class="is-flex is-align-items-center is-justify-content-flex-end">
-                        <button class="button is-rounded">
-                            <span>Ajouter aux favoris</span>
+                        <button class="button is-rounded" (click)="updateFavorite()">
                             <span class="icon is-small">
-                              <i class="far fa-heart" style="color: #DC143C"></i>
-                            </span>
+                                <i class="fa-heart" [ngClass]="itemId && favoriteStallions.includes(itemId)? 'fas': 'far'" style="color: #DC143C"></i>
+                              </span>
+                            <span>{{itemId && favoriteStallions.includes(itemId)? 'Retirer des favoris': 'Ajouter aux favoris'}}</span>
                         </button>
                         <div class="has-text-weight-bold ml-3">
                             -
@@ -374,7 +374,7 @@
                 <div class="column">
                     <div class="field">
                     <div class="control">
-                      <button class="button is-primary" [ngClass]="buttonIsLoading['status']? 'is-loading' : ''" (click)="sendDemandClick()">
+                      <button class="button is-primary" [ngClass]="buttonIsLoading['status']? 'is-loading' : ''" (click)="checkFieldsAndOpenModal()">
                         Envoyer la demande de saillie
                       </button>
                     </div>
@@ -388,3 +388,23 @@
         </form>
     </div>
 </section>
+
+<div class="modal" [ngClass]="formModalIsActive? 'is-active': ''">
+    <div class="modal-background" (click)="closeModal()"></div>
+    <div class="modal-content">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Êtes vous sûr des informations que vous avez rentrées?</p>
+            <button class="delete" aria-label="close" (click)="closeModal()"></button>
+        </header>
+        <section class="modal-card-body">
+            <p>Le nom de la jument, son numéro SIRE ainsi que ses origines apparaîtront dans le contrat tels que vous les avez rentrés.</p>
+            <p>Vérifiez bien leur orthographe, ils ne seront plus modifiables par la suite, ou bien il faudra refaire une demande de saillie.</p>
+        </section>
+        <footer class="modal-card-foot is-justify-content-center">
+            <div class="buttons">
+                <a class="button is-success" (click)="sendDemandClick()">Envoyer la demande</a>
+                <a class="button" (click)="closeModal()">Annuler</a>
+            </div>
+        </footer>
+    </div>
+</div>

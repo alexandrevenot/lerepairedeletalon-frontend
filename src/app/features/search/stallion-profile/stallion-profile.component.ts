@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
-import { StallionProfileService, stallionProfile } from './stallion-profile.service'
+import { StallionProfileService, StallionProfile } from './stallion-profile.service'
 import { getNumberArray, availableCoverTypes, getAvailableBreeds, coverPlaceNames, balancePaymentConditions, stds, vaccines, hostingTypes } from '../../../../environments/environment'
 import { ActivatedRoute } from '@angular/router';
 import { PricingService, checkoutResponse } from 'src/environments/pricing';
 import { PhotosService } from 'src/environments/photos';
+import { FavoriteStallionsService, FavoriteStallions } from '../../dashboard/favorite-stallions/favorite-stallions.service';
 
 @Component({
   selector: 'app-stallion-profile',
@@ -75,14 +76,19 @@ export class StallionProfileComponent implements OnInit{
   public formNotValid: boolean = false;
   public sendFormMessage!: FormControl;
   public backendErrorStatus: Record<string, boolean> = {'status': false}
-  public buttonIsLoading:  Record<string, boolean> = {'status': false}
+  public buttonIsLoading: Record<string, boolean> = {'status': false}
+  public formModalIsActive: boolean = false;
+
+  // favorite stallions
+  public favoriteStallions: Array<string> = [];
 
   constructor(
     private stallionProfileService: StallionProfileService,
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
     private pricingService: PricingService,
-    private photosService: PhotosService
+    private photosService: PhotosService,
+    private favoriteStallionsService: FavoriteStallionsService
   ) {}
 
   ngOnInit() {
@@ -124,7 +130,7 @@ export class StallionProfileComponent implements OnInit{
 
     if (typeof this.itemId === "string"){
       this.stallionProfileService.getStallionProfile(this.itemId)
-      .subscribe((content: stallionProfile) => {
+      .subscribe((content: StallionProfile) => {
         this.owner = content.owner;
         this.name = content.name;
         this.breed = content.breed;
@@ -178,8 +184,29 @@ export class StallionProfileComponent implements OnInit{
         }
       })
     }
+
+    this.loadFavoriteStallions();
   }
   
+  loadFavoriteStallions() {
+    this.favoriteStallionsService.getFavorites()
+    .subscribe((data: FavoriteStallions) => {
+      this.favoriteStallions = data.favorite_stallions;
+    })
+  }
+
+  updateFavorite() {
+    if (this.itemId) {
+      if (this.favoriteStallions.includes(this.itemId)) {
+        this.favoriteStallionsService.removeFromFavorites(this.itemId)
+        .subscribe(() => this.loadFavoriteStallions());
+      } else {
+        this.favoriteStallionsService.addToFavorites(this.itemId)
+        .subscribe(() => this.loadFavoriteStallions());
+      }
+    }
+  }
+
   getNonNullKeys(obj: any) {
     let toReturn = [];
     for (let [key, value] of Object.entries(obj)) {
@@ -204,8 +231,22 @@ export class StallionProfileComponent implements OnInit{
     }
   }
 
-  sendDemandClick() {
-    console.log(this.askForMatingForm.getRawValue())
+  triggerModal() {
+    this.formModalIsActive = true;
+  }
+
+  closeModal() {
+    this.formModalIsActive = false;
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    if (event.key === 'Escape') {
+      this.closeModal();
+    }
+  }
+
+  checkFieldsAndOpenModal() {
     if (!this.askForMatingForm.valid || (['iart', 'iac'].includes(this.selectedCoverTypeValue) && this.askForMatingForm.get('providedCoverPlace')?.getRawValue() == '')) {
       this.formNotValid = true;
       this.sendFormMessage.setValue("Remplissez s'il vous plaît tous les champs du formulaire de demande.");
@@ -214,6 +255,11 @@ export class StallionProfileComponent implements OnInit{
       this.formNotValid = false;
     }
 
+    this.triggerModal();
+  }
+
+  sendDemandClick() {
+    this.closeModal();
     this.buttonIsLoading['status'] = true;
     this.stallionProfileService.sendDemandToVendor(
       this.askForMatingForm.getRawValue(),

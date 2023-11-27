@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css'],
   providers: [
-    AuthService
+    
   ]
 })
 export class NavbarComponent implements OnInit {

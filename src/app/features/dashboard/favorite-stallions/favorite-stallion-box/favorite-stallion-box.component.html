@@ -1,0 +1,32 @@
+<div class="columns is-vcentered">
+    <div class="column">
+        <h4 class="title is-4">{{ name }}</h4>
+        <div class="modal py-4">
+        </div>
+        <h5 class="subtitle is-5 has-text-grey-light">{{ breed }}</h5>
+    </div>
+    <div class="column">
+        <figure class="image is-16by9">
+            <img [src]="profilePicture" style="border-radius: 15px;" alt="Image">
+            </figure>                        
+    </div>
+    <div class="column">
+        <div class="py-2">
+            <button class="button is-rounded" (click)="updateFavorite()">
+                <span class="icon is-small">
+                    <i class="fa-heart" [ngClass]="isFavorite? 'fas': 'far'" style="color: #DC143C"></i>
+                  </span>
+                <span>{{isFavorite? 'Retirer des favoris': 'Ajouter aux favoris'}}</span>
+            </button>
+        </div>
+        <div class="py-2">
+            <button class="button is-rounded" (click)="goToStallionProfile()">
+                <span class="icon">
+                    <i class="fas fa-eye"></i>
+                  </span>
+                <span>Consulter le profil</span>
+            </button>
+        </div>
+    </div>
+</div>
+<p class="help is-danger" *ngIf="profileNotVisibleErrorIsDisplayed">Le profil de cet étalon n'est pas consultable.</p>

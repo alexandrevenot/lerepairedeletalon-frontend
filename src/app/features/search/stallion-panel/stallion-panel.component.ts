@@ -36,7 +36,6 @@ export class StallionPanelComponent implements OnInit, OnChanges {
     coverTypes: {}
   };
   @Output() loadingEndingEvent = new EventEmitter();
-  @Output() clickedOnProfileEvent = new EventEmitter();
 
   constructor(
     private stallionPanelService: StallionPanelService,
@@ -125,8 +124,5 @@ export class StallionPanelComponent implements OnInit, OnChanges {
       this.isLoading = false;
       this.loadingEndingEvent.emit();
     })
-  }
-  handleClickOnProfile(itemId: string) {
-    this.clickedOnProfileEvent.emit(itemId);
   }
 }

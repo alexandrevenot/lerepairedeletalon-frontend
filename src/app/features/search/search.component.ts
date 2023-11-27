@@ -30,9 +30,4 @@ export class SearchComponent {
   handleLoadingEnding(){
     this.filtersAreLoading = false;
   }
-
-  handleClickOnProfile(itemId: string) {
-    const url = `/stallion-profile?id=${itemId}`;
-    window.open(url, '_blank');
-  }
 }
