@@ -17,7 +17,6 @@
                         </ul>
                     </li>
                     <li><a [ngClass]="isHighlighted('FavoriteStallionsComponent', 'buyer')? 'is-active' : ''" (click)="onClick('FavoriteStallionsComponent', null, 'buyer')">Mes étalons favoris</a></li>
-                    <li><a>Mes avis donnés</a></li>
                 </ul>
                 <p class="menu-label">
                     Vente
@@ -41,11 +40,10 @@
                     </li>
                 </ul>
                 <p class="menu-label">
-                    Paramètres
+                    Administratif
                 </p>
                 <ul class="menu-list">
-                    <li><a [ngClass]="isHighlighted('ProfileInformationComponent', 'parameters')? 'is-active' : ''" (click)="onClick('ProfileInformationComponent', null, 'parameters')">Informations du profil</a></li>
-                    <li><a>RIB</a></li>
+                    <li><a [ngClass]="isHighlighted('MyAccountComponent', 'admin')? 'is-active' : ''" (click)="onClick('MyAccountComponent', null, 'admin')">Mon compte</a></li>
                 </ul>
             </aside>
         </section>
@@ -80,12 +78,12 @@
                 <app-cover-page-action [coverId]="selectedCoverId" [coverActionType]="selectedCoverActionType"></app-cover-page-action>
             </ng-container>
 
-            <ng-container *ngSwitchCase="'ProfileInformationComponent'">
-                <app-profile-information></app-profile-information>
-            </ng-container>
-
             <ng-container *ngSwitchCase="'FavoriteStallionsComponent'">
                 <app-favorite-stallions></app-favorite-stallions>
+            </ng-container>
+
+            <ng-container *ngSwitchCase="'MyAccountComponent'">
+                <app-my-account></app-my-account>
             </ng-container>
         </div>
     </div>

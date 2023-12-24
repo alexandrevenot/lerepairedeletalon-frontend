@@ -1,0 +1,322 @@
+<h3 class="subtitle is-3 has-text-weight-semibold">Mon compte</h3>
+
+<section class="section">
+  <div class="container">
+    <form [formGroup]="accountInformationForm"  class="box">
+      <h4 class="subtitle is-4 has-text-weight-bold pb-4 has-text-centered">Identité, mot de passe et coordonnées</h4>
+
+      <div class="columns">
+        <div class="column">
+          <label class="label has-text-weight-semibold has-text-grey-light">Prénom</label>
+          <div class="control">
+            <input class="input" type="text" formControlName="firstname" readonly>
+          </div>
+        </div>
+        <div class="column">
+          <label class="label has-text-weight-semibold has-text-grey-light">Nom</label>
+          <div class="control">
+            <input class="input" type="text" formControlName="lastname" readonly>
+          </div>
+        </div>
+      </div>
+
+      <div class="columns">
+        <div class="column">
+          <label class="label has-text-weight-semibold has-text-grey-light">Adresse mail</label>
+          <div class="control">
+            <input class="input" type="text" formControlName="email" readonly>
+          </div>
+        </div>
+        <div class="column">
+          <label class="label has-text-weight-semibold has-text-grey-light">Numéro de téléphone</label>
+          <div class="control">
+            <input class="input" type="text" formControlName="phoneNumber" readonly>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <label class="label has-text-weight-semibold has-text-grey-light">Mot de passe</label>
+        <div class="field is-grouped">
+          <p class="control is-expanded">
+            <input class="input" type="text" value="**********" readonly>
+          </p>
+          <p class="control">
+            <button class="button is-primary" [ngClass]="passwordChangeStatus['status'] == 'Loading'? 'is-loading': ''" (click)="sendPasswordUpdateEmail()">
+              <span class="icon is-small">
+                <i class="fas fa-pencil"></i>
+              </span>
+              <span>Changer de mot de passe</span>
+            </button>
+          </p>
+        </div>
+        <label class="label has-text-weight-semibold has-text-success" *ngIf="passwordChangeStatus['status'] == 'Success'">
+          Un lien permettant de changer votre mot de passe a été envoyé à votre adresse mail.
+        </label>
+      </div>
+
+    </form>
+
+    <form [formGroup]="contractualIdentityForm" class="box">
+      <h4 class="subtitle is-4 has-text-weight-bold pb-4 has-text-centered">Complément d'identité pour les contrats</h4>
+      <div class="columns is-align-items-center">
+        <div class="column is-2 has-text-right">
+          <label class="label">Je suis un</label>
+        </div>
+
+        <div class="column">
+          <div class="field">
+            <div class="control">
+              <label class="radio has-text-weight-semibold">
+                <input type="radio" value="company" formControlName="companyOrIndividualRadio">
+                Professionel
+              </label>
+
+              <label class="radio has-text-weight-semibold">
+                <input type="radio" value="individual" formControlName="companyOrIndividualRadio">
+                Particulier
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="selectedProfileType == 'company'">
+        <div class="columns is-align-items-end">
+          <div class="column is-2 has-text-right">
+            <label class="label pb-4">Mon entreprise</label>
+          </div>
+
+          <div class="column">
+            <label class="label has-text-grey-light has-text-weight-semibold">Nom</label>
+            <div class="field">
+              <p class="control is-expanded">
+                <input class="input" type="text" placeholder="Élevage de ..." formControlName="companyName"
+                  [readonly]="!contractualIdentityFormIsBeingModified && userHasAContractualIdentity">
+              </p>
+            </div>
+          </div>
+
+          <div class="column">
+            <label class="label has-text-grey-light has-text-weight-semibold">Forme juridique</label>
+            <div class="field">
+              <p class="control is-expanded">
+                <input class="input" type="text" placeholder="SARL" formControlName="companyStatus"
+                  [readonly]="!contractualIdentityFormIsBeingModified && userHasAContractualIdentity">
+              </p>
+            </div>
+          </div>
+
+          <div class="column">
+            <label class="label has-text-grey-light has-text-weight-semibold">Capital</label>
+            <div class="field has-addons">
+              <p class="control is-expanded">
+                <input class="input" type="text" placeholder="10000" formControlName="capital"
+                  [readonly]="!contractualIdentityFormIsBeingModified && userHasAContractualIdentity">
+              </p>
+              <p class="control">
+                <a class="button is-static">
+                  €
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="columns is-align-items-center">
+          <div class="column is-2 has-text-right">
+            <label class="label"></label>
+          </div>
+
+          <div class="column">
+            <label class="label has-text-grey-light has-text-weight-semibold">Siège social</label>
+            <div class="field">
+              <p class="control is-expanded">
+                <input class="input" type="text" placeholder="5 allée des Platanes"
+                  formControlName="headOfficeAddress"
+                  [readonly]="!contractualIdentityFormIsBeingModified && userHasAContractualIdentity">
+              </p>
+            </div>
+          </div>
+
+          <div class="column">
+            <label class="label has-text-grey-light has-text-weight-semibold">SIRET</label>
+            <div class="field">
+              <p class="control is-expanded">
+                <input class="input" type="text" placeholder="12345678900012" formControlName="siret"
+                  [readonly]="!contractualIdentityFormIsBeingModified && userHasAContractualIdentity">
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="columns is-align-items-end">
+        <div class="column is-2 has-text-right">
+          <label class="label pb-4">Mes informations</label>
+        </div>
+
+        <div class="column">
+          <label class="label has-text-grey-light has-text-weight-semibold">Sexe</label>
+          <div class="field">
+            <div class="control is-expanded">
+              <div class="select is-fullwidth">
+                <select formControlName="gender">
+                  <option>Sexe</option>
+                  <option *ngFor="let gender of ['Monsieur', 'Madame']">{{gender}}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="column">
+          <label class="label has-text-grey-light has-text-weight-semibold">Date de naissance</label>
+          <div class="field">
+            <p class="control is-expanded">
+              <input class="input" type="text" placeholder="01/01/2000" formControlName="birthdate"
+                [readonly]="!contractualIdentityFormIsBeingModified && userHasAContractualIdentity">
+            </p>
+          </div>
+        </div>
+
+        <div class="column">
+          <label class="label has-text-grey-light has-text-weight-semibold">Lieu de naissance</label>
+          <div class="field">
+            <p class="control is-expanded">
+              <input class="input" type="text" placeholder="Toulouse" formControlName="birthplace"
+                [readonly]="!contractualIdentityFormIsBeingModified && userHasAContractualIdentity">
+            </p>
+          </div>
+        </div>
+
+        <div class="column">
+          <label class="label has-text-grey-light has-text-weight-semibold">Nationalité</label>
+          <div class="field">
+            <p class="control is-expanded">
+              <input class="input" type="text" placeholder="Française" formControlName="citizenship"
+                [readonly]="!contractualIdentityFormIsBeingModified && userHasAContractualIdentity">
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="columns is-align-items-center">
+        <div class="column is-2 has-text-right">
+          <label class="label"></label>
+        </div>
+
+        <div class="column">
+          <label class="label has-text-grey-light has-text-weight-semibold">Adresse postale complète</label>
+          <div class="field">
+            <p class="control is-expanded">
+              <textarea class="textarea" type="text" placeholder="7 rue des Alouettes 31000 Toulouse"
+                formControlName="postalAddress" rows="2"
+                [readonly]="!contractualIdentityFormIsBeingModified && userHasAContractualIdentity"></textarea>
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+
+
+      <div class="columns is-align-items-center">
+        <div class="column is-2 has-text-right">
+
+        </div>
+
+        <div class="column">
+
+          <p class="help pb-3" [ngClass]="!contractualIdentityFormHelperIsTriggered['status'] ? 'has-text-success' : 'has-text-danger'">{{
+            updateFormMessage.value }}</p>
+
+          <div class="control">
+            <button class="button is-primary is-outlined"
+              *ngIf="!contractualIdentityFormIsBeingModified && userHasAContractualIdentity" (click)="askForContractualIdentityFormEdit()">
+              <span class="icon">
+                <i class="fas fa-pen-to-square"></i>
+              </span>
+              <span>Éditer cette section</span>
+            </button>
+          </div>
+
+          <div class="field is-grouped py-2">
+            <p class="control">
+              <button class="button is-primary" (click)="saveContractualIdentity()"
+                *ngIf="contractualIdentityFormIsBeingModified || !userHasAContractualIdentity">
+                <span class="icon">
+                  <i class="fas fa-check"></i>
+                </span>
+                <span>{{userHasAContractualIdentity? 'Enregistrer les changements' : 'Enregistrer les
+                  informations du profil'}}</span>
+              </button>
+            </p>
+            <p class="control">
+              <button class="button is-danger is-outlined" (click)="cancelContractualIdentityFormEdition()" *ngIf="contractualIdentityFormIsBeingModified">
+                <span class="icon">
+                  <i class="fas fa-xmark"></i>
+                </span>
+                <span>Annuler</span>
+              </button>
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </form>
+
+    <div class="box">
+      <h4 class="subtitle is-4 has-text-weight-bold pb-4 has-text-centered">Évaluations</h4>
+      <div class="tile is-ancestor">
+        <div class="tile">
+          <div class="tile is-parent is-vertical is-8">
+            <article class="tile is-child notification is-clickable" style="color: #ffffff; background-color: #3B7C35;"
+            (click)="handleClickReviews('received', 'buyer')">
+              <div class="columns">
+                <div class="column">
+                  <p class="title">Reçues</p>
+                  <p class="subtitle">en tant qu'acheteur</p>
+                </div>
+                <div class="column has-text-right">
+                  <span class="tag is-large is-rounded has-text-weight-semibold py-2">{{buyerScore? buyerScore: "-"}}/5</span>
+                  <p class="subtitle pt-2">{{nbReviewsAsBuyer > 0? nbReviewsAsBuyer: 'Aucune'}} évaluation{{nbReviewsAsBuyer >= 2? "s": ""}}</p>
+                </div>
+              </div>
+            </article>
+            <article class="tile is-child notification is-clickable" style="color: #ffffff; background-color: #3B7C35;"
+            (click)="handleClickReviews('received', 'seller')">
+              <div class="columns">
+                <div class="column">
+                  <p class="title">Reçues</p>
+                  <p class="subtitle">en tant que vendeur</p>
+                </div>
+                <div class="column has-text-right">
+                  <span class="tag is-large is-rounded has-text-weight-semibold py-2">{{sellerScore? sellerScore: "-"}}/5</span>
+                  <p class="subtitle pt-2">{{nbReviewsAsSeller > 0? nbReviewsAsSeller: 'Aucune'}} évaluation{{nbReviewsAsSeller >= 2? "s": ""}}</p>
+                </div>
+              </div>
+            </article>
+          </div>
+          <div class="tile is-parent is-vertical">
+            <article class="tile is-child notification is-clickable" style="color: #ffffff; background-color: #7c5135;"
+            (click)="handleClickReviews('given', 'buyer')">
+              <p class="title">Données</p>
+              <p class="subtitle">en tant qu'acheteur</p>
+            </article>
+            <article class="tile is-child notification is-clickable" style="color: #ffffff; background-color: #7c5135;"
+            (click)="handleClickReviews('given', 'seller')">
+              <p class="title">Données</p>
+              <p class="subtitle">en tant que vendeur</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <form class="box">
+      <h4 class="subtitle is-4 has-text-weight-bold pb-4 has-text-centered">Versements</h4>
+    </form>
+  </div>
+</section>

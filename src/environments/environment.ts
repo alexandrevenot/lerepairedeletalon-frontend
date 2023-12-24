@@ -203,3 +203,11 @@ export const profileStatuses: Record<string, string> = {
   "hidden": "Invisible",
   "to_be_validated": "En attente de validation"
 }
+
+export enum backendInteractionStatus {
+  Init = "",
+  UserError = "UserError",
+  Loading = "Loading",
+  BackendError = "BackendError",
+  Success = "Success"
+}

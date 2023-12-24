@@ -21,10 +21,12 @@ import { StallionProfileComponent } from './features/search/stallion-profile/sta
 import { MyCoversComponent } from './features/dashboard/my-covers/my-covers.component';
 import { CoverBoxComponent } from './features/dashboard/my-covers/cover-box/cover-box.component';
 import { CoverPageComponent } from './features/dashboard/my-covers/cover-page/cover-page.component';
-import { ProfileInformationComponent } from './features/dashboard/parameters/profile-information/profile-information.component';
 import { CoverPageActionComponent } from './features/dashboard/my-covers/cover-page/cover-page-action/cover-page-action.component';
 import { FavoriteStallionsComponent } from './features/dashboard/favorite-stallions/favorite-stallions.component';
 import { FavoriteStallionBoxComponent } from './features/dashboard/favorite-stallions/favorite-stallion-box/favorite-stallion-box.component';
+import { MyAccountComponent } from './features/dashboard/my-account/my-account.component';
+import { ReviewsComponent } from './features/dashboard/reviews/reviews.component';
+import { PasswordUpdateComponent } from './features/mail-links/password-update/password-update.component';
 
 @NgModule({
   declarations: [
@@ -44,10 +46,12 @@ import { FavoriteStallionBoxComponent } from './features/dashboard/favorite-stal
     MyCoversComponent,
     CoverBoxComponent,
     CoverPageComponent,
-    ProfileInformationComponent,
     CoverPageActionComponent,
     FavoriteStallionsComponent,
-    FavoriteStallionBoxComponent
+    FavoriteStallionBoxComponent,
+    MyAccountComponent,
+    ReviewsComponent,
+    PasswordUpdateComponent
   ],
   imports: [
     BrowserModule,

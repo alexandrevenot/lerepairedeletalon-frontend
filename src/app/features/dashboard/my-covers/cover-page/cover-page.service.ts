@@ -13,7 +13,9 @@ export interface GetCoverInfo {
     mare_name: string;
     mare_breed: string;
     mare_nsire: string;
-    contact_name: string;
+    contact_id: string;
+    contact_firstname: string;
+    contact_lastname: string;
     contact_phone_number: string;
     contact_email: string;
     cover_type: string;
@@ -26,6 +28,8 @@ export interface GetCoverInfo {
     buyer_message: string;
     timestamps: Array<Record<string, string>>;
     notes: string;
+    reviewed_by_buyer: boolean;
+    reviewed_by_seller: boolean;
     pov: string;
 }
 
@@ -94,6 +98,28 @@ export class CoverPageService {
                 failed["value"] = true;
                 display["value"] = true;
                 return this.handleError(error);
+            })
+        )
+    }
+
+    postReview(
+        userId: string,
+        coverId: string,
+        score: number,
+        content: string,
+        reviewStatus: Record<string, string>
+    ) {
+        return this.http.post(
+            `http://localhost:3001/users/reviews/${userId}`,
+            {
+                cover_id: coverId,
+                score: score,
+                content: content
+            }
+        ).pipe(
+            catchError(() => {
+                reviewStatus['status'] = "backendError";
+                return throwError(() => new Error());
             })
         )
     }
