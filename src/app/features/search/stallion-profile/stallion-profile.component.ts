@@ -6,6 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { PricingService, checkoutResponse } from 'src/environments/pricing';
 import { PhotosService } from 'src/environments/photos';
 import { FavoriteStallionsService, FavoriteStallions } from '../../dashboard/favorite-stallions/favorite-stallions.service';
+import { UserScore, UserScoreService } from 'src/app/core/user-score/user-score.service';
 
 @Component({
   selector: 'app-stallion-profile',
@@ -31,6 +32,7 @@ export class StallionProfileComponent implements OnInit{
   public hostingTypes = hostingTypes;
 
   // raw data
+  public ownerName: string = "";
   public name: string = "";
   public breed: string = "";
   public nSire: string = "";
@@ -63,6 +65,9 @@ export class StallionProfileComponent implements OnInit{
   public hasPedigree: boolean = false;
   public stallionSTDNegativeTests: Array<string> = [];
   public stallionSTDNegativeTestsTD: Record<string, string> = {};
+  public score: number = 0;
+  public nbReviewsAsSeller: number = 0;
+  public ownerHasOtherReviews: boolean = false;
 
   // form data
   public askForMatingForm!: FormGroup;
@@ -88,7 +93,8 @@ export class StallionProfileComponent implements OnInit{
     private formBuilder: FormBuilder,
     private pricingService: PricingService,
     private photosService: PhotosService,
-    private favoriteStallionsService: FavoriteStallionsService
+    private favoriteStallionsService: FavoriteStallionsService,
+    private userScoreService: UserScoreService
   ) {}
 
   ngOnInit() {
@@ -182,6 +188,26 @@ export class StallionProfileComponent implements OnInit{
             reader.readAsDataURL(response);
           })
         }
+
+        this.userScoreService.getUserScore(
+          this.owner,
+          this.nSire,
+          "seller"
+        ).subscribe((userScore: UserScore) => {
+          this.ownerName = userScore.firstname + " " + userScore.lastname.toUpperCase();
+  
+          if (userScore.nb_reviews) {
+            this.nbReviewsAsSeller = userScore.nb_reviews;
+          }
+  
+          if (userScore.score) {
+            this.score = userScore.score;
+          }
+  
+          if (userScore.owner_has_other_reviews) {
+            this.ownerHasOtherReviews = true;
+          }
+        })
       })
     }
 
@@ -229,6 +255,16 @@ export class StallionProfileComponent implements OnInit{
     } else {
       return 0
     }
+  }
+
+  openReviewsForStallion() {
+    const url = `/user-reviews?id=${this.owner}&reviewPov=received&coverPov=seller&stallionNSIRE=${this.nSire}`;
+    window.open(url, '_blank');
+  }
+
+  openAllReviews() {
+    const url = `/user-reviews?id=${this.owner}&reviewPov=received&coverPov=seller`;
+    window.open(url, '_blank');
   }
 
   triggerModal() {

@@ -1,8 +1,10 @@
 import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { CoverPageService, GetCoverInfo } from './cover-page.service';
 import { availableCoverTypes, coverPlaceNames, statusCommentaryMapping, statusHelper,
-  statusMapping, vaccines, shortBalancePaymentConditions, stds, hostingTypes } from 'src/environments/environment';
-import { Form, FormControl } from '@angular/forms';
+  statusMapping, vaccines, shortBalancePaymentConditions, stds, hostingTypes, getNumberArray } from 'src/environments/environment';
+import { FormControl } from '@angular/forms';
+import { UserScore, UserScoreService } from 'src/app/core/user-score/user-score.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-cover-page',
@@ -14,6 +16,8 @@ export class CoverPageComponent implements OnInit{
   @Input() coverId: string = "";
 
   @Output() goToCoverPageActionEvent = new EventEmitter();
+
+  public getNumberArray = getNumberArray;
 
   public availableCoverTypes = availableCoverTypes;
   public coverPlaceNames = coverPlaceNames;
@@ -35,7 +39,9 @@ export class CoverPageComponent implements OnInit{
   public mareName: string = "";
   public mareBreed: string = "";
   public mareNSIRE: string = "";
-  public contactName: string = "";
+  public contactId: string = "";
+  public contactFirstname: string = "";
+  public contactLastname: string = "";
   public contactPhoneNumber: string = "";
   public contactEmail: string = "";
   public coverType: string = "";
@@ -56,6 +62,10 @@ export class CoverPageComponent implements OnInit{
 
   public status: string = "";
   public pov: string = "";
+  public alreadyReviewed: boolean = false;
+
+  public contactScoreString: string = "-/5";
+  public contactNbReviewsString: string = "0 évaluation";
 
   public messageTitle: Record<string, string> = {
     "seller": "Message de l'acheteur",
@@ -84,6 +94,14 @@ export class CoverPageComponent implements OnInit{
   public newBasePriceModalIsActive: boolean = false;
 
   public valueForPutCover: string | number = "";
+
+  public reviewFormControl: FormControl = new FormControl('');
+  public reviewPlaceholder: string = "";
+  public reviewSelectedScore: number = 0;
+  public reviewComment: string = "";
+  public reviewModalIsActive: boolean = false;
+  public reviewStatus: Record<string, string> = {"status": ""}; // "", "loading", "scoreError", "commentError" "backendError", "success"
+  public alreadyReviewedMessage: string = "Cette saillie a déjà été évaluée."
 
   // cover management
   public actions: Record<string, Record<string, Record<string, string>>> = {
@@ -133,7 +151,10 @@ export class CoverPageComponent implements OnInit{
     }
   }
 
-  constructor(private coverPageService: CoverPageService) {}
+  constructor(
+    private coverPageService: CoverPageService,
+    private userScoreService: UserScoreService,
+    ) {}
 
   ngOnInit(): void {
     this.loadCoverInfo();
@@ -142,7 +163,6 @@ export class CoverPageComponent implements OnInit{
   loadCoverInfo() {
     this.coverPageService.getCoverInfo(this.coverId)
     .subscribe((data: GetCoverInfo) => {
-      console.log(data);
       this.stallionName = data.stallion_name;
       this.stallionBreed = data.stallion_breed;
       this.stallionNSIRE = data.stallion_nsire;
@@ -173,7 +193,9 @@ export class CoverPageComponent implements OnInit{
       this.mareName = data.mare_name;
       this.mareBreed = data.mare_breed;
       this.mareNSIRE = data.mare_nsire;
-      this.contactName = data.contact_name;
+      this.contactId = data.contact_id;
+      this.contactFirstname = data.contact_firstname;
+      this.contactLastname = data.contact_lastname;
       this.contactPhoneNumber = data.contact_phone_number;
       this.contactEmail = data.contact_email;
       this.coverType = data.cover_type;
@@ -231,10 +253,57 @@ export class CoverPageComponent implements OnInit{
       this.status = data.status;
       this.pov = data.pov;
 
+      this.alreadyReviewed = (this.pov == "seller" && data.reviewed_by_seller) || (this.pov == "buyer" && data.reviewed_by_buyer);
+
       this.notesFormControl.setValue(data.notes);
       this.lastSavedNotesValue = data.notes;
       this.notesFormControl.value;
+
+      this.reviewPlaceholder = "Donnez votre avis sur le déroulement de cette saillie, ";
+      if (this.pov == "seller") {
+        this.reviewPlaceholder += "et sur l'acheteur.";
+      } else {
+        this.reviewPlaceholder += "sur l'étalon et sur le vendeur."
+      }
+
+      let userScoreObservable: Observable<UserScore>;
+      if (this.pov == "seller") {
+        userScoreObservable = this.userScoreService.getUserScore(
+          this.contactId,
+          null,
+          "buyer"
+        )
+      } else {
+        userScoreObservable = this.userScoreService.getUserScore(
+          this.contactId,
+          this.stallionNSIRE,
+          "seller"
+        )
+      }
+
+      userScoreObservable.subscribe((userScore: UserScore) => {
+        if (userScore.score) {
+          this.contactScoreString = userScore.score.toString() + "/5";
+        }
+        if (userScore.nb_reviews) {
+          this.contactNbReviewsString = userScore.nb_reviews.toString() + " évaluation";
+          if (userScore.nb_reviews > 1) {
+            this.contactNbReviewsString += "s";
+          }
+        }
+      })
     })
+  }
+
+  openReviews(contactPov: "buyer" | "seller") {
+    let url: string;
+    if (contactPov == "seller") {
+      url = `/user-reviews?id=${this.contactId}&reviewPov=received&coverPov=seller&stallionNSIRE=${this.stallionNSIRE}`;
+    } else {
+      url = `/user-reviews?id=${this.contactId}&reviewPov=received&coverPov=buyer`;
+    }
+
+    window.open(url, '_blank');
   }
 
   saveNewArrivalDate() {
@@ -267,7 +336,7 @@ export class CoverPageComponent implements OnInit{
 
   }
 
-  triggerModal(modalType: "arrivalDate" | "basePrice") {
+  triggerModal(modalType: "arrivalDate" | "basePrice" | "review") {
     if (modalType == "arrivalDate") {
       const value = this.newArrivalDate.getRawValue();
       if (value) {
@@ -280,7 +349,7 @@ export class CoverPageComponent implements OnInit{
         this.valueForPutCover = value
         this.newArrivalDateModalIsActive = true;
       }
-    } else {
+    } else if (modalType == "basePrice") {
       const value = this.newBasePrice.getRawValue();
       if (value) {
         const newSubtotal = parseInt(value);
@@ -292,14 +361,18 @@ export class CoverPageComponent implements OnInit{
         this.valueForPutCover = newSubtotal;
         this.newBasePriceModalIsActive = true;
       }
+    } else {
+      this.reviewModalIsActive = true;
     }
   }
 
-  closeModal(modalType: "arrivalDate" | "basePrice") {
+  closeModal(modalType: "arrivalDate" | "basePrice" | "review") {
     if (modalType == "arrivalDate") {
       this.newArrivalDateModalIsActive = false;
-    } else {
+    } else if (modalType == "basePrice") {
       this.newBasePriceModalIsActive = false;
+    } else {
+      this.reviewModalIsActive = false;
     }
   }
 
@@ -308,6 +381,7 @@ export class CoverPageComponent implements OnInit{
     if (event.key === 'Escape') {
       this.closeModal("arrivalDate");
       this.closeModal("basePrice");
+      this.closeModal("review");
     }
   }
 
@@ -327,6 +401,42 @@ export class CoverPageComponent implements OnInit{
       this.updateNotesMessage.setValue("Les notes ont bien été sauvegardées.")
       this.updateNotesSuccess['status'] = true;
       this.notesAreBeingModified = false;
+    })
+  }
+
+  updateReviewScore(value: number) {
+    this.reviewSelectedScore = value;
+  }
+
+  checkFieldsAndOpenReviewModal() {
+    if ([1, 2, 3, 4, 5].includes(this.reviewSelectedScore)) {
+      const comment = this.reviewFormControl.getRawValue();
+      if (comment) {
+        this.reviewComment = comment;
+        this.reviewStatus['status'] = "loading";
+        this.triggerModal("review");
+        return
+      } else {
+        this.reviewStatus['status'] = "commentError";
+      }
+    } else {
+      this.reviewStatus['status'] = "scoreError";
+    }
+  }
+
+  postReview() {
+    this.closeModal("review");
+    this.coverPageService.postReview(
+      this.contactId,
+      this.coverId,
+      this.reviewSelectedScore,
+      this.reviewComment,
+      this.reviewStatus
+    )
+    .subscribe(() => {
+      this.reviewStatus['status'] = "success";
+      this.alreadyReviewedMessage = "L'évaluation a bien été postée.";
+      this.alreadyReviewed = true;
     })
   }
 

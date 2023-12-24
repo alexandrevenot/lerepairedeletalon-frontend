@@ -1,9 +1,37 @@
 <section class="section">
     <div class="container">
         <div class="content py-3">
-            <h3 class="subtitle is-3 has-text-weight-bold mb-3">{{name}}</h3>
-            <h4 class="subtitle is-4 has-text-grey-light">{{breed}}</h4>
             <div class="columns">
+                <div class="column">
+                    <h3 class="subtitle is-3 has-text-weight-bold mb-3">{{name}}</h3>
+                    <h4 class="subtitle is-4 has-text-grey-light pb-0 mb-0">{{breed}}</h4>
+                </div>
+                <div class="column has-text-right">
+                    <p class="has-text-weight-semibold has-text-grey-light">Responsable: <span class="has-text-weight-semibold has-text-black">{{ownerName}}</span></p>
+                    <div class="is-flex is-align-items-center is-justify-content-flex-end">
+                        <div class="ml-3 has-text-weight-bold" *ngIf="nbReviewsAsSeller === 0">
+                            Aucune évaluation
+                        </div>
+                        <div class="ml-3 has-text-weight-bold is-underlined is-clickable" (click)="openReviewsForStallion()" *ngIf="nbReviewsAsSeller === 1">
+                            Voir l'unique évaluation
+                        </div>
+                        <div class="ml-3 has-text-weight-bold is-underlined is-clickable" (click)="openReviewsForStallion()" *ngIf="nbReviewsAsSeller >= 2">
+                            Voir {{nbReviewsAsSeller}} évaluations
+                        </div>
+                        <div class="has-text-weight-bold ml-3" *ngIf="ownerHasOtherReviews || nbReviewsAsSeller > 0">
+                            ·
+                        </div>
+                        <span class="tag is-medium is-rounded has-text-weight-semibold has-text-white ml-3" style="background-color: #3B7C35;" *ngIf="nbReviewsAsSeller > 0">
+                            {{score}}/5
+                        </span>
+                        <div class="ml-3 has-text-weight-bold is-clickable is-underlined" *ngIf="nbReviewsAsSeller === 0 && ownerHasOtherReviews" (click)="openAllReviews()">
+                            Voir les évaluations de ce responsable avec d'autres étalons
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="columns pt-0">
                 <div class="column">
                     <p class="has-text-weight-semibold">
                         {{location}}
@@ -18,21 +46,6 @@
                               </span>
                             <span>{{itemId && favoriteStallions.includes(itemId)? 'Retirer des favoris': 'Ajouter aux favoris'}}</span>
                         </button>
-                        <div class="has-text-weight-bold ml-3">
-                            -
-                        </div>
-                        <div class="ml-3 has-text-weight-bold is-clickable">
-                            15 commentaires
-                        </div>
-                        <div class="has-text-weight-bold ml-3">
-                            -
-                        </div>
-                        <span class="icon-text ml-3">
-                            <span class="has-text-weight-semibold">4.5</span>
-                            <span class="icon">
-                              <i class="fas fa-star" style="color: #FFDF00"></i>
-                            </span>
-                        </span>
                     </div>
                 </div>
             </div>
@@ -373,16 +386,16 @@
 
                 <div class="column">
                     <div class="field">
-                    <div class="control">
-                      <button class="button is-primary" [ngClass]="buttonIsLoading['status']? 'is-loading' : ''" (click)="checkFieldsAndOpenModal()">
-                        Envoyer la demande de saillie
-                      </button>
+                        <div class="control">
+                        <button class="button is-primary" [ngClass]="buttonIsLoading['status']? 'is-loading' : ''" (click)="checkFieldsAndOpenModal()">
+                            Envoyer la demande de saillie
+                        </button>
+                        </div>
+                        <p class="help" [ngClass]="{
+                            'has-text-success': !formNotValid && !backendErrorStatus['status'],
+                            'has-text-danger': formNotValid || backendErrorStatus['status']
+                            }">{{ sendFormMessage.value }}</p>
                     </div>
-                    <p class="help" [ngClass]="{
-                        'has-text-success': !formNotValid && !backendErrorStatus['status'],
-                        'has-text-danger': formNotValid || backendErrorStatus['status']
-                        }">{{ sendFormMessage.value }}</p>
-                  </div>
                 </div>
             </div>
         </form>

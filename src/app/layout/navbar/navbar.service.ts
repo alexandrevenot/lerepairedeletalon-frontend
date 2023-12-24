@@ -23,7 +23,7 @@ export class NavbarService {
 
     public getUser() {
         return this.http.get<returnUser>(
-            'http://localhost:3001/auth/user-name'
+            'http://localhost:3001/users/user-name'
         ).pipe(
             catchError(() => {
                 return of<returnUser>({firstname: "", lastname: ""});

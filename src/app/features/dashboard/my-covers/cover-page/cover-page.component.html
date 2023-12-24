@@ -60,7 +60,7 @@
         </div>
 
 
-        <h4 class="subtitle is-4 has-text-weight-bold pt-4">{{messageContact[pov]}}</h4>
+        <h4 class="subtitle is-4 has-text-weight-bold pt-4">{{pov == 'seller'? 'Acheteur': 'Vendeur'}}</h4>
 
         <label class="label has-text-weight-semibold has-text-grey-light" *ngIf="['requested', 'denied'].includes(status) && pov == 'buyer'? 'Masqué' : ''">Le numéro de téléphone et l'adresse mail du vendeur restent masqués tant que la saillie n'a pas été acceptée.</label>
 
@@ -68,7 +68,7 @@
             <div class="column">
                 <label class="label has-text-weight-semibold has-text-grey-light">Nom</label>
                 <div class="control has-icons-left">
-                    <input class="input is-medium is-primary" [value]="contactName" readonly>
+                    <input class="input is-medium is-primary" [value]="contactFirstname + ' ' + contactLastname" readonly>
                     <span class="icon is-medium is-left">
                         <i class="fa-solid fa-user" style="color: hsl(0, 0%, 71%);"></i>
                     </span>
@@ -93,6 +93,22 @@
                         <i class="fa-solid fa-envelope" style="color: hsl(0, 0%, 71%);"></i>
                     </span>
                 </div>
+            </div>
+        </div>
+
+        <div class="columns content is-align-items-end">
+            <div class="column">
+                <label class="label has-text-weight-semibold has-text-grey-light">Nombre d'évaluations</label>
+                <input class="input is-medium is-primary" [value]="contactNbReviewsString" readonly>
+            </div>
+
+            <div class="column">
+                <label class="label has-text-weight-semibold has-text-grey-light">Note moyenne</label>
+                <input class="input is-medium is-primary" [value]="contactScoreString" readonly>
+            </div>
+
+            <div class="column">
+                <button class="button is-primary is-medium is-fullwidth" (click)="openReviews(pov=='seller'? 'buyer': 'seller')">Voir les évaluations de {{contactFirstname}}</button>
             </div>
         </div>
 
@@ -166,16 +182,14 @@
         </div>
 
         <h4 class="subtitle is-4 has-text-weight-bold pt-4">{{messageTitle[pov]}}</h4>
-        <div class="content content">
-            <div class="content has-text-weight-semibold is-size-5 has-text-justified">
-                <span class="icon">
-                    <i class="fas fa-quote-left"></i>
-                </span>
-                <p [innerHTML]="messageFromBuyer"></p>
-                <span class="icon is-pulled-right">
-                    <i class="fas fa-quote-right"></i>
-                </span>
-            </div>
+        <div class="content has-text-weight-semibold is-size-5 has-text-justified">
+            <span class="icon">
+                <i class="fas fa-quote-left"></i>
+            </span>
+            <p [innerHTML]="messageFromBuyer"></p>
+            <span class="icon is-pulled-right">
+                <i class="fas fa-quote-right"></i>
+            </span>
         </div>
 
         <h4 class="subtitle is-4 has-text-weight-bold pt-4">Historique des actions</h4>
@@ -294,6 +308,53 @@
     </div>
 </section>
 
+<section class="section" *ngIf="['downpaid', 'fullypaid'].includes(status)">
+    <div class="container">
+        <div class="box">
+            <div class="is-flex is-flex-direction-column is-align-items-center">
+                <h4 class="subtitle is-4 has-text-weight-bold is-centered">Rédiger l'évaluation de cette saillie</h4>
+                <label class="label has-text-weight-semibold has-text-success pt-4" *ngIf="alreadyReviewed">
+                    {{alreadyReviewedMessage}}
+                </label>
+            </div>
+            
+            <div class="columns pb-6" *ngIf="!alreadyReviewed">
+                <div class="column is-1">
+
+                </div>
+                <div class="column is-10">
+                    <label class="label has-text-weight-semibold has-text-grey-light">Note:</label>
+                    <div class="field is-grouped is-grouped-multiline pb-4">
+                        <p class="control" *ngFor="let i of getNumberArray(5)">
+                        <button class="button" [ngClass]="[reviewSelectedScore == i+1? 'is-primary': '']" (click)="updateReviewScore(i+1)">
+                            {{i+1}}/5
+                        </button>
+                        </p>
+                    </div>
+                    <label class="label has-text-weight-semibold has-text-grey-light">Commentaire:</label>
+    
+                        <textarea class="textarea"  rows="8" [placeholder]="reviewPlaceholder" [formControl]="reviewFormControl"></textarea>
+                        <div class="py-4">
+                            <button class="button is-primary"[ngClass]="reviewStatus['status'] == 'loading'? 'is-loading' : ''" (click)="checkFieldsAndOpenReviewModal()">
+                                <span class="icon">
+                                    <i class="fas fa-pen-to-square"></i>
+                                </span>
+                                <span>Poster l'évaluation</span>
+                            </button>
+                        </div>
+                        <p class="help has-text-danger" *ngIf="reviewStatus['status'] == 'noteError'">Vous devez sélectionner une note pour l'évaluation.</p>
+                        <p class="help has-text-danger" *ngIf="reviewStatus['status'] == 'commentError'">Le commentaire de votre évaluation ne peut pas être vide.</p>
+                        <p class="help has-text-danger" *ngIf="reviewStatus['status'] == 'backendError'">L'évaluation semble avoir échoué. C'est peut-être un problème de notre côté. Veuillez réessayer s'il vous plaît.</p>
+                        <p class="help has-text-success" *ngIf="reviewStatus['status'] == 'success'">L'évaluation a bien été postée.</p>
+                </div>
+                <div class="column is-1">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <section class="section">
     <div class="container">
         <div class="box is-flex is-flex-direction-column is-align-items-center">
@@ -366,6 +427,26 @@
             <div class="buttons">
                 <a class="button is-success" (click)="saveNewArrivalDate()">Valider la nouvelle date</a>
                 <a class="button" (click)="closeModal('arrivalDate')">Annuler</a>
+            </div>
+        </footer>
+    </div>
+</div>
+
+<div class="modal" [ngClass]="reviewModalIsActive? 'is-active': ''">
+    <div class="modal-background" (click)="closeModal('review')"></div>
+    <div class="modal-content">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Êtes-vous sûr de vouloir poster cette évaluation?</p>
+            <button class="delete" aria-label="close" (click)="closeModal('review')"></button>
+        </header>
+        <section class="modal-card-body">
+            <p>Vous ne pourrez évaluer cette saillie qu'une seule fois.</p>
+            <p>Vous pouvez le faire dès maintenant, mais si la saillie n'est pas complètement terminée, il peut être judicieux d'attendre que ce soit le cas.</p>
+        </section>
+        <footer class="modal-card-foot is-justify-content-center">
+            <div class="buttons">
+                <a class="button is-success" (click)="postReview()">Poster l'évaluation</a>
+                <a class="button" (click)="closeModal('review'); reviewStatus['status'] = ''">Annuler</a>
             </div>
         </footer>
     </div>

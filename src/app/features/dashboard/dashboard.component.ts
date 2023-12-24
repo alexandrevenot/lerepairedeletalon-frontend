@@ -32,8 +32,8 @@ export class DashboardComponent implements OnInit{
       myStallionsComponent: true,
       myFavorites: false
     },
-    parameters: {
-      ProfileInformationComponent: false
+    admin: {
+      MyAccountComponent: false
     }
   };
 
