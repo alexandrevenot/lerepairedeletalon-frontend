@@ -3,19 +3,21 @@ import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http'
 import { catchError, throwError } from 'rxjs';
 import { updateFilterData } from '../filters/filters.component'
 
-interface returnedItem {
+export interface searchItem {
     id: string;
     name: string;
     breed: string;
+    height: number;
+    cover_types: Array<number>;
     city: string;
     dep_name: string;
     reg_name: string;
     price: number;
-    photo_id: string;
+    photo_url: string;
   }
 
 export interface searchData {
-    content: Array<returnedItem>
+    content: Array<searchItem>
 }
 
 @Injectable()

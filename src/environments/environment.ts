@@ -211,3 +211,7 @@ export enum backendInteractionStatus {
   BackendError = "BackendError",
   Success = "Success"
 }
+
+export const objectStorageBaseUrl: string = "https://storage.googleapis.com"
+export const photosPrefix: string = "/lrde-public-photos"
+export const backendBaseUrl: string = "http://localhost:3001/"

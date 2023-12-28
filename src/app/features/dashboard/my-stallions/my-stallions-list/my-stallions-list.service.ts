@@ -6,7 +6,7 @@ interface getStallionsListItem {
     id: string;
     name: string;
     breed: string;
-    photo_id: string;
+    photo_url: string;
     last_update_timestamp: string;
     profile_status: string;
 }

@@ -1,11 +1,11 @@
 import { Component, HostListener, Input, OnInit  } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { PostStallionResponse, StallionService } from './stallion.service';
-import { getAvailableBreeds, breedsRecord, availableCoverTypes, coverPlaceNames, getNumberArray, photosMaxSizeInBytes, splitListOrKeysList, balancePaymentConditions, stds, vaccines, hostingTypes } from 'src/environments/environment';
+import { getAvailableBreeds, breedsRecord, availableCoverTypes, coverPlaceNames, getNumberArray, photosMaxSizeInBytes, splitListOrKeysList, balancePaymentConditions, stds, vaccines, hostingTypes, objectStorageBaseUrl, photosPrefix } from 'src/environments/environment';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { GeolocationService, getCityData, getCityItem } from 'src/environments/geolocation';
-import { PhotosService } from 'src/environments/photos';
 import { Router } from '@angular/router';
+import { HttpResponse } from '@angular/common/http';
 
 export interface StallionComponentInput {
   mode: 'edition' | 'creation';
@@ -18,8 +18,7 @@ export interface StallionComponentInput {
   styleUrls: ['./stallion.component.css'],
   providers: [
     StallionService,
-    GeolocationService,
-    PhotosService
+    GeolocationService
   ]
 })
 export class StallionComponent implements OnInit {
@@ -45,6 +44,8 @@ export class StallionComponent implements OnInit {
   public availableVaccines = Object.keys(this.vaccinesRecord);
   public hostingTypesRecord = hostingTypes;
   public availableHostingTypes = Object.keys(this.hostingTypesRecord);
+  public objectStorageBaseUrl = objectStorageBaseUrl;
+  public photosPrefix = photosPrefix;
 
   // helpers
   public submitHelper: FormControl = new FormControl('');
@@ -67,7 +68,7 @@ export class StallionComponent implements OnInit {
   public stallionStdNegativeTests: Record<string, boolean> = {};
   public stallionVaccines: Record<string, boolean> = {};
   public verificationFile!: File;
-  public photos: File[] = [];
+  public photos: Array<File | null> = [];
   public hostingTypes: Record<string, Record<string, boolean>> = {};
   public mareSTDs: Record<string, Record<string, boolean>> = {};
   public mareVaccines: Record<string, Record<string, boolean>> = {};
@@ -85,6 +86,10 @@ export class StallionComponent implements OnInit {
   };
   public locationModalIsActive = false;
   public productionBreedsAddedByHand: Array<string> = [];
+  public saveButtonIsDisabled: boolean = false;
+
+  // only when editing
+  public keptPhotos: Array<number> = [];
 
   // form values variables
   public stallionForm!: FormGroup;
@@ -94,7 +99,6 @@ export class StallionComponent implements OnInit {
     private geolocationService: GeolocationService,
     private formBuilder: FormBuilder,
     private sanitizer: DomSanitizer,
-    private photosService: PhotosService,
     private router: Router
     ) {}
   
@@ -194,14 +198,11 @@ export class StallionComponent implements OnInit {
         this.stallionForm.get('nSIRE')?.setValue(data.n_sire);
         this.stallionForm.get('nSIRE')?.disable();
 
-        for (const [index, photoId] of data.photos.entries()) {
-          this.photosService.getPhoto(photoId)
-          .subscribe(response => {
-            const imageURL = URL.createObjectURL(response);
-            this.photosURLs.push(this.sanitizer.bypassSecurityTrustUrl(imageURL));
-            this.photos.push(new File([response], 'Photo' + index.toString(), { type: response.type }));
-          })
-        }
+        data.photos.forEach((url: string) => {
+          this.photosURLs.push(objectStorageBaseUrl + photosPrefix + '/' + url);
+          this.photos.push(null);
+        })
+        this.keptPhotos = getNumberArray(data.photos.length);
 
         this.stallionForm.get('mainDesc')?.setValue(data.main_desc);
         this.stallionForm.get('color')?.setValue(data.color);
@@ -364,6 +365,9 @@ export class StallionComponent implements OnInit {
   deletePhoto(index: number) {
     this.photos.splice(index, 1);
     this.photosURLs.splice(index, 1);
+    if (this.stallionComponentInput.mode == 'edition') {
+      this.keptPhotos.splice(index, 1);
+    }
   }
 
   // Stud-books
@@ -539,7 +543,14 @@ export class StallionComponent implements OnInit {
     // data validation
     let shouldThrowError = false;
 
-    if (this.photos.length === 0) {
+    let nonNullPhotos = 0
+    this.photos.forEach((photo: File | null) => {
+      if (photo) {
+        nonNullPhotos++;
+      }
+    })
+
+    if (nonNullPhotos + this.keptPhotos.length === 0) {
       this.photosHelper.setValue("Il faut au minimum une photo.");
       shouldThrowError = true;
     }
@@ -580,6 +591,7 @@ export class StallionComponent implements OnInit {
     )
     .subscribe(() => {
       return this.stallionService.uploadNewPhotos(
+        this.keptPhotos,
         this.photos,
         stallionId,
         this.submitted,
@@ -590,11 +602,15 @@ export class StallionComponent implements OnInit {
         this.submitted['status'] = false;
         this.triggerEmptyMandatoryFields['status'] = false;
         this.submitHelper.setValue('Informations mises à jour avec succès.');
+        this.saveButtonIsDisabled = true;
+        setTimeout(() => {
+          this.getBackToMyStallions();
+        }, 2000)
       })
     })
   }
 
-  getBackToDashboard() {
-    this.router.navigate(['/dashboard'], {queryParams: { reload: 'true' }});
+  getBackToMyStallions() {
+    this.router.navigate(['/dashboard'], {queryParams: { myStallions: 'true' }});
   }
 }

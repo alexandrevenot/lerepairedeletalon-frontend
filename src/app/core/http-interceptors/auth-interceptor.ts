@@ -10,9 +10,12 @@ import { Router } from "@angular/router";
 import { Observable, catchError, throwError } from 'rxjs';
 
 import { AuthService } from '../auth/auth.service';
+import { backendBaseUrl } from 'src/environments/environment';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
+
+  public backendBaseUrl = backendBaseUrl;
 
   constructor(
     private authService: AuthService,
@@ -23,7 +26,7 @@ export class AuthInterceptor implements HttpInterceptor {
     const authToken = this.authService.getToken("access");
 
     // If an access token is available in the local storage
-    if (authToken != "") {
+    if (req.urlWithParams.includes(backendBaseUrl) && authToken != "") {
       const authReq = req.clone({
         headers: req.headers.set('Authorization', authToken)
       });

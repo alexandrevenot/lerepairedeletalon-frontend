@@ -1,20 +1,7 @@
 import { Component, OnInit, HostListener, Input, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
-import { StallionPanelService, searchData } from './stallion-panel.service';
-import { getNumberArray } from '../../../../environments/environment';
+import { StallionPanelService, searchData, searchItem } from './stallion-panel.service';
 import { updateFilterData } from '../filters/filters.component'
-import { PhotosService } from 'src/environments/photos';
-
-export interface Item {
-  id: string;
-  name: string;
-  breed: string;
-  city: string;
-  depName: string;
-  regName: string;
-  price: number;
-  photoId: string;
-  photo: string;
-}
+import { getNumberArray } from 'src/environments/environment';
 
 @Component({
   selector: 'app-stallion-panel',
@@ -23,7 +10,6 @@ export interface Item {
   providers: [StallionPanelService]
 })
 export class StallionPanelComponent implements OnInit, OnChanges {
-
   @Input() filters: updateFilterData = {
     form: {},
     breeds: {},
@@ -38,8 +24,7 @@ export class StallionPanelComponent implements OnInit, OnChanges {
   @Output() loadingEndingEvent = new EventEmitter();
 
   constructor(
-    private stallionPanelService: StallionPanelService,
-    private photosService: PhotosService
+    private stallionPanelService: StallionPanelService
   ) {}
   
   public getNumberArrayF = getNumberArray;
@@ -48,17 +33,18 @@ export class StallionPanelComponent implements OnInit, OnChanges {
   private shouldStopCalling: boolean = false;
   public isLoading: boolean = false;
 
-  public items: Item[] = [];
-  public emptyItem = {
+  public items: searchItem[] = [];
+  public emptyItem: searchItem = {
     id: "",
     name: "",
     breed: "",
+    height: 0,
+    cover_types: [],
     city: "",
-    depName: "",
-    regName: "",
+    dep_name: "",
+    reg_name: "",
     price: 0,
-    photoId: "",
-    photo: ""
+    photo_url: ""
   };
 
   ngOnInit() {
@@ -91,36 +77,10 @@ export class StallionPanelComponent implements OnInit, OnChanges {
   loadProfiles() {
     this.stallionPanelService.getSearch(16, ++this.iteration, this.filters)
     .subscribe((data: searchData) => {
-      if ( data.content.length < 16) {
+      if (data.content.length < 16) {
         this.shouldStopCalling = true;
       }
-
-      // infos
-      for (let item of data.content) {
-        this.items.push({
-          id: item.id,
-          name: item.name,
-          breed: item.breed,
-          city: item.city,
-          depName: item.dep_name,
-          regName: item.reg_name,
-          price: item.price,
-          photoId: item.photo_id,
-          photo: ""
-        });
-
-        const index: number = this.items.length - 1;
-
-        // pp
-        this.photosService.getPhoto(item.photo_id)
-        .subscribe(response => {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            this.items[index].photo = reader.result as string;
-          };
-          reader.readAsDataURL(response);
-        })
-      }
+      this.items.push(...data.content);
       this.isLoading = false;
       this.loadingEndingEvent.emit();
     })

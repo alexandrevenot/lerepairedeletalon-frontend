@@ -1,10 +1,9 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { StallionProfileService, StallionProfile } from './stallion-profile.service'
-import { getNumberArray, availableCoverTypes, getAvailableBreeds, coverPlaceNames, balancePaymentConditions, stds, vaccines, hostingTypes } from '../../../../environments/environment'
+import { getNumberArray, availableCoverTypes, getAvailableBreeds, coverPlaceNames, balancePaymentConditions, stds, vaccines, hostingTypes, objectStorageBaseUrl, photosPrefix } from '../../../../environments/environment'
 import { ActivatedRoute } from '@angular/router';
 import { PricingService, checkoutResponse } from 'src/environments/pricing';
-import { PhotosService } from 'src/environments/photos';
 import { FavoriteStallionsService, FavoriteStallions } from '../../dashboard/favorite-stallions/favorite-stallions.service';
 import { UserScore, UserScoreService } from 'src/app/core/user-score/user-score.service';
 
@@ -30,13 +29,15 @@ export class StallionProfileComponent implements OnInit{
   public vaccines = vaccines;
   public availableVaccines = Object.keys(this.vaccines);
   public hostingTypes = hostingTypes;
+  public objectStorageBaseUrl = objectStorageBaseUrl;
+  public photosPrefix = photosPrefix;
 
   // raw data
   public ownerName: string = "";
   public name: string = "";
   public breed: string = "";
   public nSire: string = "";
-  public photos: {[key: string]: string} = {};
+  public photos: Array<string> = [];
   public mainDesc: string = ""
   public color: string = "";
   public birthdate: string = "";
@@ -92,7 +93,6 @@ export class StallionProfileComponent implements OnInit{
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
     private pricingService: PricingService,
-    private photosService: PhotosService,
     private favoriteStallionsService: FavoriteStallionsService,
     private userScoreService: UserScoreService
   ) {}
@@ -178,16 +178,9 @@ export class StallionProfileComponent implements OnInit{
           }
         }
   
-        for (const [index, photoId] of content.photos.entries()) {
-          this.photosService.getPhoto(photoId)
-          .subscribe(response => {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-              this.photos[index] = reader.result as string;
-            };
-            reader.readAsDataURL(response);
-          })
-        }
+        content.photos.forEach((photoUrl: string) => {
+          this.photos.push(objectStorageBaseUrl + photosPrefix + '/' + photoUrl);
+        })
 
         this.userScoreService.getUserScore(
           this.owner,

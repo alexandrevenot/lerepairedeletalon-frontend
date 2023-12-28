@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Item } from '../stallion-panel.component'
 import { FavoriteStallionsService, FavoriteStallions } from 'src/app/features/dashboard/favorite-stallions/favorite-stallions.service';
+import { searchItem } from '../stallion-panel.service';
+import { objectStorageBaseUrl, photosPrefix } from 'src/environments/environment';
 
 @Component({
   selector: 'app-stallion-panel-item',
@@ -9,17 +10,21 @@ import { FavoriteStallionsService, FavoriteStallions } from 'src/app/features/da
 })
 export class StallionPanelItemComponent implements OnInit{
 
-  @Input() item: Item = {
+  @Input() item: searchItem = {
     id: "",
     name: "",
     breed: "",
+    height: 0,
+    cover_types: [],
     city: "",
-    depName: "",
-    regName: "",
+    dep_name: "",
+    reg_name: "",
     price: 0,
-    photoId: "",
-    photo: ""
+    photo_url: ""
   };
+
+  public objectStorageBaseUrl = objectStorageBaseUrl;
+  public photosPrefix = photosPrefix;
 
   public location: string = "";
   public favoriteStallions: Array<string> = [];
@@ -29,7 +34,7 @@ export class StallionPanelItemComponent implements OnInit{
   ) {}
 
   ngOnInit() {
-    this.location = (this.item.city + ", " + this.item.depName + ", " + this.item.regName).slice(0, 14) + '...';
+    this.location = (this.item.city + ", " + this.item.dep_name + ", " + this.item.reg_name).slice(0, 14) + '...';
     this.loadFavoriteStallions();
   }
 

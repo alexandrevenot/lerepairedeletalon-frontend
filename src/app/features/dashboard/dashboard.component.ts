@@ -57,6 +57,7 @@ export class DashboardComponent implements OnInit{
     this.route.queryParams.subscribe(params => {
       const coverId = params['coverId'];
       const reload = params['reload'];
+      const myStallions = params['myStallions'];
       if (coverId != undefined) {
         if (coverId) {
           setTimeout(() => {
@@ -67,7 +68,10 @@ export class DashboardComponent implements OnInit{
       } else if (reload != undefined) {
         this.initializeVars();
         this.router.navigate(['/dashboard']);
-      }
+      } else if (myStallions != undefined) {
+        this.onClick('stallionsList', 'myStallionsComponent', 'seller');
+        this.router.navigate(['/dashboard']);
+      } 
     });
   }
 
