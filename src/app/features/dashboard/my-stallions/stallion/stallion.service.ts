@@ -86,10 +86,6 @@ interface StallionBody {
   editable_fields_body: EditableStallionFields;
 }
 
-interface EditStallionBody {
-  editable_fields_body: EditableStallionFields
-}
-
 export interface PostStallionResponse {
   message: string;
   stallion_id: string;
@@ -114,14 +110,18 @@ export class StallionService {
 
   uploadFiles(
     verificationFile: File,
-    photos: File[],
+    photos: Array<File | null>,
     stallionId: string,
     submitted: Record<string, boolean>,
     message: FormControl<any>,
     triggerEmptyMandatoryFields: Record<string, boolean>
   ) {
     const formData = new FormData();
-    photos.forEach((file) => { formData.append('photos', file); });
+    photos.forEach((file) => {
+      if (file) {
+        formData.append('photos', file);
+      }
+    });
     formData.append('verification_file', verificationFile);
 
     let headers = new HttpHeaders();
@@ -150,14 +150,21 @@ export class StallionService {
   }
 
   uploadNewPhotos(
-    photos: File[],
+    keptPhotos: Array<number>,
+    photos: Array<File | null>,
     stallionId: string,
     submitted: Record<string, boolean>,
     message: FormControl<any>,
     triggerEmptyMandatoryFields: Record<string, boolean>
   ) {
     const formData = new FormData();
-    photos.forEach((file) => { formData.append('photos', file); });
+    photos.forEach((file) => {
+      if (file) {
+        formData.append('new_photos', file);
+      }
+    });
+
+    keptPhotos.forEach((index: number) => {formData.append('kept_photos', index.toString())})
 
     let headers = new HttpHeaders();
     headers.append('Content-Type', 'multipart/form-data');

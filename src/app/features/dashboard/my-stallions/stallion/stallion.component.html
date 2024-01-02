@@ -658,11 +658,11 @@
 
     <div class="field is-grouped mt-6">
       <div class="control">
-        <button class="button is-primary" type="button" (click)="onSubmit()" [ngClass]="submitted['status'] ? 'is-loading' : ''">
+        <button class="button is-primary" type="button" (click)="onSubmit()" [ngClass]="submitted['status'] ? 'is-loading' : ''" [disabled]="saveButtonIsDisabled">
           {{stallionComponentInput.mode === "creation"? "Ajouter l'étalon": "Enregistrer les changements"}}</button>
       </div>
       <div class="control">
-        <button class="button is-light" (click)="getBackToDashboard()">Annuler</button>
+        <button class="button is-light" (click)="getBackToMyStallions()">Annuler</button>
       </div>
       <p class="help">{{ submitHelper.value }}</p>
     </div>

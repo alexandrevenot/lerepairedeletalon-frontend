@@ -1,15 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { PhotosService } from 'src/environments/photos';
 import { FavoriteStallionBoxService, FavoriteStallionprofile } from './favorite-stallion-box.service';
-import { FavoriteStallionsService, FavoriteStallions } from '../favorite-stallions.service';
+import { FavoriteStallionsService } from '../favorite-stallions.service';
 
 @Component({
   selector: 'app-favorite-stallion-box',
   templateUrl: './favorite-stallion-box.component.html',
   styleUrls: ['./favorite-stallion-box.component.css'],
   providers: [
-    FavoriteStallionBoxService,
-    PhotosService
+    FavoriteStallionBoxService
   ]
 })
 export class FavoriteStallionBoxComponent implements OnInit{
@@ -26,8 +24,7 @@ export class FavoriteStallionBoxComponent implements OnInit{
 
   constructor(
     private favoriteStallionBoxService: FavoriteStallionBoxService,
-    private favoriteStallionsService: FavoriteStallionsService,
-    private photosService: PhotosService
+    private favoriteStallionsService: FavoriteStallionsService
   ) {}
 
   ngOnInit(): void {
@@ -38,15 +35,7 @@ export class FavoriteStallionBoxComponent implements OnInit{
         this.name = data.name;
         this.breed = data.breed;
         this.profileStatus = data.profile_status;
-        this.photosService.getPhoto(data.thumbnail_photo)
-        .subscribe(response => {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            this.profilePicture = reader.result as string
-          }
-          reader.readAsDataURL(response);
-        })
-        
+        this.profilePicture = data.thumbnail_photo;
       })
     }
   }

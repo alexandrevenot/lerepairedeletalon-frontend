@@ -1,6 +1,6 @@
 import { Component, ElementRef, Input, EventEmitter, Output, HostListener, } from '@angular/core';
 import { StallionBoxItem } from '../my-stallions-list.component'
-import { profileStatuses } from 'src/environments/environment';
+import { objectStorageBaseUrl, photosPrefix, profileStatuses } from 'src/environments/environment';
 import { DashboardStallionBoxService } from './dashboard-stallion-box.service';
 
 interface StallionActionMessage {
@@ -27,6 +27,9 @@ export class DashboardStallionBoxComponent{
     profileStatus: 'visible'
   };
   @Output() stallionAction = new EventEmitter<StallionActionMessage>();
+
+  public objectStorageBaseUrl = objectStorageBaseUrl;
+  public photosPrefix = photosPrefix;
 
   public profileStatuses = profileStatuses;
   public optionsIsClicked: boolean = false;
