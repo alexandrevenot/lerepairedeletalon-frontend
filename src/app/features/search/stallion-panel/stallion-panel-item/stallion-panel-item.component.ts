@@ -27,6 +27,9 @@ export class StallionPanelItemComponent implements OnInit{
   public photosPrefix = photosPrefix;
 
   public location: string = "";
+  public heightFloor: number = 0;
+  public heightDec: number = 0;
+
   public favoriteStallions: Array<string> = [];
 
   constructor(
@@ -35,6 +38,8 @@ export class StallionPanelItemComponent implements OnInit{
 
   ngOnInit() {
     this.location = (this.item.city + ", " + this.item.dep_name + ", " + this.item.reg_name).slice(0, 14) + '...';
+    this.heightFloor = Math.floor(this.item.height/100);
+    this.heightDec = ((this.item.height/100) - this.heightFloor)*100;
     this.loadFavoriteStallions();
   }
 

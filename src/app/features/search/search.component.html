@@ -6,17 +6,17 @@
 
 <div class="columns">
     <div class="column is-3 is-offset-1">
-        <section class="section">
-            <app-filters [loadingStatus]="filtersAreLoading" (updateFiltersEvent)="handleNewFilters($event)"></app-filters>
-        </section>
+        <div class="columns pt-5">
+            <div class="column is-offset-1">
+                <app-filters [loadingStatus]="filtersAreLoading" (updateFiltersEvent)="handleNewFilters($event)"></app-filters>
+            </div>
+        </div>
     </div>
 
-    <div class="column">
-        <section class="section">
-            <app-stallion-panel
-            [filters]="currentFilters"
-            (loadingEndingEvent)="handleLoadingEnding()"
-            ></app-stallion-panel>
-        </section>
+    <div class="column is-offset-1">
+        <app-stallion-panel
+        [filters]="currentFilters"
+        (loadingEndingEvent)="handleLoadingEnding()"
+        ></app-stallion-panel>
     </div>
 </div>

@@ -10,6 +10,18 @@
     <div class="column has-text-left">
         <h4 class="subtitle is-4 has-text-weight-semibold">{{item.mare_name}}</h4>
     </div>
+    <div class="column">
+        <div class="buttons is-centered" (click)="goToCoverPage(item.id)">
+            <button class="button is-rounded is-small">
+                <span class="icon">
+                    <i class="fas fa-eye"></i>
+                </span>
+                <span>
+                    Gérer / Consulter les détails
+                </span>
+            </button>
+        </div>
+    </div>
 </div>
 
 <div class="columns is-vcentered">
@@ -21,7 +33,7 @@
             <span class="tag is-medium" [ngClass]="statusHelperObject[item.status]">{{statusMappingObject[item.status]}}, {{statusCommentaryMappingObject[item.status]}}</span>
         </div>
     </div>
-    <div class="column is-2">
+    <div class="column">
         <div class="content has-text-centered">
             <div class="block has-text-grey mb-2">
                 {{priceName[item.pov]}}:
@@ -31,16 +43,5 @@
             </div>
         </div>
     </div>
-    <div class="column">
-        <div class="buttons is-centered" (click)="goToCoverPage(item.id)">
-            <button class="button">
-                <span class="icon">
-                    <i class="fas fa-eye"></i>
-                </span>
-                <span>
-                    Gérer / Consulter les détails
-                </span>
-            </button>
-        </div>
-    </div>
+
 </div>

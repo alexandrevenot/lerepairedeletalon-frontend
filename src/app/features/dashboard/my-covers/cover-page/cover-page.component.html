@@ -8,36 +8,36 @@
 
             <div class="column">
                 <label class="label has-text-weight-semibold has-text-grey-light">Nom </label>
-                <input class="input is-medium is-primary" [value]="stallionName" readonly>
+                <input class="input is-primary" [value]="stallionName" readonly>
             </div>
 
             <div class="column">
                 <label class="label has-text-weight-semibold has-text-grey-light">Race</label>
-                <input class="input is-medium is-primary" [value]="stallionBreed" readonly>
+                <input class="input is-primary" [value]="stallionBreed" readonly>
             </div>
 
             <div class="column">
                 <label class="label has-text-weight-semibold has-text-grey-light">N° SIRE</label>
-                <input class="input is-medium is-primary" [value]="stallionNSIRE" readonly>
+                <input class="input is-primary" [value]="stallionNSIRE" readonly>
             </div>
 
         </div>
 
         <div class="content">
             <label class="label has-text-weight-semibold has-text-grey-light">Races de production</label>
-            <input class="input is-medium is-primary" [value]="stallionProductionBreeds" readonly>
+            <input class="input is-primary" [value]="stallionProductionBreeds" readonly>
         </div>
 
         <div class="content">
             <label class="label has-text-weight-semibold has-text-grey-light">Vaccins</label>
-            <input class="input is-medium is-primary" [value]="stallionVaccines != ''? stallionVaccines : 'Pas de vaccin déclaré à jour'" readonly>
+            <input class="input is-primary" [value]="stallionVaccines != ''? stallionVaccines : 'Pas de vaccin déclaré à jour'" readonly>
         </div>
 
         <div class="content">
             <label class="label has-text-weight-semibold has-text-grey-light">Tests MST négatifs</label>
-            <input class="input is-medium is-primary" [value]="'Pas de test MST négatif déclaré'" readonly *ngIf="stallionSTDNegativeTests.length == 0">
+            <input class="input is-primary" [value]="'Pas de test MST négatif déclaré'" readonly *ngIf="stallionSTDNegativeTests.length == 0">
             <div [ngClass]="i+1 == stallionSTDNegativeTests.length? '' : 'pb-2'" *ngFor="let std of stallionSTDNegativeTests; let i = index">
-                <input class="input is-medium is-primary" [value]="std" readonly>
+                <input class="input is-primary" [value]="std" readonly>
             </div>
         </div>
 
@@ -45,17 +45,17 @@
         <div class="columns content">
             <div class="column">
                 <label class="label has-text-weight-semibold has-text-grey-light">Nom</label>
-                <input class="input is-medium is-primary" [value]="mareName" readonly>
+                <input class="input is-primary" [value]="mareName" readonly>
             </div>
 
             <div class="column">
                 <label class="label has-text-weight-semibold has-text-grey-light">Race</label>
-                <input class="input is-medium is-primary" [value]="mareBreed" readonly>
+                <input class="input is-primary" [value]="mareBreed" readonly>
             </div>
 
             <div class="column">
                 <label class="label has-text-weight-semibold has-text-grey-light">N° SIRE</label>
-                <input class="input is-medium is-primary" [value]="mareNSIRE" readonly>
+                <input class="input is-primary" [value]="mareNSIRE" readonly>
             </div>
         </div>
 
@@ -68,8 +68,8 @@
             <div class="column">
                 <label class="label has-text-weight-semibold has-text-grey-light">Nom</label>
                 <div class="control has-icons-left">
-                    <input class="input is-medium is-primary" [value]="contactFirstname + ' ' + contactLastname" readonly>
-                    <span class="icon is-medium is-left">
+                    <input class="input is-primary" [value]="contactFirstname + ' ' + contactLastname" readonly>
+                    <span class="icon is-left">
                         <i class="fa-solid fa-user" style="color: hsl(0, 0%, 71%);"></i>
                     </span>
                 </div>
@@ -78,8 +78,8 @@
             <div class="column">
                 <label class="label has-text-weight-semibold has-text-grey-light">Numéro de téléphone</label>
                 <div class="control has-icons-left">
-                    <input class="input is-medium is-primary" [value]="contactPhoneNumber" readonly [disabled]="['requested', 'denied'].includes(status) && pov == 'buyer'">
-                    <span class="icon is-medium is-left">
+                    <input class="input is-primary" [value]="contactPhoneNumber" readonly [disabled]="['requested', 'denied'].includes(status) && pov == 'buyer'">
+                    <span class="icon is-left">
                         <i class="fa-solid fa-phone" style="color: hsl(0, 0%, 71%);"></i>
                     </span>
                 </div>
@@ -88,8 +88,8 @@
             <div class="column">
                 <label class="label has-text-weight-semibold has-text-grey-light">Adresse mail</label>
                 <div class="control has-icons-left">
-                    <input class="input is-medium is-primary" [value]="contactEmail" readonly [disabled]="['requested', 'denied'].includes(status) && pov == 'buyer'">
-                    <span class="icon is-medium is-left">
+                    <input class="input is-primary" [value]="contactEmail" readonly [disabled]="['requested', 'denied'].includes(status) && pov == 'buyer'">
+                    <span class="icon is-left">
                         <i class="fa-solid fa-envelope" style="color: hsl(0, 0%, 71%);"></i>
                     </span>
                 </div>
@@ -99,16 +99,16 @@
         <div class="columns content is-align-items-end">
             <div class="column">
                 <label class="label has-text-weight-semibold has-text-grey-light">Nombre d'évaluations</label>
-                <input class="input is-medium is-primary" [value]="contactNbReviewsString" readonly>
+                <input class="input is-primary" [value]="contactNbReviewsString" readonly>
             </div>
 
             <div class="column">
                 <label class="label has-text-weight-semibold has-text-grey-light">Note moyenne</label>
-                <input class="input is-medium is-primary" [value]="contactScoreString" readonly>
+                <input class="input is-primary" [value]="contactScoreString" readonly>
             </div>
 
             <div class="column">
-                <button class="button is-primary is-medium is-fullwidth" (click)="openReviews(pov=='seller'? 'buyer': 'seller')">Voir les évaluations de {{contactFirstname}}</button>
+                <button class="button is-primary is-fullwidth" (click)="openReviews(pov=='seller'? 'buyer': 'seller')">Voir les évaluations de {{contactFirstname}}</button>
             </div>
         </div>
 
@@ -116,20 +116,20 @@
         <div class="columns content">
             <div class="column">
                 <label class="label has-text-weight-semibold has-text-grey-light">Type</label>
-                <input class="input is-medium is-primary" [value]="availableCoverTypes[coverType]" readonly>
+                <input class="input is-primary" [value]="availableCoverTypes[coverType]" readonly>
             </div>
 
             <div class="column">
                 <label class="label has-text-weight-semibold has-text-grey-light" *ngIf="coverPlaceNames[coverType]">{{coverPlaceNames[coverType].slice(0,1).toUpperCase()}}{{coverPlaceNames[coverType].slice(1,coverPlaceNames[coverType].length)}}</label>
-                <input class="input is-medium is-primary"  [value]="coverPlace" readonly>
+                <input class="input is-primary"  [value]="coverPlace" readonly>
             </div>
 
             <div class="column is-2">
                 <label class="label has-text-weight-semibold has-text-grey-light" *ngIf="pov == 'buyer'">Prix</label>
                 <label class="label has-text-weight-semibold has-text-grey-light" *ngIf="pov == 'seller'">Revenus bruts</label>
                 <div class="control has-icons-right">
-                    <input class="input is-medium is-primary" [value]="price" readonly>
-                    <span class="icon is-medium is-right">
+                    <input class="input is-primary" [value]="price" readonly>
+                    <span class="icon is-right">
                         <i class="fa-solid fa-euro" style="color: hsl(0, 0%, 71%);"></i>
                     </span>
                 </div>
@@ -138,47 +138,47 @@
 
         <div class="content">
             <label class="label has-text-weight-semibold has-text-grey-light">Condition de paiement du solde</label>
-            <input class="input is-medium is-primary" [value]="balancePaymentCondition" readonly>
+            <input class="input is-primary" [value]="balancePaymentCondition" readonly>
         </div>
 
         <div class="content">
             <label class="label has-text-weight-semibold has-text-grey-light">Montant de l'acompte</label>
-            <input class="input is-medium is-primary" [value]="advancePercentage" readonly>
+            <input class="input is-primary" [value]="advancePercentage" readonly>
         </div>
 
         <div class="content" *ngIf="['lib', 'hand', 'iai'].includes(coverType)">
             <label class="label has-text-weight-semibold has-text-grey-light">Nombre maximum de tentatives de saillie</label>
-            <input class="input is-medium is-primary" [value]="maxNbOfAttempts" readonly>
+            <input class="input is-primary" [value]="maxNbOfAttempts" readonly>
         </div>
 
         <div class="content" *ngIf="['lib', 'hand'].includes(coverType)">
             <label class="label has-text-weight-semibold has-text-grey-light">Tests MST négatifs demandés pour la jument</label>
-            <input class="input is-medium is-primary" [value]="'Aucun test MST à effectuer'" readonly *ngIf="demandedSTDNegativeTests.length == 0">
+            <input class="input is-primary" [value]="'Aucun test MST à effectuer'" readonly *ngIf="demandedSTDNegativeTests.length == 0">
             <div [ngClass]="i+1 == demandedSTDNegativeTests.length? '' : 'pb-2'" *ngFor="let std of demandedSTDNegativeTests; let i = index">
-                <input class="input is-medium is-primary" [value]="std" readonly>
+                <input class="input is-primary" [value]="std" readonly>
             </div>
         </div>
 
         <div class="content" *ngIf="['lib', 'hand'].includes(coverType)">
             <label class="label has-text-weight-semibold has-text-grey-light">Vaccins à jour demandés pour la jument</label>
-            <input class="input is-medium is-primary" [value]="demandedVaccines != ''? demandedVaccines : 'Aucun vaccin demandé'" readonly>
+            <input class="input is-primary" [value]="demandedVaccines != ''? demandedVaccines : 'Aucun vaccin demandé'" readonly>
         </div>
 
         <div class="content" *ngIf="['lib', 'hand', 'iai'].includes(coverType)">
             <label class="label has-text-weight-semibold has-text-grey-light">Hébergement</label>
             <div [ngClass]="i+1 == hostingSpecs.length? '' : 'pb-2'" *ngFor="let htype of hostingSpecs; let i = index">
-                <input class="input is-medium is-primary" [value]="htype" readonly>
+                <input class="input is-primary" [value]="htype" readonly>
             </div>
         </div>
 
         <div class="content" *ngIf="['iart', 'iac'].includes(coverType)">
             <label class="label has-text-weight-semibold has-text-grey-light">Nombre de paillettes fournies</label>
-            <input class="input is-medium is-primary" [value]="nbProvidedStraws" readonly>
+            <input class="input is-primary" [value]="nbProvidedStraws" readonly>
         </div>
 
         <div class="content" *ngIf="'iac' == coverType">
             <label class="label has-text-weight-semibold has-text-grey-light">Propriétaire des doses restantes</label>
-            <input class="input is-medium is-primary" [value]="leftStrawsOwner" readonly>
+            <input class="input is-primary" [value]="leftStrawsOwner" readonly>
         </div>
 
         <h4 class="subtitle is-4 has-text-weight-bold pt-4">{{messageTitle[pov]}}</h4>
@@ -357,7 +357,7 @@
 
 <section class="section">
     <div class="container">
-        <div class="box is-flex is-flex-direction-column is-align-items-center">
+        <div class="box is-flex is-flex-direction-column is-align-items-center" style="background-color: #f7faf7;">
             <h4 class="subtitle is-4 has-text-weight-bold">Statut de la saillie</h4>
  
             <div class="block">
@@ -368,7 +368,7 @@
             <h4 class="subtitle is-4 has-text-weight-bold" *ngIf="actions[pov] && (actions[pov]['green'][status] || actions[pov]['red'][status])">Actions</h4>
             <div class="field is-grouped is-centered">
                 <p class="control">
-                  <button class="button is-success is-medium" (click)="green(status, pov)" *ngIf="actions[pov] && actions[pov]['green'][status]"
+                  <button class="button is-success" (click)="green(status, pov)" *ngIf="actions[pov] && actions[pov]['green'][status]"
                     [disabled]="pov == 'seller' && ['lib', 'hand', 'iai'].includes(coverType) && !arrivalDate">
                     <span class="icon">
                       <i class="fas fa-check"></i>
@@ -377,7 +377,7 @@
                   </button>
                 </p>
                 <p class="control">
-                    <button class="button is-danger is-medium" (click)="red(status, pov)" *ngIf="actions[pov] && actions[pov]['red'][status]">
+                    <button class="button is-danger" (click)="red(status, pov)" *ngIf="actions[pov] && actions[pov]['red'][status]">
                       <span class="icon">
                         <i class="fas fa-xmark"></i>
                       </span>

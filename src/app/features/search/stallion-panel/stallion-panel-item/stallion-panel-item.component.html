@@ -7,21 +7,27 @@
           [style]="item.id && favoriteStallions.includes(item.id)? 'color: #DC143C;': 'color: #ffffff;'"></i>
       </span>
 </div>
-<div class="card-content px-0">
-  <div class="content">
-      <h6 class="subtitle is-6 mb-1 has-text-weight-bold">{{item.name}}</h6>
-      <p class="has-text-grey-light is-size-6">{{item.breed}}</p>
-  </div>
+<div class="card-content px-0 pt-2 is-clickable" style="background-color: #f7faf7;" (click)="handleClick()">
+  <p class="has-text-weight-bold py-0 my-0">{{item.name}}</p>
 
-  <div class="columns">
-    <div class="column" id="locationColumn">
-      <div class="content">
-          <p class="has-text-grey-light has-text-weight-semibold" style="font-size: 14px">{{location}}</p>
-      </div>
+  <div class="columns py-0 my-0">
+    <div class="column py-0 my-0">
+      <p class="has-text-grey-light">{{item.breed}}</p>
     </div>
 
+    <div class="column is-4 py-0 my-0">
+      <p class="has-text-grey-light has-text-right">{{heightFloor}}m{{heightDec}}</p>
+    </div>
+  </div>  
+
+
+  <div class="columns py-0 my-0">
     <div class="column">
-      <p class="has-text-weight-bold is-size-6 has-text-right">{{item.price}}€</p>
+      <p class="has-text-grey-light">{{location}}</p>
+    </div>
+
+    <div class="column is-4">
+      <p class="has-text-weight-bold has-text-right">{{item.price}}€</p>
     </div>
   </div>  
 </div>

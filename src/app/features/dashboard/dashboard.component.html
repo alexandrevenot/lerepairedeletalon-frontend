@@ -7,7 +7,10 @@
                     Achat
                 </p>
                 <ul class="menu-list">
-                    <li><a [ngClass]="isHighlighted('MyCoversComponent', 'buyer')? 'is-active' : ''" (click)="onClick('MyCoversComponent', null, 'buyer')">Mes saillies</a>
+                    <li>
+                        <a class="is-flex is-align-items-center" [ngClass]="isHighlighted('MyCoversComponent', 'buyer')? 'is-active' : ''" (click)="onClick('MyCoversComponent', null, 'buyer')">Mes saillies
+                            <span class="icon ml-auto"><i class="fas fa-chevron-up" [ngClass]="isExpanded['buyer']['MyCoversComponent']? 'fa-rotate-180' : 'fa-rotate-90'"></i></span>
+                        </a>
                         <ul *ngIf="isExpanded['buyer']['MyCoversComponent']">
                             <li><a [ngClass]="isHighlighted('pendingApproval', 'buyer')? 'is-active' : ''" (click)="onClick('pendingApproval', 'MyCoversComponent', 'buyer')">Demandées</a></li>
                             <li><a [ngClass]="isHighlighted('pendingSignature', 'buyer')? 'is-active' : ''" (click)="onClick('pendingSignature', 'MyCoversComponent', 'buyer')">En cours de signature</a></li>
@@ -22,14 +25,18 @@
                     Vente
                 </p>
                 <ul class="menu-list">
-                    <li><a [ngClass]="isHighlighted('myStallionsComponent', 'seller')? 'is-active' : ''" (click)="onClick('myStallionsComponent', null, 'seller')">Mes étalons</a>
+                    <li><a class="is-flex is-align-items-center" [ngClass]="isHighlighted('myStallionsComponent', 'seller')? 'is-active' : ''" (click)="onClick('myStallionsComponent', null, 'seller')">Mes étalons
+                        <span class="icon ml-auto"><i class="fas fa-chevron-up" [ngClass]="isExpanded['seller']['myStallionsComponent']? 'fa-rotate-180' : 'fa-rotate-90'"></i></span>
+                    </a>
                         <ul *ngIf="isExpanded['seller']['myStallionsComponent']">
                             <li><a [ngClass]="isHighlighted('stallionsList', 'seller')? 'is-active' : ''" (click)="onClick('stallionsList', 'myStallionsComponent', 'seller')">Liste de mes étalons</a></li>
                             <li><a [ngClass]="isHighlighted('stallion', 'seller')? 'is-active' : ''" (click)="onClick('stallion', 'myStallionsComponent', 'seller')">Ajouter un nouvel étalon</a></li>
                         </ul>
                     </li>
 
-                    <li><a [ngClass]="isHighlighted('MyCoversComponent', 'seller')? 'is-active' : ''" (click)="onClick('MyCoversComponent', null, 'seller')">Mes saillies</a>
+                    <li><a class="is-flex is-align-items-center" [ngClass]="isHighlighted('MyCoversComponent', 'seller')? 'is-active' : ''" (click)="onClick('MyCoversComponent', null, 'seller')">Mes saillies
+                        <span class="icon ml-auto"><i class="fas fa-chevron-up" [ngClass]="isExpanded['seller']['MyCoversComponent']? 'fa-rotate-180' : 'fa-rotate-90'"></i></span>
+                    </a>
                         <ul *ngIf="isExpanded['seller']['MyCoversComponent']">
                             <li><a [ngClass]="isHighlighted('pendingApproval', 'seller')? 'is-active' : ''" (click)="onClick('pendingApproval', 'MyCoversComponent', 'seller')">Demandes</a></li>
                             <li><a [ngClass]="isHighlighted('pendingSignature', 'seller')? 'is-active' : ''" (click)="onClick('pendingSignature', 'MyCoversComponent', 'seller')">En cours de signature</a></li>
