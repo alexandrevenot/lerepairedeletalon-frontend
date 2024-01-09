@@ -2,9 +2,9 @@
     <div class="container">
         <div class="content py-3">
             <div class="columns">
-                <div class="column">
-                    <h3 class="subtitle is-3 has-text-weight-bold mb-3">{{name}}</h3>
-                    <h4 class="subtitle is-4 has-text-grey-light pb-0 mb-0">{{breed}}</h4>
+                <div class="column is-4">
+                    <h4 class="subtitle is-4 has-text-weight-bold mb-3">{{name}}</h4>
+                    <h5 class="subtitle is-5 has-text-grey-light pb-0 mb-0">{{breed}}</h5>
                 </div>
                 <div class="column has-text-right">
                     <p class="has-text-weight-semibold has-text-grey-light">Responsable: <span class="has-text-weight-semibold has-text-black">{{ownerName}}</span></p>
@@ -41,7 +41,7 @@
                 <div class="column has-text-right">
                     <div class="is-flex is-align-items-center is-justify-content-flex-end">
                         <button class="button is-rounded" (click)="updateFavorite()">
-                            <span class="icon is-small">
+                            <span class="icon">
                                 <i class="fa-heart" [ngClass]="itemId && favoriteStallions.includes(itemId)? 'fas': 'far'" style="color: #DC143C"></i>
                               </span>
                             <span>{{itemId && favoriteStallions.includes(itemId)? 'Retirer des favoris': 'Ajouter aux favoris'}}</span>
@@ -55,14 +55,14 @@
             <img [src]="photos[0]" alt="Photo">
         </figure>
 
-        <div class="content has-text-weight-semibold is-size-5 has-text-justified">
+        <div class="content has-text-weight-semibold is-size-6 has-text-justified">
             <p [innerHTML]="mainDesc"></p>
         </div>
 
         <div class="content py-4">
-            <h4 class="subtitle is-4 has-text-weight-bold">Informations de base</h4>
+            <h5 class="subtitle is-5 has-text-weight-bold">Informations de base</h5>
             <div class="content has-text-weight-semibold">
-                <div class="tags are-large">
+                <div class="tags are-medium">
                     <span class="tag is-rounded">{{color}}</span>
                     <span class="tag is-rounded">{{age}}</span>
                     <span class="tag is-rounded">{{heightTagValue}}</span>            
@@ -71,32 +71,32 @@
         </div>
 
         <div class="content py-4">
-            <h4 class="subtitle is-4 has-text-weight-bold">Races de production</h4>
+            <h5 class="subtitle is-5 has-text-weight-bold">Races de production</h5>
             <div class="content has-text-weight-semibold">
-                <div class="tags are-large">
+                <div class="tags are-medium">
                     <span class="tag is-rounded" *ngFor="let productionBreed of productionBreeds">{{productionBreed}}</span>
                 </div>
             </div>
         </div>
 
         <div class="content py-4" *ngIf="hasPedigree">
-            <h4 class="subtitle is-4 has-text-weight-bold">Pedigree</h4>
+            <h5 class="subtitle is-5 has-text-weight-bold">Pedigree</h5>
             <div class="columns is-flex is-align-items-center">
                 <div class="column">
                     <div class="control my-3">
-                        <input class="input is-medium" value="{{pedigree[0]}}" readonly>
+                        <input class="input" value="{{pedigree[0]}}" readonly>
                     </div>
                 </div>
           
                 <div class="column">
                     <div class="control py-5" *ngFor="let x of getNumberArray(2)">
-                        <input class="input is-medium" value="{{pedigree[2+x]}}" readonly>
+                        <input class="input" value="{{pedigree[2+x]}}" readonly>
                     </div>
                 </div>
           
                 <div class="column">
                     <div class="control my-3" *ngFor="let x of getNumberArray(4)">
-                        <input class="input is-medium" value="{{pedigree[6+x]}}" readonly>
+                        <input class="input" value="{{pedigree[6+x]}}" readonly>
                     </div>
                 </div>
               </div>
@@ -104,27 +104,27 @@
             <div class="columns is-flex is-align-items-center">
               <div class="column">
                 <div class="control my-3">
-                    <input class="input is-medium" value="{{pedigree[1]}}" readonly>
+                    <input class="input" value="{{pedigree[1]}}" readonly>
                 </div>
             </div>
       
             <div class="column">
                 <div class="control py-5" *ngFor="let x of getNumberArray(2)">
-                    <input class="input is-medium" value="{{pedigree[4+x]}}" readonly>
+                    <input class="input" value="{{pedigree[4+x]}}" readonly>
                 </div>
             </div>
       
             <div class="column">
                 <div class="control my-3" *ngFor="let x of getNumberArray(4)">
-                    <input class="input is-medium" value="{{pedigree[10+x]}}" readonly>
+                    <input class="input" value="{{pedigree[10+x]}}" readonly>
                 </div>
             </div>
           </div>
         </div>
 
         <div class="content py-4">
-            <h4 class="subtitle is-4 has-text-weight-bold">Vaccins de l'étalon à jour</h4>
-            <div class="has-text-weight-semibold is-size-5 py-3" *ngFor="let vaccine of availableVaccines">
+            <h5 class="subtitle is-5 has-text-weight-bold">Vaccins de l'étalon à jour</h5>
+            <div class="has-text-weight-semibold is-size-6 py-3" *ngFor="let vaccine of availableVaccines">
                 <span class="icon-text">
                     <span class="icon" [ngClass]="stallionVaccines.includes(vaccine)? 'has-text-success' : 'has-text-danger'">
                         <i class="fas" [ngClass]="stallionVaccines.includes(vaccine)? 'fa-check-square' : 'fa-ban'"></i>
@@ -135,10 +135,10 @@
         </div>
 
         <div class="content py-4">
-            <h4 class="subtitle is-4 has-text-weight-bold">Tests des MST de l'étalon</h4>
+            <h5 class="subtitle is-5 has-text-weight-bold">Tests des MST de l'étalon</h5>
             <div class="columns" *ngFor="let std of availableSTDS">
                 <div class="column">
-                    <div class="control has-text-weight-semibold is-size-5">
+                    <div class="control has-text-weight-semibold is-size-6">
                         <span class="icon-text">
                             <span class="icon" [ngClass]="stallionSTDNegativeTests.includes(std)? 'has-text-success' : 'has-text-danger'">
                                 <i class="fas" [ngClass]="stallionSTDNegativeTests.includes(std)? 'fa-check-square' : 'fa-ban'"></i>
@@ -151,52 +151,52 @@
                 <div class="column">
                     <div class="control">
                         <span class="has-text-weight-semibold has-text-grey-light pr-4">Date du test:</span>
-                        <span class="has-text-weight-semibold is-size-5">{{stallionSTDNegativeTests.includes(std)? stallionSTDNegativeTestsTD[std] : '-'}}</span>
+                        <span class="has-text-weight-semibold is-size-6">{{stallionSTDNegativeTests.includes(std)? stallionSTDNegativeTestsTD[std] : '-'}}</span>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="content py-4" *ngIf="crossbreedingAdvice">
-            <h4 class="subtitle is-4 has-text-weight-bold">Conseils de croisement</h4>
-            <div class="content has-text-weight-semibold is-size-5 has-text-justified">
+            <h5 class="subtitle is-5 has-text-weight-bold">Conseils de croisement</h5>
+            <div class="content has-text-weight-semibold is-size-6 has-text-justified">
                 <p [innerHTML]="crossbreedingAdvice"></p>
             </div>
         </div>
 
         <div class="content py-4" *ngIf="offspring">
-            <h4 class="subtitle is-4 has-text-weight-bold">Autres produits de l'étalon</h4>
-            <div class="content has-text-weight-semibold is-size-5 has-text-justified">
+            <h5 class="subtitle is-5 has-text-weight-bold">Autres produits de l'étalon</h5>
+            <div class="content has-text-weight-semibold is-size-6 has-text-justified">
                 <p [innerHTML]="offspring"></p>
             </div>
         </div>
 
         <div class="content py-4" *ngIf="performance">
-            <h4 class="subtitle is-4 has-text-weight-bold">Performances de l'étalon</h4>
-            <div class="content has-text-weight-semibold is-size-5 has-text-justified">
+            <h5 class="subtitle is-5 has-text-weight-bold">Performances de l'étalon</h5>
+            <div class="content has-text-weight-semibold is-size-6 has-text-justified">
                 <p [innerHTML]="performance"></p>
             </div>
         </div>
 
         <div class="content py-4" *ngIf="pedigreePO">
-            <h4 class="subtitle is-4 has-text-weight-bold">Performances du pedigree de l'étalon</h4>
-            <div class="content has-text-weight-semibold is-size-5 has-text-justified">
+            <h5 class="subtitle is-5 has-text-weight-bold">Performances du pedigree de l'étalon</h5>
+            <div class="content has-text-weight-semibold is-size-6 has-text-justified">
                 <p [innerHTML]="pedigreePO"></p>
             </div>
         </div>
 
         <div class="content py-4" *ngIf="stallionAdditionalInfo">
-            <h4 class="subtitle is-4 has-text-weight-bold">Informations additionnelles</h4>
-            <div class="content has-text-weight-semibold is-size-5 has-text-justified">
+            <h5 class="subtitle is-5 has-text-weight-bold">Informations additionnelles</h5>
+            <div class="content has-text-weight-semibold is-size-6 has-text-justified">
                 <p [innerHTML]="stallionAdditionalInfo"></p>
             </div>
         </div>
 
         <div class="content py-4">
-            <h4 class="subtitle is-4 has-text-weight-bold">Types de saillies proposés et conditions</h4>
-            <div class="box" *ngFor="let coverType of coverTypes">
+            <h5 class="subtitle is-5 has-text-weight-bold">Types de saillies proposés et conditions</h5>
+            <div class="box" style="background-color: #f7faf7;" *ngFor="let coverType of coverTypes">
                 <div class="content">
-                    <span class="tag is-success is-large">{{availableCoverTypes[coverType]}}</span>
+                    <span class="tag is-success is-medium">{{availableCoverTypes[coverType]}}</span>
                 </div>
 
                 <div class="block" *ngIf="['lib', 'hand', 'iai'].includes(coverType)">
@@ -251,7 +251,7 @@
                 </div>
             </div>
 
-            <div class="content has-text-weight-semibold is-size-5 has-text-justified">
+            <div class="content has-text-weight-semibold is-size-6 has-text-justified">
                 <p [innerHTML]="coverAdditionalInfo"></p>
             </div>
         </div>
@@ -264,7 +264,7 @@
 
 <section class="section">
     <div class="container">
-        <form [formGroup]="askForMatingForm" class="box">
+        <form [formGroup]="askForMatingForm" class="box" style="background-color: #f7faf7;">
             <h4 class="subtitle is-4 has-text-weight-bold pb-4 has-text-centered">Formulaire de demande de saillie</h4>
 
             <div class="columns is-align-items-end">

@@ -2,7 +2,7 @@
   <nav class="navbar is-fixed-top px-5" role="navigation" aria-label="main navigation" >
     <div class="navbar-brand">
       <a class="navbar-item" (click)="navigateToSearch()">
-        <img src="./assets/logo/logo-black.png" width="260" height="65">
+        <img [src]="objectStorageBaseUrl + photosPrefix + '/logo-black.png'" width="260" height="65">
       </a>
 
     </div>
@@ -13,7 +13,7 @@
         <a class="navbar-item is-size-6" (click)="navigateToSearch()">
           <span class="icon-text">
             <span class="icon">
-              <i class="fas fa-search"></i>
+              <img [src]="objectStorageBaseUrl + photosPrefix + '/glass.png'">
             </span>
             <span>Rechercher un étalon</span>
           </span>
@@ -22,7 +22,7 @@
         <a class="navbar-item is-size-6" (click)="navigateToDashboard()" *ngIf="userIsLoggedIn">
           <span class="icon-text">
             <span class="icon">
-              <i class="fas fa-desktop"></i>
+              <img [src]="objectStorageBaseUrl + photosPrefix + '/monitor.png'">
             </span>
             <span>Tableau de bord</span>
           </span>
@@ -30,10 +30,10 @@
 
         <a class="navbar-item" *ngIf="userIsLoggedIn">
           <span class="icon-text has-text-weight-semibold">
-            <span class="icon">
-              <i class="fas fa-user"></i>
+            <span class="icon pr-1">
+              <img [src]="objectStorageBaseUrl + photosPrefix + '/user.png'">
             </span>
-            <span>Bienvenue, {{firstname}} {{lastname}}</span>
+            <span>Bonjour, {{firstname}} {{lastname}}</span>
           </span>
         </a>
       

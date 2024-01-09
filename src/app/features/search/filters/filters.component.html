@@ -1,15 +1,15 @@
-<h4 class="subtitle is-4 has-text-weight-bold mb-6">Critères de recherche</h4>
+<h4 class="subtitle is-4 has-text-weight-bold mb-5">Critères de recherche</h4>
 
 <form [formGroup]="filterForm">
 
     <div class="field">
         <button class="button is-fullwidth is-justify-content-flex-start" [ngClass]="filterIsSelected['price'] ? 'is-active' : ''" (click)="swapFilter('price')">
             <span class="icon">
-                <i class="fa fa-chevron-up" [ngClass]="filterIsSelected['price'] ? '' : 'fa-rotate-180'"></i>
+                <i class="fa fa-chevron-up" [ngClass]="filterIsSelected['price'] ? 'fa-rotate-180' : 'fa-rotate-90'"></i>
             </span>
             <span class="has-text-weight-semibold">Prix</span>
         </button>
-        <div class="content px-3 py-3">
+        <div class="content py-2 pl-4">
             <div class="columns" *ngIf="filterIsSelected['price']">
                 <div class="column">
                     <div class="field has-addons">
@@ -43,11 +43,11 @@
     <div class="field">
         <button class="button is-fullwidth is-justify-content-flex-start" [ngClass]="filterIsSelected['breed'] ? 'is-active' : ''" (click)="swapFilter('breed')">
             <span class="icon">
-                <i class="fa fa-chevron-up" [ngClass]="filterIsSelected['breed'] ? '' : 'fa-rotate-180'"></i>
+                <i class="fa fa-chevron-up" [ngClass]="filterIsSelected['breed'] ? 'fa-rotate-180' : 'fa-rotate-90'"></i>
             </span>
             <span class="has-text-weight-semibold">Race de l'étalon</span>
         </button>
-        <div class="content px-3 py-3">
+        <div class="content py-2 pl-4">
             <div *ngIf="filterIsSelected['breed']">
                 <div *ngFor="let key of availableBreedTypes">
                     <p class="has-text-weight-bold pt-4">{{key}}</p>
@@ -65,11 +65,11 @@
     <div class="field">
         <button class="button is-fullwidth is-justify-content-flex-start" [ngClass]="filterIsSelected['productionBreed'] ? 'is-active' : ''" (click)="swapFilter('productionBreed')">
             <span class="icon">
-                <i class="fa fa-chevron-up" [ngClass]="filterIsSelected['productionBreed'] ? '' : 'fa-rotate-180'"></i>
+                <i class="fa fa-chevron-up" [ngClass]="filterIsSelected['productionBreed'] ? 'fa-rotate-180' : 'fa-rotate-90'"></i>
             </span>
             <span class="has-text-weight-semibold">Race de production</span>
         </button>
-        <div class="content px-3 py-3">
+        <div class="content py-2 pl-4">
             <div *ngIf="filterIsSelected['productionBreed']">
                 <div *ngFor="let key of availableBreedTypes">
                     <p class="has-text-weight-bold pt-4">{{key}}</p>
@@ -87,11 +87,11 @@
     <div class="field">
         <button class="button is-fullwidth is-justify-content-flex-start" [ngClass]="filterIsSelected['height'] ? 'is-active' : ''" (click)="swapFilter('height')">
             <span class="icon">
-                <i class="fa fa-chevron-up" [ngClass]="filterIsSelected['height'] ? '' : 'fa-rotate-180'"></i>
+                <i class="fa fa-chevron-up" [ngClass]="filterIsSelected['height'] ? 'fa-rotate-180' : 'fa-rotate-90'"></i>
             </span>
             <span class="has-text-weight-semibold">Taille au garrot de l'étalon</span>
         </button>
-        <div class="content px-3 py-3">
+        <div class="content py-2 pl-4">
             <div class="columns" *ngIf="filterIsSelected['height']">
                 <div class="column">
                     <div class="field has-addons">
@@ -125,11 +125,11 @@
     <div class="field">
         <button class="button is-fullwidth is-justify-content-flex-start" [ngClass]="filterIsSelected['coverType'] ? 'is-active' : ''" (click)="swapFilter('coverType')">
             <span class="icon">
-                <i class="fa fa-chevron-up" [ngClass]="filterIsSelected['coverType'] ? '' : 'fa-rotate-180'"></i>
+                <i class="fa fa-chevron-up" [ngClass]="filterIsSelected['coverType'] ? 'fa-rotate-180' : 'fa-rotate-90'"></i>
             </span>
             <span class="has-text-weight-semibold">Type de saillie</span>
         </button>
-        <div class="content px-3 py-3">
+        <div class="content py-2 pl-4">
             <div *ngIf="filterIsSelected['coverType']">
                 <div *ngFor="let coverType of availableCoverTypesL">
                     <label class="checkbox">
@@ -144,11 +144,11 @@
     <div class="field">
         <button class="button is-fullwidth is-justify-content-flex-start" [ngClass]="filterIsSelected['distance'] ? 'is-active' : ''" (click)="swapFilter('distance')">
             <span class="icon">
-                <i class="fa fa-chevron-up" [ngClass]="filterIsSelected['distance'] ? '' : 'fa-rotate-180'"></i>
+                <i class="fa fa-chevron-up" [ngClass]="filterIsSelected['distance'] ? 'fa-rotate-180' : 'fa-rotate-90'"></i>
             </span>
             <span class="has-text-weight-semibold">Distance</span>
         </button>
-        <div class="content px-3 py-3" *ngIf="filterIsSelected['distance']">
+        <div class="content py-2 pl-4" *ngIf="filterIsSelected['distance']">
             <div class="field">
                 <label class="label has-text-weight-semibold has-text-grey">Depuis quelle ville cherchez-vous?</label>
                 <div class="control is-expanded" [ngClass]="locationIsValidated? 'has-icons-right' : ''">

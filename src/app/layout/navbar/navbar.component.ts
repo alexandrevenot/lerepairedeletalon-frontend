@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NavbarService, connectionStatus } from './navbar.service';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { Router } from '@angular/router';
+import { objectStorageBaseUrl, photosPrefix } from 'src/environments/environment';
 
 @Component({
   selector: 'app-navbar',
@@ -12,6 +13,9 @@ import { Router } from '@angular/router';
   ]
 })
 export class NavbarComponent implements OnInit {
+
+  public objectStorageBaseUrl = objectStorageBaseUrl;
+  public photosPrefix = photosPrefix;
 
   public firstname: string = "";
   public lastname: string = "";

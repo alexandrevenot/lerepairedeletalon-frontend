@@ -27,6 +27,7 @@ import { FavoriteStallionBoxComponent } from './features/dashboard/favorite-stal
 import { MyAccountComponent } from './features/dashboard/my-account/my-account.component';
 import { ReviewsComponent } from './features/dashboard/reviews/reviews.component';
 import { PasswordUpdateComponent } from './features/mail-links/password-update/password-update.component';
+import { FooterComponent } from './layout/footer/footer.component';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,8 @@ import { PasswordUpdateComponent } from './features/mail-links/password-update/p
     FavoriteStallionBoxComponent,
     MyAccountComponent,
     ReviewsComponent,
-    PasswordUpdateComponent
+    PasswordUpdateComponent,
+    FooterComponent
   ],
   imports: [
     BrowserModule,

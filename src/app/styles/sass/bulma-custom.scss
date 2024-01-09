@@ -4,16 +4,16 @@
 
 // Update Bulma's global variables
 $primary: #3B7C35;
-
+$white: #f7faf7;
 $navbar-item-img-max-height: 80px;
 // $navbar-background-color: #3B3E3A;
-$navbar-background-color: #ffffff;
+$navbar-background-color: $white;
 $navbar-item-color: #000000;
 $navbar-item-hover-color: #000000;
-$navbar-item-hover-background-color: #ffffff;
-$menu-item-active-background-color: $primary;
+$navbar-item-hover-background-color: $white;
+$link: $primary;
 
-$file-cta-background-color: #ffffff;
+$file-cta-background-color: $white;
 $file-radius: 6px;
 
 $card-radius: 6px;
