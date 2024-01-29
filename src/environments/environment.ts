@@ -88,18 +88,12 @@ export function getNumberArray(n: number): number[] {
 
 export const availableCoverTypes: Record<string,string> = {
     "lib": "Monte en liberté",
-    "hand": "Monte en main",
-    "iai": "Insémination artificielle immédiate",
-    "iart": "Insémination artificielle réfrigérée transportée",
-    "iac": "Insémination artificielle congelée"
+    "hand": "Monte en main"
 }
 
 export const coverPlaceNames: Record<string, string> = {
   "lib": "centre de pension",
-  "hand": "centre de pension",
-  "iai": "centre d'insémination",
-  "iart": "centre d'insémination",
-  "iac": "centre d'insémination"
+  "hand": "centre de pension"
 }
 
 export const statusMapping: Record<string,string> = {
@@ -136,6 +130,7 @@ export const statusHelper: Record<string,string> = {
 }
 
 export const photosMaxSizeInBytes: number = 4 * 1024 * 1024; // 4 Mo
+export const verificationFileMaxSizeInBytes: number = 10 * 1024 * 1024; // 10 Mo
 
 export function splitListOrKeysList(variable: Record<string, any> | Array<string>, varType: 'obj' | 'list', number_of_columns: number): Array<Array<string>> {
   let columns = []
@@ -188,12 +183,6 @@ export const vaccines: Record<string, string> = {
   "tetanos": "Tétanos"
 }
 
-export const hostingTypes: Record<string, string> = {
-  "meadow": "Au pré",
-  "collective": "En box collectif",
-  "private": "En box privé"
-}
-
 export function deepCopy(object: Record<any, any>) {
   return JSON.parse(JSON.stringify(object));
 }
@@ -214,4 +203,4 @@ export enum backendInteractionStatus {
 
 export const objectStorageBaseUrl: string = "https://storage.googleapis.com"
 export const photosPrefix: string = "/lrde-public-photos"
-export const backendBaseUrl: string = "http://localhost:3001/"
+export const backendBaseUrl: string = "http://localhost:3001"

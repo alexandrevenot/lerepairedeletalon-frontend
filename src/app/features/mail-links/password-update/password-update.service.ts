@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { catchError, throwError } from "rxjs";
-import { backendInteractionStatus } from "src/environments/environment";
+import { backendBaseUrl, backendInteractionStatus } from "src/environments/environment";
 
 @Injectable()
 export class PasswordUpdateService {
@@ -19,7 +19,7 @@ export class PasswordUpdateService {
 
         status["value"] = backendInteractionStatus.Loading;
         return this.http.put(
-            "http://localhost:3001/mailing/update-password",
+            `${backendBaseUrl}/mailing/update-password`,
             body
         ).pipe(
             catchError(() => {

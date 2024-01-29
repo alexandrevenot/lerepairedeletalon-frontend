@@ -1,7 +1,7 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { StallionProfileService, StallionProfile } from './stallion-profile.service'
-import { getNumberArray, availableCoverTypes, getAvailableBreeds, coverPlaceNames, balancePaymentConditions, stds, vaccines, hostingTypes, objectStorageBaseUrl, photosPrefix } from '../../../../environments/environment'
+import { getNumberArray, availableCoverTypes, getAvailableBreeds, coverPlaceNames, balancePaymentConditions, stds, vaccines, objectStorageBaseUrl, photosPrefix, backendInteractionStatus } from '../../../../environments/environment'
 import { ActivatedRoute } from '@angular/router';
 import { PricingService, checkoutResponse } from 'src/environments/pricing';
 import { FavoriteStallionsService, FavoriteStallions } from '../../dashboard/favorite-stallions/favorite-stallions.service';
@@ -28,7 +28,6 @@ export class StallionProfileComponent implements OnInit{
   public availableSTDS = Object.keys(this.stds);
   public vaccines = vaccines;
   public availableVaccines = Object.keys(this.vaccines);
-  public hostingTypes = hostingTypes;
   public objectStorageBaseUrl = objectStorageBaseUrl;
   public photosPrefix = photosPrefix;
 
@@ -79,10 +78,8 @@ export class StallionProfileComponent implements OnInit{
   public selectedCoverTypeValue: string = "";
 
   // form data validation
-  public formNotValid: boolean = false;
   public sendFormMessage!: FormControl;
-  public backendErrorStatus: Record<string, boolean> = {'status': false}
-  public buttonIsLoading: Record<string, boolean> = {'status': false}
+  public demandStatus: Record<string, backendInteractionStatus> = {"status": backendInteractionStatus.Init};
   public formModalIsActive: boolean = false;
 
   // favorite stallions
@@ -103,8 +100,7 @@ export class StallionProfileComponent implements OnInit{
       mareNSIRE: ['', Validators.required],
       mareBreed: ['', Validators.required],
       selectedCoverType: ['', Validators.required],
-      messageToVendor: ['', Validators.required],
-      providedCoverPlace: ['']
+      messageToVendor: ['', Validators.required]
     });
 
     this.sendFormMessage = new FormControl('');
@@ -113,12 +109,7 @@ export class StallionProfileComponent implements OnInit{
 
     if (sCTCtrl) {
       sCTCtrl.valueChanges.subscribe(value => {
-
         this.selectedCoverTypeValue = value;
-
-        if (['iart', 'iac'].includes(value)){
-          this.askForMatingForm.get('providedCoverPlace')?.setValue("");
-        }
 
         this.pricingService.getCheckout(this.getPriceOfCoverType(value))
         .subscribe((data: checkoutResponse) => {
@@ -277,29 +268,24 @@ export class StallionProfileComponent implements OnInit{
 
   checkFieldsAndOpenModal() {
     if (!this.askForMatingForm.valid || (['iart', 'iac'].includes(this.selectedCoverTypeValue) && this.askForMatingForm.get('providedCoverPlace')?.getRawValue() == '')) {
-      this.formNotValid = true;
+      this.demandStatus['status'] = backendInteractionStatus.UserError;
       this.sendFormMessage.setValue("Remplissez s'il vous plaît tous les champs du formulaire de demande.");
       return
-    } else {
-      this.formNotValid = false;
     }
-
     this.triggerModal();
   }
 
   sendDemandClick() {
     this.closeModal();
-    this.buttonIsLoading['status'] = true;
+    this.demandStatus['status'] = backendInteractionStatus.Loading;
     this.stallionProfileService.sendDemandToVendor(
       this.askForMatingForm.getRawValue(),
       this.owner,
       this.nSire,
-      this.backendErrorStatus,
+      this.demandStatus,
       this.sendFormMessage,
-      this.buttonIsLoading
     ).subscribe(() => {
-      this.backendErrorStatus['status'] = false;
-      this.buttonIsLoading['status'] = false;
+      this.demandStatus['status'] = backendInteractionStatus.Success;
       this.sendFormMessage.setValue("Demande envoyée avec succès.");
     })
   }

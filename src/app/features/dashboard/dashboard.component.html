@@ -9,14 +9,24 @@
                 <ul class="menu-list">
                     <li>
                         <a class="is-flex is-align-items-center" [ngClass]="isHighlighted('MyCoversComponent', 'buyer')? 'is-active' : ''" (click)="onClick('MyCoversComponent', null, 'buyer')">Mes saillies
+                            <span class="tag is-rounded is-danger ml-2"
+                                *ngIf="hasCoverNotifications('buyer') && !isExpanded['buyer']['MyCoversComponent']"
+                                [ngClass]="isHighlighted('MyCoversComponent', 'buyer')? 'is-light' : ''">
+                                    {{sumCoverNotifications('buyer')}}
+                            </span>
                             <span class="icon ml-auto"><i class="fas fa-chevron-up" [ngClass]="isExpanded['buyer']['MyCoversComponent']? 'fa-rotate-180' : 'fa-rotate-90'"></i></span>
                         </a>
                         <ul *ngIf="isExpanded['buyer']['MyCoversComponent']">
-                            <li><a [ngClass]="isHighlighted('pendingApproval', 'buyer')? 'is-active' : ''" (click)="onClick('pendingApproval', 'MyCoversComponent', 'buyer')">Demandées</a></li>
-                            <li><a [ngClass]="isHighlighted('pendingSignature', 'buyer')? 'is-active' : ''" (click)="onClick('pendingSignature', 'MyCoversComponent', 'buyer')">En cours de signature</a></li>
-                            <li><a [ngClass]="isHighlighted('onGoing', 'buyer')? 'is-active' : ''" (click)="onClick('onGoing', 'MyCoversComponent', 'buyer')">Engagées</a></li>
-                            <li><a [ngClass]="isHighlighted('done', 'buyer')? 'is-active' : ''" (click)="onClick('done', 'MyCoversComponent', 'buyer')">Terminées</a></li>
-                            <li><a [ngClass]="isHighlighted('denied', 'buyer')? 'is-active' : ''" (click)="onClick('denied', 'MyCoversComponent', 'buyer')">Refusées</a></li>
+                            <li *ngFor="let group of ['pendingApproval', 'pendingSignature', 'onGoing', 'done', 'denied']">
+                                <a [ngClass]="isHighlighted(group, 'buyer')? 'is-active' : ''"
+                                (click)="onClick(group, 'MyCoversComponent', 'buyer')">
+                                    {{mappingGroupToName['buyer'][group]}}
+                                    <span class="tag is-rounded is-danger ml-2"
+                                        *ngIf="coverNotifications['buyer'] && coverNotifications['buyer'][group] && coverNotifications['buyer'][group].length > 0">
+                                        {{coverNotifications['buyer'][group]? coverNotifications['buyer'][group].length: 0}}
+                                    </span>
+                                </a>
+                            </li>
                         </ul>
                     </li>
                     <li><a [ngClass]="isHighlighted('FavoriteStallionsComponent', 'buyer')? 'is-active' : ''" (click)="onClick('FavoriteStallionsComponent', null, 'buyer')">Mes étalons favoris</a></li>
@@ -35,14 +45,24 @@
                     </li>
 
                     <li><a class="is-flex is-align-items-center" [ngClass]="isHighlighted('MyCoversComponent', 'seller')? 'is-active' : ''" (click)="onClick('MyCoversComponent', null, 'seller')">Mes saillies
+                        <span class="tag is-rounded is-danger ml-2"
+                            *ngIf="hasCoverNotifications('seller') && !isExpanded['seller']['MyCoversComponent']"
+                            [ngClass]="isHighlighted('MyCoversComponent', 'seller')? 'is-light' : ''">
+                                {{sumCoverNotifications('seller')}}
+                        </span>
                         <span class="icon ml-auto"><i class="fas fa-chevron-up" [ngClass]="isExpanded['seller']['MyCoversComponent']? 'fa-rotate-180' : 'fa-rotate-90'"></i></span>
                     </a>
                         <ul *ngIf="isExpanded['seller']['MyCoversComponent']">
-                            <li><a [ngClass]="isHighlighted('pendingApproval', 'seller')? 'is-active' : ''" (click)="onClick('pendingApproval', 'MyCoversComponent', 'seller')">Demandes</a></li>
-                            <li><a [ngClass]="isHighlighted('pendingSignature', 'seller')? 'is-active' : ''" (click)="onClick('pendingSignature', 'MyCoversComponent', 'seller')">En cours de signature</a></li>
-                            <li><a [ngClass]="isHighlighted('onGoing', 'seller')? 'is-active' : ''" (click)="onClick('onGoing', 'MyCoversComponent', 'seller')">Engagées</a></li>
-                            <li><a [ngClass]="isHighlighted('done', 'seller')? 'is-active' : ''" (click)="onClick('done', 'MyCoversComponent', 'seller')">Terminées</a></li>
-                            <li><a [ngClass]="isHighlighted('denied', 'seller')? 'is-active' : ''" (click)="onClick('denied', 'MyCoversComponent', 'seller')">Refusées</a></li>
+                            <li *ngFor="let group of ['pendingApproval', 'pendingSignature', 'onGoing', 'done', 'denied']">
+                                <a [ngClass]="isHighlighted(group, 'seller')? 'is-active' : ''"
+                                (click)="onClick(group, 'MyCoversComponent', 'seller')">
+                                    {{mappingGroupToName['seller'][group]}}
+                                    <span class="tag is-rounded is-danger ml-2"
+                                        *ngIf="coverNotifications['seller'] && coverNotifications['seller'][group] && coverNotifications['seller'][group].length > 0">
+                                        {{coverNotifications['seller'][group]? coverNotifications['seller'][group].length: 0}}
+                                    </span>
+                                </a>
+                            </li>
                         </ul>
                     </li>
                 </ul>

@@ -28,6 +28,7 @@ import { MyAccountComponent } from './features/dashboard/my-account/my-account.c
 import { ReviewsComponent } from './features/dashboard/reviews/reviews.component';
 import { PasswordUpdateComponent } from './features/mail-links/password-update/password-update.component';
 import { FooterComponent } from './layout/footer/footer.component';
+import { EmailVerificationComponent } from './features/mail-links/email-verification/email-verification.component';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import { FooterComponent } from './layout/footer/footer.component';
     MyAccountComponent,
     ReviewsComponent,
     PasswordUpdateComponent,
-    FooterComponent
+    FooterComponent,
+    EmailVerificationComponent
   ],
   imports: [
     BrowserModule,

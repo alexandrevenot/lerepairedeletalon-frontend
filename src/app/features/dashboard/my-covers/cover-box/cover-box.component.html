@@ -10,18 +10,6 @@
     <div class="column has-text-left">
         <h4 class="subtitle is-4 has-text-weight-semibold">{{item.mare_name}}</h4>
     </div>
-    <div class="column">
-        <div class="buttons is-centered" (click)="goToCoverPage(item.id)">
-            <button class="button is-rounded is-small">
-                <span class="icon">
-                    <i class="fas fa-eye"></i>
-                </span>
-                <span>
-                    Gérer / Consulter les détails
-                </span>
-            </button>
-        </div>
-    </div>
 </div>
 
 <div class="columns is-vcentered">
@@ -43,5 +31,14 @@
             </div>
         </div>
     </div>
-
 </div>
+
+<button class="button is-centered is-light is-fullwidth is-small" (click)="goToCoverPage(item.id)">
+    <span class="icon">
+        <i class="fas fa-eye"></i>
+    </span>
+    <span>
+        Gérer / Consulter les détails
+    </span>
+</button>
+

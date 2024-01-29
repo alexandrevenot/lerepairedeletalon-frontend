@@ -2,14 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { catchError, throwError } from 'rxjs';
 import { FormControl } from '@angular/forms';
-import { IACSpecs, IAISpecs, IARTSpecs, LIBandHANDSpecs, SingularStallionSTDSpecs } from '../../dashboard/my-stallions/stallion/stallion.service';
+import {LIBandHANDSpecs, SingularStallionSTDSpecs } from '../../dashboard/my-stallions/stallion/stallion.service';
+import { backendInteractionStatus } from 'src/environments/environment';
 
 export interface CoverSpecs {
     lib: LIBandHANDSpecs | null;
     hand: LIBandHANDSpecs | null;
-    iai: IAISpecs | null;
-    iart: IARTSpecs | null;
-    iac: IACSpecs | null;
 }
 
 export interface StallionProfile {
@@ -62,28 +60,12 @@ export class StallionProfileService {
         )
     }
 
-    handleCreateCoverError(error: HttpErrorResponse, messageFormControl: FormControl) {
-        if (error.status === 400) {
-            if (error.error && error.error.detail) {
-                if (error.error.detail == "seller_id is equal to buyer_id") {
-                    messageFormControl.setValue("Bien que nous serions ravis d'en récupérer les frais de service, vous ne pouvez pas acheter de saillie à vous-même.")
-                } else if (error.error.detail == "cover already exists") {
-                    messageFormControl.setValue("Cette saillie a déjà été demandée, ou bien est déjà en cours.")
-                }
-            }
-        } else if (error.status === 500) {
-            messageFormControl.setValue('Une erreur est survenue. Merci de réessayer.');
-        }
-        return throwError(() => new Error());
-    }
-
     sendDemandToVendor(
         form: Record<string, string>,
         owner: string,
         nSire: string,
-        backendErrorStatus: Record<string, boolean>,
+        demandStatus: Record<string, backendInteractionStatus>,
         messageFormControl: FormControl,
-        buttonIsLoading: Record<string, boolean>
         ) {
         const body: Record<string, string> = {
             seller_id: owner,
@@ -92,8 +74,7 @@ export class StallionProfileService {
             mare_name: form['mareName'],
             mare_breed: form['mareBreed'],
             cover_type: form['selectedCoverType'],
-            message: form['messageToVendor'],
-            provided_cover_place: form['providedCoverPlace']
+            message: form['messageToVendor']
         }
 
         return this.http.post(
@@ -101,9 +82,20 @@ export class StallionProfileService {
             body
         ).pipe(
             catchError((error: HttpErrorResponse) => {
-                backendErrorStatus['status'] = true;
-                buttonIsLoading['status'] = false;
-                return this.handleCreateCoverError(error, messageFormControl);
+                demandStatus['status'] = backendInteractionStatus.BackendError;
+
+                if (error.status === 400) {
+                    if (error.error && error.error.detail) {
+                        if (error.error.detail == "seller_id is equal to buyer_id") {
+                            messageFormControl.setValue("Bien que nous serions ravis d'en récupérer les frais de service, vous ne pouvez pas acheter de saillie à vous-même.")
+                        } else if (error.error.detail == "cover already exists") {
+                            messageFormControl.setValue("Cette saillie a déjà été demandée, ou bien est déjà en cours.")
+                        }
+                    }
+                } else {
+                    messageFormControl.setValue("Une erreur est survenue. C'est peut-être de notre côté. Merci de réessayer.");
+                }
+                return throwError(() => new Error());
             })
         )
     }

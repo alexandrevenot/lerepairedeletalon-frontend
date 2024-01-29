@@ -1,13 +1,33 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CoverNotifications, DashboardService } from './dashboard.service';
 import { StallionComponentInput } from './my-stallions/stallion/stallion.component';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css']
+  styleUrls: ['./dashboard.component.css'],
+  providers: [DashboardService]
 })
 export class DashboardComponent implements OnInit{
+
+  // mapping group to name
+  mappingGroupToName: Record<any, Record<any, any>> = {
+    'buyer': {
+      'pendingApproval': 'Demandées',
+      'pendingSignature': 'En cours de signature',
+      'onGoing': 'Engagées',
+      'done': 'Terminées',
+      'denied': 'Refusées'
+    },
+    'seller': {
+      'pendingApproval': 'Demandes',
+      'pendingSignature': 'En cours de signature',
+      'onGoing': 'Engagées',
+      'done': 'Terminées',
+      'denied': 'Refusées'
+    }
+  }
 
   // common variables
   selectedComponentKey: string = "";
@@ -48,9 +68,16 @@ export class DashboardComponent implements OnInit{
     }
   };
   
+  // notifications
+  public coverNotifications: any = {
+    buyer: null,
+    seller: null
+  }
+
   constructor(
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private dashboardService: DashboardService
     ) {}
 
   ngOnInit(): void {
@@ -73,6 +100,11 @@ export class DashboardComponent implements OnInit{
         this.router.navigate(['/dashboard']);
       } 
     });
+
+    this.dashboardService.getCoverNotifications()
+    .subscribe((coverNotifications: CoverNotifications) => {
+      this.coverNotifications = coverNotifications;
+    })
   }
 
   initializeVars() {
@@ -116,6 +148,8 @@ export class DashboardComponent implements OnInit{
     } else { // sublabel
       this.selectedComponentKey = parentKey;
     }
+
+    this.acknowledgeCoverNotifications(key, category);
   }
 
   // special pages
@@ -135,5 +169,46 @@ export class DashboardComponent implements OnInit{
     this.stallionComponentInput.stallionId = stallionId;
     this.selectedComponentKey = "myStallionsComponent";
     this.highlightedLabel = 'stallion';
+  }
+
+  hasCoverNotifications(pov: 'buyer' | 'seller') {
+    if (!this.coverNotifications[pov]) {return;}
+
+    for (const value in this.coverNotifications[pov]) {
+      if (this.coverNotifications[pov][value] && this.coverNotifications[pov][value].length > 0) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  sumCoverNotifications(pov: 'buyer' | 'seller') {
+    if (!this.coverNotifications[pov]) {return 0;}
+
+    let sum = 0;
+    for (const value in this.coverNotifications[pov]) {
+      if (this.coverNotifications[pov][value]) {
+        sum += this.coverNotifications[pov][value].length;
+      }
+    }
+    return sum;
+  }
+
+  acknowledgeCoverNotifications(group: string, pov: string) {
+    if (
+      ['pendingApproval', 'pendingSignature', 'onGoing', 'done', 'denied'].includes(group)
+      && this.coverNotifications[pov]
+      && this.coverNotifications[pov][group]
+      && this.coverNotifications[pov][group].length > 0
+    ) {
+      this.dashboardService.acknowledgeCoverNotifications(
+        this.coverNotifications[pov][group],
+        pov,
+        group
+      )
+      .subscribe(() => {
+        this.coverNotifications[pov][group] = null;
+      });
+    }
   }
 }

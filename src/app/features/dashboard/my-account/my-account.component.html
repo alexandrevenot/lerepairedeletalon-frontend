@@ -314,9 +314,51 @@
         </div>
       </div>
     </div>
+  
+    <form class="box is-flex is-flex-direction-column is-align-items-center" style="background-color: #f7faf7;">
+      <h4 class="subtitle is-4 has-text-weight-bold pb-4">Versements</h4>
 
-    <form class="box" style="background-color: #f7faf7;">
-      <h4 class="subtitle is-4 has-text-weight-bold pb-4 has-text-centered">Versements</h4>
+      <label class="label has-text-weight-semibold has-text-grey-light">RIB du compte vers lequel envoyer les revenus <small>(Formats acceptés: PNG, PDF, JPEG, JPG)</small></label>
+      <div class="file is-primary">
+        <label class="file-label">
+          <div class="control">
+            <input class="file-input" type="file" name="resume" (change)="fetchBankIdentityFile($event)" accept=".png,.pdf,.jpeg,.jpg">
+          </div>
+          <span class="file-cta">
+            <span class="file-icon">
+              <i class="fas fa-cloud-upload-alt"></i>
+            </span>
+            <span class="file-label" *ngIf="!bankIdentityFile">
+              Sélectionner un fichier 
+            </span>
+            <span class="file-label" *ngIf="bankIdentityFile">
+              Fichier sélectionné
+            </span>
+          </span>
+          <span class="file-name" *ngIf="bankIdentityFile">
+            {{bankIdentityFile.name}}
+          </span>
+        </label>
+      </div>
     </form>
+
+    <div class="modal" [ngClass]="bankIdentityFileModalIsActive? 'is-active': ''">
+      <div class="modal-background" (click)="closeModal()"></div>
+      <div class="modal-content">
+          <header class="modal-card-head">
+              <p class="modal-card-title">Confirmer l'envoi du RIB</p>
+              <button class="delete" aria-label="close" (click)="closeModal()"></button>
+          </header>
+          <section class="modal-card-body">
+              <p>Les revenus TTC générés par les ventes de vos saillies seront envoyés sur le compte bancaire associé à ce RIB.</p>
+          </section>
+          <footer class="modal-card-foot is-justify-content-center">
+              <div class="buttons">
+                  <a class="button is-success" (click)="sendBankIdentityFile()">Envoyer le RIB</a>
+                  <a class="button" (click)="closeModal()">Annuler</a>
+              </div>
+          </footer>
+      </div>
+  </div>
   </div>
 </section>
