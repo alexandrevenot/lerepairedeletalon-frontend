@@ -199,7 +199,7 @@
                     <span class="tag is-success is-medium">{{availableCoverTypes[coverType]}}</span>
                 </div>
 
-                <div class="block" *ngIf="['lib', 'hand', 'iai'].includes(coverType)">
+                <div class="block">
                     <label class="label has-text-weight-semibold has-text-grey-light">{{coverPlaceNames[coverType].slice(0,1).toUpperCase()}}{{coverPlaceNames[coverType].slice(1,coverPlaceNames[coverType].length)}}</label>
                     <p class="has-text-weight-semibold">{{coverSpecs[coverType]['cover_place']}}</p>
                 </div>
@@ -214,39 +214,22 @@
                     <p class="has-text-weight-semibold">{{balancePaymentConditionsCorresp[coverSpecs[coverType]['balance_payment_condition']]}}</p>
                 </div>
 
-                <div class="block" *ngIf="['iac', 'iart'].includes(coverType)">
-                    <label class="label has-text-weight-semibold has-text-grey-light">Combien de paillettes sont fournies?</label>
-                    <p class="has-text-weight-semibold">{{coverSpecs[coverType]['nb_provided_straws']}}</p>
-                </div>
-
-                <div class="block" *ngIf="['iac'].includes(coverType)">
-                    <label class="label has-text-weight-semibold has-text-grey-light">De qui les paillettes non-utilisées sont-elles la propriété?</label>
-                    <p class="has-text-weight-semibold">Les paillettes non-utilisées {{(coverSpecs[coverType]['left_straws_owner'] == 'seller')? 'restent la propriété du vendeur' : "sont la propriété de l'acheteur"}}</p>
-                </div>
-
-                <div class="block" *ngIf="['lib', 'hand', 'iai'].includes(coverType)">
+                <div class="block">
                     <label class="label has-text-weight-semibold has-text-grey-light">Sur combien de chaleurs au maximum des tentatives de saillies seront réalisées?</label>
                     <p class="has-text-weight-semibold">{{coverSpecs[coverType]['maximum_nb_of_attempts']}}</p>
                 </div>
 
-                <div class="block"  *ngIf="['lib', 'hand'].includes(coverType)">
+                <div class="block">
                     <label class="label has-text-weight-semibold has-text-grey-light">Pour quelles maladies sexuellement transmissibles la jument devra-t-elle être testée?</label>
                     <ul class="has-text-weight-semibold">
                         <li *ngFor="let std of getNonNullKeys(coverSpecs[coverType]['demanded_std_negative_tests'])">{{stds[std]}}, {{coverSpecs[coverType]['demanded_std_negative_tests'][std]['test_oldness']}} jours avant</li>
                     </ul>
                 </div>
 
-                <div class="block"  *ngIf="['lib', 'hand'].includes(coverType)">
+                <div class="block">
                     <label class="label has-text-weight-semibold has-text-grey-light">Contre quelles maladies la jument devra-t-elle avoir ses vaccins à jour?</label>
                     <ul class="has-text-weight-semibold">
                         <li *ngFor="let vaccine of coverSpecs[coverType]['demanded_vaccines']">{{vaccines[vaccine]}}</li>
-                    </ul>
-                </div>
-
-                <div class="block"  *ngIf="['lib', 'hand', 'iai'].includes(coverType)">
-                    <label class="label has-text-weight-semibold has-text-grey-light">Comment la jument pourra-t-elle être hébergée?</label>
-                    <ul class="has-text-weight-semibold">
-                        <li *ngFor="let hostingType of getNonNullKeys(coverSpecs[coverType]['hosting_specs'])">{{hostingTypes[hostingType]}}, au prix de {{coverSpecs[coverType]['hosting_specs'][hostingType]['price']}}€ par jour</li>
                     </ul>
                 </div>
             </div>
@@ -317,21 +300,6 @@
                 </div>
             </div>
 
-            <div class="columns is-align-items-end" *ngIf="['iac', 'iart'].includes(selectedCoverTypeValue)">
-                <div class="column is-2 has-text-right">
-                    <label class="label pb-4">Vous demandez</label>
-                </div>
-
-                <div class="column">
-                    <label class="label has-text-grey-light has-text-weight-semibold">{{'Adresse complète du ' + coverPlaceNames[selectedCoverTypeValue]}}</label>
-                    <div class="field">
-                        <p class="control is-expanded">
-                          <input class="input" type="text" placeholder="Le Haras du Fleuve, 790 route de ..." formControlName="providedCoverPlace">
-                        </p>
-                    </div>
-                </div>
-            </div>
-
             <div class="columns is-align-items-start">
                 <div class="column is-2 has-text-right">
                     <label class="label">Votre message</label>
@@ -368,7 +336,7 @@
 
                     <div class="columns has-text-grey">
                         <div class="column">
-                            <p>Total</p>
+                            <p>Total TTC</p>
                             <p class="mt-4">(Aucun paiement n'est à effectuer pour le moment, ce n'est qu'une proposition.)</p>
                         </div>
 
@@ -387,13 +355,13 @@
                 <div class="column">
                     <div class="field">
                         <div class="control">
-                        <button class="button is-primary" [ngClass]="buttonIsLoading['status']? 'is-loading' : ''" (click)="checkFieldsAndOpenModal()">
+                        <button class="button is-primary" [ngClass]="demandStatus['status'] == 'Loading'? 'is-loading' : ''" (click)="checkFieldsAndOpenModal()">
                             Envoyer la demande de saillie
                         </button>
                         </div>
                         <p class="help" [ngClass]="{
-                            'has-text-success': !formNotValid && !backendErrorStatus['status'],
-                            'has-text-danger': formNotValid || backendErrorStatus['status']
+                            'has-text-success': demandStatus['status'] == 'Success',
+                            'has-text-danger': ['UserError', 'BackendError'].includes(demandStatus['status'])
                             }">{{ sendFormMessage.value }}</p>
                     </div>
                 </div>

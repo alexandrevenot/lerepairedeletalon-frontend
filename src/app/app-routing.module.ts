@@ -7,6 +7,7 @@ import { SearchComponent } from './features/search/search.component';
 import { StallionProfileComponent } from './features/search/stallion-profile/stallion-profile.component';
 import { ReviewsComponent } from './features/dashboard/reviews/reviews.component';
 import { PasswordUpdateComponent } from './features/mail-links/password-update/password-update.component';
+import { EmailVerificationComponent } from './features/mail-links/email-verification/email-verification.component';
 
 const routes: Routes = [
   {path: '', redirectTo: '/search', pathMatch: 'full'},
@@ -16,7 +17,8 @@ const routes: Routes = [
   {path: 'search', component: SearchComponent},
   {path: 'stallion-profile', component: StallionProfileComponent},
   {path: 'user-reviews', component: ReviewsComponent},
-  {path: 'password-update', component: PasswordUpdateComponent}
+  {path: 'password-update', component: PasswordUpdateComponent},
+  {path: 'email-verification', component: EmailVerificationComponent}
 ];
 
 @NgModule({

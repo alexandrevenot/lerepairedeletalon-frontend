@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FavoriteStallionBoxService, FavoriteStallionprofile } from './favorite-stallion-box.service';
 import { FavoriteStallionsService } from '../favorite-stallions.service';
+import { objectStorageBaseUrl, photosPrefix } from 'src/environments/environment';
 
 @Component({
   selector: 'app-favorite-stallion-box',
@@ -12,6 +13,9 @@ import { FavoriteStallionsService } from '../favorite-stallions.service';
 })
 export class FavoriteStallionBoxComponent implements OnInit{
   @Input() stallionId: string = "";
+
+  public objectStorageBaseUrl = objectStorageBaseUrl;
+  public photosPrefix = photosPrefix;
 
   public name: string = "";
   public breed: string = "";

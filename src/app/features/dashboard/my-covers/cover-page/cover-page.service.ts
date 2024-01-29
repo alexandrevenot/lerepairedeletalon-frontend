@@ -2,6 +2,7 @@ import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { FormControl } from "@angular/forms";
 import { catchError, throwError } from "rxjs";
+import { backendInteractionStatus } from "src/environments/environment";
 
 export interface GetCoverInfo {
     stallion_name: string;
@@ -20,7 +21,6 @@ export interface GetCoverInfo {
     contact_email: string;
     cover_type: string;
     cover_specs: any;
-    provided_cover_place: string;
     arrival_date: string;
     status: string;
     price: number;
@@ -37,17 +37,12 @@ export interface GetCoverInfo {
 export class CoverPageService {
     constructor(private http: HttpClient) {}
 
-    handleError(error: HttpErrorResponse) {
-        console.log(error);
-        return throwError(() => new Error());
-    }
-
     getCoverInfo(coverId: string) {
         return this.http.get<GetCoverInfo>(
             `http://localhost:3001/covers/cover/${coverId}`
         ).pipe(
             catchError((error: HttpErrorResponse) => {
-                return this.handleError(error);
+                return throwError(() => new Error());
             })
         )
     }
@@ -63,12 +58,14 @@ export class CoverPageService {
             catchError((error: HttpErrorResponse) => {
                 message.setValue("Erreur lors de la sauvegarde des notes");
                 success['status'] = false;
-                return this.handleError(error);
+                return throwError(() => new Error());
             })
         )
     }
 
-    stepForwardCover(coverId: string, nextStatus: string) {
+    stepForwardCover(coverId: string, nextStatus: string,
+        buttonStatus: Record<string, backendInteractionStatus>,
+        message: FormControl) {
         const body: Record<string, any> = {
             next_status: nextStatus
         }
@@ -77,7 +74,9 @@ export class CoverPageService {
             body
         ).pipe(
             catchError((error: HttpErrorResponse) => {
-                return this.handleError(error);
+                buttonStatus["status"] = backendInteractionStatus.BackendError;
+                message.setValue("Une erreur est survenue. C'est peut-être de notre côté. Veuillez réessayer s'il vous plaît.")
+                return throwError(() => new Error());
             })
         )
     }
@@ -97,7 +96,7 @@ export class CoverPageService {
             catchError((error: HttpErrorResponse) => {
                 failed["value"] = true;
                 display["value"] = true;
-                return this.handleError(error);
+                return throwError(() => new Error());
             })
         )
     }

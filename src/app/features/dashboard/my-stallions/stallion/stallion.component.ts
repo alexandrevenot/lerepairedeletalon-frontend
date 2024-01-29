@@ -1,11 +1,10 @@
 import { Component, HostListener, Input, OnInit  } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { PostStallionResponse, StallionService } from './stallion.service';
-import { getAvailableBreeds, breedsRecord, availableCoverTypes, coverPlaceNames, getNumberArray, photosMaxSizeInBytes, splitListOrKeysList, balancePaymentConditions, stds, vaccines, hostingTypes, objectStorageBaseUrl, photosPrefix } from 'src/environments/environment';
+import { getAvailableBreeds, breedsRecord, availableCoverTypes, coverPlaceNames, getNumberArray, photosMaxSizeInBytes, splitListOrKeysList, balancePaymentConditions, stds, vaccines, objectStorageBaseUrl, photosPrefix, backendInteractionStatus, backendBaseUrl, verificationFileMaxSizeInBytes } from 'src/environments/environment';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { GeolocationService, getCityData, getCityItem } from 'src/environments/geolocation';
 import { Router } from '@angular/router';
-import { HttpResponse } from '@angular/common/http';
 
 export interface StallionComponentInput {
   mode: 'edition' | 'creation';
@@ -35,6 +34,7 @@ export class StallionComponent implements OnInit {
   public availableCoverTypes = availableCoverTypes;
   public coverPlaceNames = coverPlaceNames;
   public photosMaxSizeInBytes = photosMaxSizeInBytes;
+  public verificationFileMaxSizeInBytes = verificationFileMaxSizeInBytes;
   public getNumberArray = getNumberArray;
   public splitListOrKeysList = splitListOrKeysList;
   public balancePaymentConditions = balancePaymentConditions;
@@ -42,8 +42,6 @@ export class StallionComponent implements OnInit {
   public vaccinesRecord = vaccines;
   public availableStds = Object.keys(this.stdsRecord);
   public availableVaccines = Object.keys(this.vaccinesRecord);
-  public hostingTypesRecord = hostingTypes;
-  public availableHostingTypes = Object.keys(this.hostingTypesRecord);
   public objectStorageBaseUrl = objectStorageBaseUrl;
   public photosPrefix = photosPrefix;
 
@@ -52,11 +50,13 @@ export class StallionComponent implements OnInit {
   public photosHelper: FormControl= new FormControl('');
   public verificationFileHelper: FormControl= new FormControl('');
   public locationHelper: FormControl = new FormControl('');
+  public birthdateHelper: FormControl = new FormControl('');
 
   // form validation status
-  public submitted: Record<string, boolean> = {status: false};
-  public triggerEmptyMandatoryFields: Record<string, boolean> = {status: false};
+  public stallionFormStatus: Record<string, backendInteractionStatus> = {"status": backendInteractionStatus.Init};
   public locationSearchSuccess: Record<string, boolean> = {status: false};
+
+  // form booleans
   public isLookingForLocation: boolean = false;
   public locationIsValidated: boolean = false;
   public stallionHasUnregisteredBreed: boolean = false;
@@ -69,7 +69,6 @@ export class StallionComponent implements OnInit {
   public stallionVaccines: Record<string, boolean> = {};
   public verificationFile!: File;
   public photos: Array<File | null> = [];
-  public hostingTypes: Record<string, Record<string, boolean>> = {};
   public mareSTDs: Record<string, Record<string, boolean>> = {};
   public mareVaccines: Record<string, Record<string, boolean>> = {};
 
@@ -147,39 +146,21 @@ export class StallionComponent implements OnInit {
       this.stallionForm.addControl(coverType + 'BalancePaymentCondition', new FormControl(''));
       this.stallionForm.addControl(coverType + 'AdvancePercentage', new FormControl(''));
 
-      if ('iac' === coverType) {
-        this.stallionForm.addControl(coverType + 'LeftStrawsOwner', new FormControl(''));
+      this.stallionForm.addControl(coverType + 'CoverPlace', new FormControl(''));
+      this.stallionForm.addControl(coverType + 'MaximumNumberOfAttempts', new FormControl(''));
+
+      this.mareSTDs[coverType] = {}
+      for (const std of this.availableStds) {
+        this.stallionForm.addControl(coverType + std + 'MareTestOldness', new FormControl(''));
+        this.stallionForm.get(coverType + std + 'MareTestOldness')?.disable();
+        this.mareSTDs[coverType][std] = false;
       }
 
-      if (['iac', 'iart'].includes(coverType)) {
-        this.stallionForm.addControl(coverType + 'NbProvidedStraws', new FormControl(''));
-      }
-
-      if (['lib', 'hand', 'iai'].includes(coverType)) {
-        this.stallionForm.addControl(coverType + 'CoverPlace', new FormControl(''));
-        this.stallionForm.addControl(coverType + 'MaximumNumberOfAttempts', new FormControl(''));
-
-        this.mareSTDs[coverType] = {}
-        for (const std of this.availableStds) {
-          this.stallionForm.addControl(coverType + std + 'MareTestOldness', new FormControl(''));
-          this.stallionForm.get(coverType + std + 'MareTestOldness')?.disable();
-          this.mareSTDs[coverType][std] = false;
-        }
-
-        this.hostingTypes[coverType] = {}
-        for (const hostingType of this.availableHostingTypes) {
-          this.stallionForm.addControl(coverType + hostingType + 'Price', new FormControl(''));
-          this.stallionForm.get(coverType + hostingType + 'Price')?.disable();
-          this.hostingTypes[coverType][hostingType] = false;
-        }
-
-        for (const vaccine of this.availableVaccines) {
-          this.mareVaccines[coverType] = {vaccine: false};
-        }
+      for (const vaccine of this.availableVaccines) {
+        this.mareVaccines[coverType] = {vaccine: false};
       }
 
       this.coverTypes[coverType] = false;
-
     }
 
     if (this.stallionComponentInput.mode === 'edition') {
@@ -257,40 +238,20 @@ export class StallionComponent implements OnInit {
             this.stallionForm.get(coverType + 'BalancePaymentCondition')?.setValue(data.cover_specs[coverType].balance_payment_condition);
             this.stallionForm.get(coverType + 'AdvancePercentage')?.setValue(data.cover_specs[coverType].advance_percentage);
 
-            if (['lib', 'hand', 'iai'].includes(coverType)) {
-              this.stallionForm.get(coverType + 'CoverPlace')?.setValue(data.cover_specs[coverType].cover_place);
-              this.stallionForm.get(coverType + 'MaximumNumberOfAttempts')?.setValue(data.cover_specs[coverType].maximum_nb_of_attempts);
-              
-              for (let hostingType of this.availableHostingTypes) {
-                if (data.cover_specs[coverType].hosting_specs[hostingType]) {
-                  this.stallionForm.get(coverType + hostingType + 'Price')?.setValue(data.cover_specs[coverType].hosting_specs[hostingType].price);
-                  this.stallionForm.get(coverType + hostingType + 'Price')?.enable();
-                  this.hostingTypes[coverType][hostingType] = true;
-                }
+            this.stallionForm.get(coverType + 'CoverPlace')?.setValue(data.cover_specs[coverType].cover_place);
+            this.stallionForm.get(coverType + 'MaximumNumberOfAttempts')?.setValue(data.cover_specs[coverType].maximum_nb_of_attempts);
+
+            for (let vaccine of data.cover_specs[coverType].demanded_vaccines) {
+              this.mareVaccines[coverType][vaccine] = true;
+            }
+
+            for (let std of this.availableStds) {
+              if (data.cover_specs[coverType].demanded_std_negative_tests[std]) {
+                this.stallionForm.get(coverType + std + 'MareTestOldness')?.setValue(data.cover_specs[coverType].demanded_std_negative_tests[std].test_oldness);
+                this.stallionForm.get(coverType + std + 'MareTestOldness')?.enable();
+                this.mareSTDs[coverType][std] = true;
               }
-            }
-
-            if (['lib', 'hand'].includes(coverType)) {
-              for (let vaccine of data.cover_specs[coverType].demanded_vaccines) {
-                this.mareVaccines[coverType][vaccine] = true;
-              }
-
-              for (let std of this.availableStds) {
-                if (data.cover_specs[coverType].demanded_std_negative_tests[std]) {
-                  this.stallionForm.get(coverType + std + 'MareTestOldness')?.setValue(data.cover_specs[coverType].demanded_std_negative_tests[std].test_oldness);
-                  this.stallionForm.get(coverType + std + 'MareTestOldness')?.enable();
-                  this.mareSTDs[coverType][std] = true;
-                }
-              }              
-            }
-
-            if (['iart', 'iac'].includes(coverType)) {
-              this.stallionForm.get(coverType + 'NbProvidedStraws')?.setValue(data.cover_specs[coverType].nb_provided_straws); 
-            }
-
-            if ('iac' === coverType) {
-              this.stallionForm.get(coverType + 'LeftStrawsOwner')?.setValue(data.cover_specs[coverType].left_straws_owner); 
-            }
+            }              
 
             this.stallionForm.get('coverAdditionalInfo')?.setValue(data.cover_additional_info);
           }
@@ -320,9 +281,9 @@ export class StallionComponent implements OnInit {
     return list;
   }
 
-  updateNestedCheckbox(coverType: string, formControlName: string, checkboxType: 'hostingTypes' | 'mareSTDs' | 'mareVaccines', event: any) {
+  updateNestedCheckbox(coverType: string, formControlName: string, checkboxType: 'mareSTDs' | 'mareVaccines', event: any) {
     this[checkboxType][coverType][event.target.id] = event.target.checked;
-    if (['hostingTypes', 'mareSTDs'].includes(checkboxType)) {
+    if (['mareSTDs'].includes(checkboxType)) {
       let formControl = this.stallionForm.get(formControlName)
       event.target.checked? formControl?.enable(): formControl?.disable();
     }
@@ -332,27 +293,41 @@ export class StallionComponent implements OnInit {
     return this[checkboxType][id];
   }
 
-  isCheckedNested(coverType: string, checkboxType: 'hostingTypes' | 'mareSTDs' | 'mareVaccines', id: any) {
+  isCheckedNested(coverType: string, checkboxType: 'mareSTDs' | 'mareVaccines', id: any) {
     return this[checkboxType][coverType][id];
   }
 
   // files
   fetchVerificationFile(event: any) {
+    const file: File = event.target.files[0];
+    if (!file) {
+      return
+    }
+
+    if (file.size > verificationFileMaxSizeInBytes) {
+      this.verificationFileHelper.setValue('La taille du fichier doit être inférieure à 10 Mo. Celle du fichier sélectionné les dépasse.');
+      return
+    } 
+
     this.verificationFile = event.target.files[0];
-    this.verificationFileHelper.setValue('');
+    this.verificationFileHelper.setValue('');    
   }
 
   fetchPhotos(event: any) {
-    const selectedFile: File = event.target.files[0];
-    if (selectedFile && selectedFile.size > photosMaxSizeInBytes) {
+    const file: File = event.target.files[0];
+    if (!file) {
+      return
+    }
+
+    if (file.size > photosMaxSizeInBytes) {
       this.photosHelper.setValue('La taille de chaque photo doit être inférieure à 4Mo.');
       return
     }
 
-    this.photos.push(selectedFile);
+    this.photos.push(file);
 
     const img = new Image();
-    img.src = URL.createObjectURL(selectedFile);
+    img.src = URL.createObjectURL(file);
 
     img.onload = () => {  
       URL.revokeObjectURL(img.src);
@@ -404,7 +379,7 @@ export class StallionComponent implements OnInit {
 
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
-    if (event.key === 'Escape') {
+    if (this.locationModalIsActive && event.key === 'Escape') {
       this.resetCity();
     }
   }
@@ -451,9 +426,26 @@ export class StallionComponent implements OnInit {
     this.closeModal();
   }
 
+  // numbers
+  makeNumberInteger(formControlName: string) {
+    this.stallionForm.get(formControlName)?.setValue(
+      this.stallionForm.getRawValue()[formControlName]
+      .replace(/\D/g, '')
+    )
+  }
+
   // checking form validity
-  isFilledInForm(field: string) {
+  getValueInStallionForm(field: string) {
     return this.stallionForm.getRawValue()[field];
+  }
+
+  formControlValueIsBetween15and50(field: string) {
+    const value = this.stallionForm.getRawValue()[field];
+    return 15 <= value && value <= 50;
+  }
+
+  birthdateFormatIsCorrect() {
+    return /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/.test(this.getValueInStallionForm("birthdate"));
   }
 
   dropdownIsSelected(field: 'breed') {
@@ -462,17 +454,6 @@ export class StallionComponent implements OnInit {
     } else {
       return false;
     }
-  }
-
-  public findInvalidControls() {
-    const invalid = [];
-    const controls = this.stallionForm.controls;
-    for (const name in controls) {
-        if (controls[name].invalid) {
-            invalid.push(name);
-        }
-    }
-    return invalid;
   }
 
   onSubmit() {
@@ -497,19 +478,60 @@ export class StallionComponent implements OnInit {
       shouldThrowError = true;
     }
 
+    if (!this.birthdateFormatIsCorrect()) {
+      shouldThrowError = true;
+      if (this.getValueInStallionForm('birthdate')) {
+        this.birthdateHelper.setValue("La date de naissance doit être au format JJ/MM/AAAA.");
+      }
+    }
+
+    if (this.getSelectedCheckboxes('productionBreeds').length <= 0) {
+      shouldThrowError = true;
+    }
+
+    if (this.getSelectedCheckboxes('coverTypes').length <= 0) {
+      shouldThrowError = true;
+    }
+
     if (!this.stallionForm.valid) {
       shouldThrowError = true;
     }
 
+    const stallionFormValue = this.stallionForm.getRawValue();
+    for (let coverType of this.getSelectedCheckboxes('coverTypes')) {
+      if (
+        !this.getValueInStallionForm(coverType + "Price")
+        || !this.getValueInStallionForm(coverType + "BalancePaymentCondition")
+        || !this.getValueInStallionForm(coverType + "AdvancePercentage")
+        || !this.getValueInStallionForm(coverType + "CoverPlace")
+        || !this.getValueInStallionForm(coverType + "MaximumNumberOfAttempts")
+      ) {
+        shouldThrowError = true;
+      }
+
+      if (!this.formControlValueIsBetween15and50(coverType + "AdvancePercentage")) {
+        shouldThrowError = true;
+      }
+
+      for (let [std, value] of Object.entries(this.mareSTDs[coverType])) {
+        if (value) {
+          if (!this.getValueInStallionForm(coverType + std + 'MareTestOldness')) {
+            shouldThrowError = true;
+          }
+        }
+      }
+    }
+
     // if data is not validated
     if (shouldThrowError) {
-      this.triggerEmptyMandatoryFields['status'] = true;
-      this.submitHelper.setValue('Une erreur est survenue. Merci de réessayer.');
+      this.stallionFormStatus['status'] = backendInteractionStatus.UserError;
+      this.submitHelper.setValue("Certains champs du formulaire sont manquants ou contiennent des erreurs. Veuillez s'il vous plaît remonter la page, et les corriger.");
       throw new Error("Incomplete form");
     }
 
     // API calls
-    this.submitted['status'] = true;
+    this.stallionFormStatus['status'] = backendInteractionStatus.Loading;
+    this.submitHelper.setValue('');
     return this.stallionService.registerNewStallion(
       this.stallionForm.getRawValue(),
       this.selectedLocation,
@@ -517,23 +539,19 @@ export class StallionComponent implements OnInit {
       this.getSelectedCheckboxes('productionBreeds').concat(this.productionBreedsAddedByHand),
       this.getSelectedCheckboxes('stallionStdNegativeTests'),
       this.getSelectedCheckboxes('stallionVaccines'),
-      this.hostingTypes,
       this.mareSTDs,
       this.mareVaccines,
-      this.submitted,
+      this.stallionFormStatus,
       this.submitHelper,
-      this.triggerEmptyMandatoryFields
       ).subscribe((response: PostStallionResponse) => {
         return this.stallionService.uploadFiles(
           this.verificationFile,
           this.photos,
           response['stallion_id'],
-          this.submitted,
-          this.submitHelper,
-          this.triggerEmptyMandatoryFields
+          this.stallionFormStatus,
+          this.submitHelper
         ).subscribe(() => {
-          this.submitted['status'] = false;
-          this.triggerEmptyMandatoryFields['status'] = false;
+          this.stallionFormStatus['status'] = backendInteractionStatus.Success;
           this.submitHelper.setValue('Étalon ajouté avec succès.');
         })
       });
@@ -555,14 +573,47 @@ export class StallionComponent implements OnInit {
       shouldThrowError = true;
     }
 
+    if (this.getSelectedCheckboxes('productionBreeds').length <= 0) {
+      shouldThrowError = true;
+    }
+
+    if (this.getSelectedCheckboxes('coverTypes').length <= 0) {
+      shouldThrowError = true;
+    }
+
     if (!this.stallionForm.valid) {
       shouldThrowError = true;
+    }
+
+    const stallionFormValue = this.stallionForm.getRawValue();
+    for (let coverType of this.getSelectedCheckboxes('coverTypes')) {
+      if (
+        !this.getValueInStallionForm(coverType + "Price")
+        || !this.getValueInStallionForm(coverType + "BalancePaymentCondition")
+        || !this.getValueInStallionForm(coverType + "AdvancePercentage")
+        || !this.getValueInStallionForm(coverType + "CoverPlace")
+        || !this.getValueInStallionForm(coverType + "MaximumNumberOfAttempts")
+      ) {
+        shouldThrowError = true;
+      }
+
+      if (!this.formControlValueIsBetween15and50(coverType + "AdvancePercentage")) {
+        shouldThrowError = true;
+      }
+
+      for (let [std, value] of Object.entries(this.mareSTDs[coverType])) {
+        if (value) {
+          if (!this.getValueInStallionForm(coverType + std + 'MareTestOldness')) {
+            shouldThrowError = true;
+          }
+        }
+      }
     }
     
     // if data is not validated
     if (shouldThrowError) {
-      this.triggerEmptyMandatoryFields['status'] = true;
-      this.submitHelper.setValue('Une erreur est survenue. Merci de réessayer.');
+      this.stallionFormStatus['status'] = backendInteractionStatus.UserError;
+      this.submitHelper.setValue("Certains champs du formulaire sont manquants ou contiennent des erreurs. Veuillez s'il vous plaît remonter la page, et les corriger.");
       throw new Error("Incomplete form");
     }
 
@@ -573,7 +624,7 @@ export class StallionComponent implements OnInit {
 
     const stallionId = this.stallionComponentInput.stallionId;
 
-    this.submitted['status'] = true;
+    this.stallionFormStatus['status'] = backendInteractionStatus.Loading;
     return this.stallionService.editStallion(
       stallionId,
       this.stallionForm.getRawValue(),
@@ -582,25 +633,21 @@ export class StallionComponent implements OnInit {
       this.getSelectedCheckboxes('productionBreeds').concat(this.productionBreedsAddedByHand),
       this.getSelectedCheckboxes('stallionStdNegativeTests'),
       this.getSelectedCheckboxes('stallionVaccines'),
-      this.hostingTypes,
       this.mareSTDs,
       this.mareVaccines,
-      this.submitted,
+      this.stallionFormStatus,
       this.submitHelper,
-      this.triggerEmptyMandatoryFields
     )
     .subscribe(() => {
       return this.stallionService.uploadNewPhotos(
         this.keptPhotos,
         this.photos,
         stallionId,
-        this.submitted,
-        this.submitHelper,
-        this.triggerEmptyMandatoryFields
+        this.stallionFormStatus,
+        this.submitHelper
       )
       .subscribe(() => {
-        this.submitted['status'] = false;
-        this.triggerEmptyMandatoryFields['status'] = false;
+        this.stallionFormStatus['status'] = backendInteractionStatus.Success;
         this.submitHelper.setValue('Informations mises à jour avec succès.');
         this.saveButtonIsDisabled = true;
         setTimeout(() => {

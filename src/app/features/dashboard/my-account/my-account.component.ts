@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MyAccountService } from './my-account.service';
 import { UserScore, UserScoreService } from 'src/app/core/user-score/user-score.service';
@@ -33,6 +33,11 @@ export class MyAccountComponent implements OnInit{
   public nbReviewsAsSeller: number = 0;
   public buyerScore: number | null = null;
   public nbReviewsAsBuyer: number = 0;
+
+  // payment
+  public bankIdentityFile!: File;
+  public bankIdentityFileModalIsActive: boolean = false;
+  public bankIdentityFileStatus: string = "";
 
   constructor(
     private myAccountService: MyAccountService,
@@ -107,6 +112,10 @@ export class MyAccountComponent implements OnInit{
         this.nbReviewsAsBuyer = data.nb_reviews_as_buyer;
       }
 
+      if (data.bank_identity) {
+
+      }
+
       this.userScoreService.getUserScore(this.userId, null, "seller")
       .subscribe((userScore: UserScore) => {
         if (userScore.score) {
@@ -178,5 +187,25 @@ export class MyAccountComponent implements OnInit{
   handleClickReviews(reviewPov: "given" | "received", coverPov: "buyer" | "seller") {
     const url = `/user-reviews?id=${this.userId}&reviewPov=${reviewPov}&coverPov=${coverPov}`;
     window.open(url, '_blank');
+  }
+
+  fetchBankIdentityFile(event: any) {
+    this.bankIdentityFile = event.target.files[0];
+    this.bankIdentityFileModalIsActive = true;
+  }
+
+  sendBankIdentityFile() {
+
+  }
+
+  closeModal() {
+    this.bankIdentityFileModalIsActive = false;
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    if (event.key === 'Escape') {
+      this.closeModal();
+    }
   }
 }

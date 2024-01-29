@@ -12,9 +12,9 @@
           <label class="label has-text-weight-semibold has-text-grey">Nom de l'étalon</label>
           <div class="control">
             <input class="input" [ngClass]="{
-              'is-success': isFilledInForm('name') && triggerEmptyMandatoryFields['status'],
-              'is-danger': !isFilledInForm('name') && triggerEmptyMandatoryFields['status']
-              }" type="text" placeholder="" formControlName="name">
+                'is-success': getValueInStallionForm('name') && 'UserError' == stallionFormStatus['status'],
+                'is-danger': !getValueInStallionForm('name') && 'UserError' == stallionFormStatus['status']
+                }" type="text" placeholder="Rosembert" formControlName="name">
           </div>
         </div>
       </div>
@@ -26,8 +26,8 @@
           <label class="label has-text-weight-semibold has-text-grey">Stud-book de naissance</label>
           <div class="control" *ngIf="!stallionHasUnregisteredBreed">
             <div class="select" [ngClass]="{
-              'is-success': dropdownIsSelected('breed') && triggerEmptyMandatoryFields['status'],
-              'is-danger': !dropdownIsSelected('breed') && triggerEmptyMandatoryFields['status']
+              'is-success': dropdownIsSelected('breed') && 'UserError' == stallionFormStatus['status'],
+              'is-danger': !dropdownIsSelected('breed') && 'UserError' == stallionFormStatus['status']
               }">
               <select formControlName="breed">
                 <option>Sélectionner</option>
@@ -70,8 +70,8 @@
           <label class="label has-text-weight-semibold has-text-grey">N° SIRE</label>
           <div class="control">
             <input class="input" [ngClass]="{
-              'is-success': isFilledInForm('nSIRE') && triggerEmptyMandatoryFields['status'],
-              'is-danger': !isFilledInForm('nSIRE') && triggerEmptyMandatoryFields['status']
+              'is-success': getValueInStallionForm('nSIRE') && 'UserError' == stallionFormStatus['status'],
+              'is-danger': !getValueInStallionForm('nSIRE') && 'UserError' == stallionFormStatus['status']
               }" type="text" placeholder="12345678X" formControlName="nSIRE">
           </div>
         </div>
@@ -133,8 +133,8 @@
       <h5 class="subtitle is-5 has-text-weight-bold">Description principale</h5>
       <div class="control">
         <textarea class="textarea" [ngClass]="{
-          'is-success': isFilledInForm('mainDesc') && triggerEmptyMandatoryFields['status'],
-          'is-danger': !isFilledInForm('mainDesc') && triggerEmptyMandatoryFields['status']
+          'is-success': getValueInStallionForm('mainDesc') && 'UserError' == stallionFormStatus['status'],
+          'is-danger': !getValueInStallionForm('mainDesc') && 'UserError' == stallionFormStatus['status']
           }" placeholder="Décrivez votre étalon en quelques lignes..." formControlName="mainDesc"></textarea>
       </div>
     </div>
@@ -146,8 +146,8 @@
           <label class="label has-text-weight-semibold has-text-grey">Robe</label>
           <div class="control">
             <input class="input" [ngClass]="{
-              'is-success': isFilledInForm('color') && triggerEmptyMandatoryFields['status'],
-              'is-danger': !isFilledInForm('color') && triggerEmptyMandatoryFields['status']
+              'is-success': getValueInStallionForm('color') && 'UserError' == stallionFormStatus['status'],
+              'is-danger': !getValueInStallionForm('color') && 'UserError' == stallionFormStatus['status']
               }" type="text" placeholder="Noir pie tobiano" formControlName="color">
           </div>
         </div>
@@ -157,9 +157,9 @@
         <div class="field">
           <label class="label has-text-weight-semibold has-text-grey">Taille au garrot <small>(centimètres)</small></label>
           <div class="control">
-          <input class="input" [ngClass]="{
-            'is-success': isFilledInForm('height') && triggerEmptyMandatoryFields['status'],
-            'is-danger': !isFilledInForm('height') && triggerEmptyMandatoryFields['status']
+          <input class="input" (input)="makeNumberInteger('height')" [ngClass]="{
+            'is-success': getValueInStallionForm('height') && 'UserError' == stallionFormStatus['status'],
+            'is-danger': !getValueInStallionForm('height') && 'UserError' == stallionFormStatus['status']
             }" type="text" placeholder="160" formControlName="height">
           </div>
         </div>
@@ -170,10 +170,11 @@
           <label class="label has-text-weight-semibold has-text-grey">Date de naissance <small>(JJ/MM/AAAA)</small></label>
           <div class="control">
           <input class="input" [ngClass]="{
-            'is-success': isFilledInForm('birthdate') && triggerEmptyMandatoryFields['status'],
-            'is-danger': !isFilledInForm('birthdate') && triggerEmptyMandatoryFields['status']
+            'is-success': getValueInStallionForm('birthdate') && 'UserError' == stallionFormStatus['status'],
+            'is-danger': (!birthdateFormatIsCorrect() || !getValueInStallionForm('birthdate')) && 'UserError' == stallionFormStatus['status']
             }" type="text" placeholder="01/01/2015" formControlName="birthdate">
           </div>
+          <p class="help has-text-danger">{{ birthdateHelper.value }}</p>
         </div>
       </div>
     </div>
@@ -186,7 +187,7 @@
           <div class="control" [ngClass]="locationIsValidated? 'has-icons-right' : ''">
             <input class="input" [ngClass]="{
               'is-success': locationIsValidated,
-              'is-danger': !locationIsValidated && (isLookingForLocation || triggerEmptyMandatoryFields['status'])
+              'is-danger': !locationIsValidated && (isLookingForLocation || 'UserError' == stallionFormStatus['status'])
               }" type="text" placeholder="Toulouse" formControlName="location">
             <span class="icon is-right" *ngIf="locationIsValidated">
               <i class="fas fa-check fa-sm"></i>
@@ -359,7 +360,7 @@
     <div class="field">
       <h5 class="subtitle is-5 has-text-weight-bold">Pedigree: performances et produits</h5>
       <div class="control">
-        <textarea class="textarea" placeholder="Dans ce paragraphe, apportez des informations concernant le pedigree de l'étalon, que ce soit à propos de leurs performances en compétition bien de leurs autres produits." formControlName="pedigreePO"></textarea>
+        <textarea class="textarea" placeholder="Dans ce paragraphe, apportez des informations concernant le pedigree de l'étalon, que ce soit à propos de leurs performances en compétition ou bien de leurs autres produits." formControlName="pedigreePO"></textarea>
       </div>
     </div>
 
@@ -374,7 +375,11 @@
 
     <div class="field">
       <h5 class="subtitle is-5 has-text-weight-bold">Stud-books de production</h5>
-      <label class="label has-text-weight-semibold has-text-grey">Indiquez les stud-books dans lesquelles votre étalon est approuvé à produire.</label>
+      <label class="label has-text-weight-semibold" [ngClass]="{
+        'has-text-success': getSelectedCheckboxes('productionBreeds').length > 0 && 'UserError' == stallionFormStatus['status'],
+        'has-text-grey': getSelectedCheckboxes('productionBreeds').length > 0 && 'UserError' != stallionFormStatus['status'],
+        'has-text-danger': !(getSelectedCheckboxes('productionBreeds').length > 0) && 'UserError' == stallionFormStatus['status']
+        }">Indiquez les stud-books dans lesquelles votre étalon est approuvé à produire.</label>
 
       <div *ngFor="let key of availableBreedTypes">
         <p class="has-text-weight-bold pt-4">{{key}}</p>
@@ -480,36 +485,45 @@
 
     <h5 class="subtitle is-5 has-text-weight-bold mt-5">Caractéristiques des saillies</h5>
     <label class="label has-text-weight-semibold" [ngClass]="{
-      'has-text-grey': getSelectedCheckboxes('coverTypes').length > 0 && triggerEmptyMandatoryFields['status'],
-      'has-text-danger': !(getSelectedCheckboxes('coverTypes').length > 0) && triggerEmptyMandatoryFields['status']
-      }" *ngIf="getSelectedCheckboxes('coverTypes').length === 0">
+        'has-text-grey': 'UserError' != stallionFormStatus['status'],
+        'has-text-danger': 'UserError' == stallionFormStatus['status']
+        }" *ngIf="getSelectedCheckboxes('coverTypes').length === 0">
       Commencez par sélectionner un type de saillie disponible pour votre étalon.
     </label>
 
-    <div class="box py-4" *ngFor="let coverType of getSelectedCheckboxes('coverTypes')">
+    <div class="box py-4" style="background-color: #f7faf7;" *ngFor="let coverType of getSelectedCheckboxes('coverTypes')">
       <label class="label has-text-weight-bold">Si l'acheteur choisit une {{availableCoverTypes[coverType]}} :</label>
 
       <div class="field pt-4">
-        <label class="label has-text-weight-semibold has-text-grey">Indiquez le prix de la saillie.</label>
+        <label class="label has-text-weight-semibold has-text-grey">Indiquez le prix HT de la saillie en euros <small>(pas de nombres à virgule)</small></label>
         <div class="control has-icons-right">
-          <input class="input" type="text" placeholder="400" formControlName="{{coverType}}Price">
+          <input class="input" (input)="makeNumberInteger(coverType + 'Price')" [ngClass]="{
+            'is-success': getValueInStallionForm(coverType + 'Price') && 'UserError' == stallionFormStatus['status'],
+            'is-danger': !getValueInStallionForm(coverType + 'Price') && 'UserError' == stallionFormStatus['status']
+            }" type="text" placeholder="400" formControlName="{{coverType}}Price">
           <span class="icon is-small is-right">
             <i class="fas fa-euro"></i>
           </span>
         </div>
       </div>
 
-      <div class="field pt-4" *ngIf="['lib', 'hand', 'iai'].includes(coverType)">
+      <div class="field pt-4">
         <label class="label has-text-weight-semibold has-text-grey">{{"Indiquez l'adresse du " + coverPlaceNames[coverType]}}</label>
         <div class="control">
-          <input class="input" type="text" formControlName="{{coverType}}CoverPlace">
+          <input class="input" [ngClass]="{
+            'is-success': getValueInStallionForm(coverType + 'CoverPlace') && 'UserError' == stallionFormStatus['status'],
+            'is-danger': !getValueInStallionForm(coverType + 'CoverPlace') && 'UserError' == stallionFormStatus['status']
+            }" type="text" formControlName="{{coverType}}CoverPlace" placeholder="Le Haras des Prés, ...">
         </div>
       </div>
 
       <div class="field pt-4">
-        <label class="label has-text-weight-semibold has-text-grey">Quel pourcentage du prix total doit constituer l'acompte de la saillie? <small>(Min. 15%, Max. 50%)</small></label>
+        <label class="label has-text-weight-semibold has-text-grey">Quel pourcentage du prix total doit constituer l'acompte de la saillie? <small>(Min. 15%, Max. 50%, pas de nombres à virgule)</small></label>
         <div class="control has-icons-right">
-          <input class="input" type="text" placeholder="50" formControlName="{{coverType}}AdvancePercentage">
+          <input class="input" (input)="makeNumberInteger(coverType + 'AdvancePercentage')" [ngClass]="{
+            'is-success': getValueInStallionForm(coverType + 'AdvancePercentage') && 'UserError' == stallionFormStatus['status'],
+            'is-danger': (!getValueInStallionForm(coverType + 'AdvancePercentage') || !formControlValueIsBetween15and50(coverType + 'AdvancePercentage')) && 'UserError' == stallionFormStatus['status']
+            }" type="text" placeholder="50" formControlName="{{coverType}}AdvancePercentage">
           <span class="icon is-small is-right">
             <i class="fas fa-percentage"></i>
           </span>
@@ -517,7 +531,10 @@
       </div>
 
       <div class="field pt-4">
-        <label class="label has-text-weight-semibold has-text-grey">Dans quel cas l'acheteur doit-il payer le solde de la saillie?</label>
+        <label class="label has-text-weight-semibold"
+          [ngClass]="!getValueInStallionForm(coverType + 'BalancePaymentCondition') && 'UserError' == stallionFormStatus['status']? 'has-text-danger': 'has-text-grey'">
+          Dans quel cas l'acheteur doit-il payer le solde de la saillie?
+        </label>
         <div class="control" *ngFor="let balancePaymentCondition of splitListOrKeysList(balancePaymentConditions, 'obj', 1)[0]">
           <label class="radio has-text-weight-semibold">
             <input type="radio" [value]="balancePaymentCondition" [formControlName]="coverType + 'BalancePaymentCondition'">
@@ -526,31 +543,17 @@
         </div>
       </div>
 
-      <div class="field pt-4" *ngIf="['iac', 'iart'].includes(coverType)">
-        <label class="label has-text-weight-semibold has-text-grey">Combien de paillettes sont fournies?</label>
-        <div class="control">
-          <input class="input" type="text" placeholder="9" [formControlName]="coverType + 'NbProvidedStraws'">
-        </div>
-      </div>
-
-      <div class="field pt-4" *ngIf="['iac'].includes(coverType)">
-        <label class="label has-text-weight-semibold has-text-grey pt-4">De qui les paillettes non utilisées sont-elles la propriété?</label>
-        <div class="control">
-          <label class="radio has-text-weight-semibold" *ngFor="let leftStrawsOwner of ['buyer', 'seller']">
-            <input type="radio" [value]="leftStrawsOwner" [formControlName]="coverType + 'LeftStrawsOwner'">
-            {{leftStrawsOwner === "seller"? "Vous": "L'acheteur"}}
-          </label>
-        </div>
-      </div>
-
-      <div class="field pt-4" *ngIf="['lib', 'hand', 'iai'].includes(coverType)">
+      <div class="field pt-4">
         <label class="label has-text-weight-semibold has-text-grey">Sur combien de chaleurs au maximum des tentatives de saillies seront réalisées?</label>
         <div class="control">
-          <input class="input" type="text" placeholder="3" [formControlName]="coverType + 'MaximumNumberOfAttempts'">
+          <input class="input" (input)="makeNumberInteger(coverType + 'MaximumNumberOfAttempts')" [ngClass]="{
+            'is-success': getValueInStallionForm(coverType + 'MaximumNumberOfAttempts') && 'UserError' == stallionFormStatus['status'],
+            'is-danger': !getValueInStallionForm(coverType + 'MaximumNumberOfAttempts') && 'UserError' == stallionFormStatus['status']
+            }" type="text" placeholder="3" [formControlName]="coverType + 'MaximumNumberOfAttempts'">
         </div>
       </div>
 
-      <div class="field pt-4" *ngIf="['lib', 'hand'].includes(coverType)">
+      <div class="field pt-4">
         <label class="label has-text-weight-semibold has-text-grey">Pour quelles maladies sexuellement transmissibles la jument devra-t-elle être testée?</label>
   
         <div *ngFor="let std of splitListOrKeysList(stdsRecord, 'obj', 1)[0]">
@@ -566,7 +569,10 @@
               <label class="label has-text-weight-semibold has-text-grey">Quand avant l'arrivée au centre, au maximum?</label>
               <div class="field has-addons">
                 <p class="control">
-                  <input class="input" type="text" placeholder="30" [formControlName]="coverType + std + 'MareTestOldness'">
+                  <input class="input" [ngClass]="{
+                    'is-success': mareSTDs[coverType][std] && getValueInStallionForm(coverType + std + 'MareTestOldness') && 'UserError' == stallionFormStatus['status'],
+                    'is-danger': mareSTDs[coverType][std] && !getValueInStallionForm(coverType + std + 'MareTestOldness') && 'UserError' == stallionFormStatus['status']
+                    }" type="text" placeholder="30" [formControlName]="coverType + std + 'MareTestOldness'">
                 </p>
                 <p class="control">
                   <a class="button is-static">
@@ -579,7 +585,7 @@
         </div>
       </div>
 
-      <div class="field pt-4" *ngIf="['lib', 'hand'].includes(coverType)">
+      <div class="field pt-4">
         <label class="label has-text-weight-semibold has-text-grey">Contre quelles maladies la jument devra-t-elle avoir ses vaccins à jour?</label>
   
         <div class="columns has-text-weight-semibold">
@@ -614,58 +620,30 @@
           </div>
         </div>
       </div>
-
-      <div class="field pt-4" *ngIf="['lib', 'hand', 'iai'].includes(coverType)">
-        <label class="label has-text-weight-semibold has-text-grey">Comment la jument pourra-t-elle être hébergée?</label>
-  
-        <div *ngFor="let hostingType of splitListOrKeysList(hostingTypesRecord, 'obj', 1)[0]">
-          <div class="columns is-align-items-center">
-            <div class="column">
-              <label class="checkbox has-text-weight-semibold">
-                <input type="checkbox" [id]="hostingType" (change)="updateNestedCheckbox(coverType, coverType + hostingType + 'Price', 'hostingTypes', $event)"
-                  [checked]="isCheckedNested(coverType, 'hostingTypes', hostingType)">
-                {{hostingTypesRecord[hostingType]}}
-              </label>
-            </div>
-            <div class="column">
-              <label class="label has-text-weight-semibold has-text-grey">À quel prix?</label>
-              <div class="field has-addons">
-                <p class="control">
-                  <input class="input" type="text" placeholder="5" [formControlName]="coverType + hostingType + 'Price'">
-                </p>
-                <p class="control">
-                  <a class="button is-static">
-                    €/jour
-                  </a>
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
     </div>
 
     <div class="field mt-5">
       <h5 class="subtitle is-5 has-text-weight-bold">Informations additionnelles</h5>
       <div class="control">
-        <textarea class="textarea" [ngClass]="{
-          'is-success': isFilledInForm('coverAdditionalInfo') && triggerEmptyMandatoryFields['status'],
-          'is-danger': !isFilledInForm('coverAdditionalInfo') && triggerEmptyMandatoryFields['status']
-          }" placeholder="Ajoutez ici les informations additionnelles sur les saillies..." formControlName="coverAdditionalInfo"></textarea>
+        <textarea class="textarea" placeholder="Ajoutez ici les informations additionnelles à propos des saillies..."
+        formControlName="coverAdditionalInfo"></textarea>
       </div>
     </div>
 
     <div class="field is-grouped mt-6">
       <div class="control">
-        <button class="button is-primary" type="button" (click)="onSubmit()" [ngClass]="submitted['status'] ? 'is-loading' : ''" [disabled]="saveButtonIsDisabled">
+        <button class="button is-primary" type="button" (click)="onSubmit()" [ngClass]="stallionFormStatus['status'] == 'Loading'? 'is-loading' : ''" [disabled]="saveButtonIsDisabled">
           {{stallionComponentInput.mode === "creation"? "Ajouter l'étalon": "Enregistrer les changements"}}</button>
       </div>
       <div class="control">
         <button class="button is-light" (click)="getBackToMyStallions()">Annuler</button>
       </div>
-      <p class="help">{{ submitHelper.value }}</p>
     </div>
+    <p class="help" [ngClass]="{
+      '': ['Init', 'Loading'].includes(stallionFormStatus['status']),
+      'is-success': ['Success'].includes(stallionFormStatus['status']),
+      'is-danger': ['UserError', 'BackendError'].includes(stallionFormStatus['status'])
+      }">{{ submitHelper.value }}</p>
   </form>
 </section>
 

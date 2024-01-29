@@ -1,7 +1,7 @@
 import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { CoverPageService, GetCoverInfo } from './cover-page.service';
 import { availableCoverTypes, coverPlaceNames, statusCommentaryMapping, statusHelper,
-  statusMapping, vaccines, shortBalancePaymentConditions, stds, hostingTypes, getNumberArray } from 'src/environments/environment';
+  statusMapping, vaccines, shortBalancePaymentConditions, stds, getNumberArray, backendInteractionStatus } from 'src/environments/environment';
 import { FormControl } from '@angular/forms';
 import { UserScore, UserScoreService } from 'src/app/core/user-score/user-score.service';
 import { Observable } from 'rxjs';
@@ -27,8 +27,6 @@ export class CoverPageComponent implements OnInit{
   public statusList: string[] = Object.keys(this.statusMappingObject);
   public stdsMapping = stds;
   public availableSTDS = Object.keys(stds);
-  public hostingMapping = hostingTypes;
-  public availableHostingTypes = Object.keys(hostingTypes);
 
   public stallionName: string = "";
   public stallionBreed: string = "";
@@ -53,9 +51,6 @@ export class CoverPageComponent implements OnInit{
   public maxNbOfAttempts: number = 0;
   public demandedSTDNegativeTests: Array<string> = [];
   public demandedVaccines: string = "";
-  public hostingSpecs: Array<string> = [];
-  public nbProvidedStraws: string = "";
-  public leftStrawsOwner: string = "";
   public arrivalDate: string = "";
   public messageFromBuyer: string = "";
   public timestamps: Array<Record<string, string>> = [];
@@ -82,6 +77,10 @@ export class CoverPageComponent implements OnInit{
   public updateNotesMessage: FormControl = new FormControl('');
   public updateNotesSuccess: Record<string, boolean> = {'status': false};
   public notesAreBeingModified: boolean = false;
+
+  public greenButtonStatus: Record<string, backendInteractionStatus> = {"status": backendInteractionStatus.Init};
+  public redButtonStatus: Record<string, backendInteractionStatus> = {"status": backendInteractionStatus.Init};
+  public greenAndRedButtonFormControl = new FormControl('');
 
   public newArrivalDate: FormControl = new FormControl('');
   public arrivalDateChangeFailed: Record<string, boolean> = {"value": false};
@@ -118,13 +117,13 @@ export class CoverPageComponent implements OnInit{
       },
       red: {
         requested: "Refuser la proposition",
-        approved: "Revenir à 'Proposée'",
+        approved: 'Revenir à "Demandée"',
         signingstarted: "",
         buyersigned: "",
         sellersigned: "",
         downpaid: "",
         fullypaid: "",
-        denied: "Revenir à 'Proposée'"
+        denied: 'Revenir à "Demandée"'
       }
     },
     buyer: {
@@ -201,50 +200,29 @@ export class CoverPageComponent implements OnInit{
       this.coverType = data.cover_type;
       this.price = data.price;
       this.basePrice = data.base_price;
-      this.coverPlace = ['iart', 'iac'].includes(data.cover_type)? data.provided_cover_place : data.cover_specs.cover_place;
+      this.coverPlace = data.cover_specs.cover_place;
 
       this.balancePaymentCondition = shortBalancePaymentConditions[data.cover_specs.balance_payment_condition];
 
       this.advancePercentage = data.cover_specs.advance_percentage.toString() + '% du prix total';
 
-      if (['lib', 'hand', 'iai'].includes(this.coverType)) {
-        this.maxNbOfAttempts = data.cover_specs.maximum_nb_of_attempts;
+      this.maxNbOfAttempts = data.cover_specs.maximum_nb_of_attempts;
 
-        this.hostingSpecs = [];
-        for (let htype of this.availableHostingTypes) {
-          if (Object.keys(data.cover_specs.hosting_specs).includes(htype)
-          && data.cover_specs.hosting_specs[htype]) {
-            this.hostingSpecs.push(this.hostingMapping[htype] + ", au prix de " + data.cover_specs.hosting_specs[htype]['price'] + '€ par jour');
-          }
+      this.demandedSTDNegativeTests = [];
+      for (let std of this.availableSTDS) {
+        if (Object.keys(data.cover_specs.demanded_std_negative_tests).includes(std)
+        && data.cover_specs.demanded_std_negative_tests[std]) {
+          this.demandedSTDNegativeTests.push(this.stdsMapping[std] + ", " + data.cover_specs.demanded_std_negative_tests[std]['test_oldness'] + ' jours avant la saillie');
         }
       }
 
-      if (['lib', 'hand'].includes(this.coverType)) {
-        this.demandedSTDNegativeTests = [];
-        for (let std of this.availableSTDS) {
-          if (Object.keys(data.cover_specs.demanded_std_negative_tests).includes(std)
-          && data.cover_specs.demanded_std_negative_tests[std]) {
-            this.demandedSTDNegativeTests.push(this.stdsMapping[std] + ", " + data.cover_specs.demanded_std_negative_tests[std]['test_oldness'] + ' jours avant la saillie');
-          }
+      let demandedVaccinesString = "";
+      data.cover_specs.demanded_vaccines.forEach(
+        (value: string) => {
+          demandedVaccinesString += (vaccines[value] + ", ");
         }
-
-        let demandedVaccinesString = "";
-        data.cover_specs.demanded_vaccines.forEach(
-          (value: string) => {
-            demandedVaccinesString += (vaccines[value] + ", ");
-          }
-        )
-        this.demandedVaccines = demandedVaccinesString.slice(0, -2);
-      }
-
-      if (['iart', 'iac'].includes(this.coverType)) {
-        this.nbProvidedStraws = data.cover_specs.nb_provided_straws;
-      }
-
-      if (this.coverType == 'iac') {
-        let leftStrawsOwnerRaw = data.cover_specs.left_straws_owner;
-        this.leftStrawsOwner = leftStrawsOwnerRaw == 'buyer'? "L'acheteur": "Le vendeur";
-      }
+      )
+      this.demandedVaccines = demandedVaccinesString.slice(0, -2);
 
       this.arrivalDate = data.arrival_date;
 
@@ -304,6 +282,12 @@ export class CoverPageComponent implements OnInit{
     }
 
     window.open(url, '_blank');
+  }
+
+  makePriceInteger() {
+    this.newBasePrice.setValue(
+      this.newBasePrice.getRawValue().replace(/\D/g, '')
+    )
   }
 
   saveNewArrivalDate() {
@@ -441,16 +425,19 @@ export class CoverPageComponent implements OnInit{
   }
 
   // common cover management methods
-  stepForwardCover(nextStatus: string) {
-    this.coverPageService.stepForwardCover(this.coverId, nextStatus)
+  stepForwardCover(nextStatus: string, buttonStatus: Record<string, backendInteractionStatus>) {
+    buttonStatus["status"] = backendInteractionStatus.Loading;
+    this.greenAndRedButtonFormControl.setValue("");
+    this.coverPageService.stepForwardCover(this.coverId, nextStatus, buttonStatus, this.greenAndRedButtonFormControl)
     .subscribe(() => {
+      buttonStatus["status"] = backendInteractionStatus.Success;
       this.loadCoverInfo();
     })
   }
 
   green(status: string, pov: string) {
     if (status == "requested" && pov == "seller") {
-      this.stepForwardCover('approved');
+      this.stepForwardCover('approved', this.greenButtonStatus);
     } else if ((["signingstarted", "approved"].includes(status) && pov == "buyer") || (status == "buyersigned" && pov == "seller")) {
       this.goToCoverPageActionEvent.emit({coverId: this.coverId, coverActionType: "signature"});
     } else if (["sellersigned", "downpaid"].includes(status) && pov == "buyer") {
@@ -461,11 +448,11 @@ export class CoverPageComponent implements OnInit{
   red(status: string, pov: string) {
     if (pov == "seller") {
       if (status == "requested") {
-        this.stepForwardCover('denied');
+        this.stepForwardCover('denied', this.redButtonStatus);
       } else if (status == "approved") {
-        this.stepForwardCover('requested');
+        this.stepForwardCover('requested', this.redButtonStatus);
       } else if (status == "denied") {
-        this.stepForwardCover('requested');
+        this.stepForwardCover('requested', this.redButtonStatus);
       }
     }
   }

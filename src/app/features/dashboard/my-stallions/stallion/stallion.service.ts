@@ -4,7 +4,7 @@ import { FormControl} from '@angular/forms';
 import { throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { getCityItem } from 'src/environments/geolocation';
-import { deepCopy } from 'src/environments/environment';
+import { backendBaseUrl, backendInteractionStatus, deepCopy } from 'src/environments/environment';
 
 interface FinalStallionFields {
   name: string;
@@ -17,10 +17,6 @@ export interface SingularStallionSTDSpecs {
   test_date: string;
 }
 
-export interface SingularHostingSpecs {
-  price: number;
-}
-
 export interface SingularMareSTDSpecs {
   test_oldness: number;
 }
@@ -31,33 +27,8 @@ export interface LIBandHANDSpecs {
   advance_percentage: number;
   cover_place: string;
   maximum_nb_of_attempts: number;
-  hosting_specs: Record<string, SingularHostingSpecs>;
   demanded_std_negative_tests: Record<string, SingularMareSTDSpecs>;
   demanded_vaccines: Array<string>;
-}
-
-export interface IAISpecs {
-  price: number;
-  balance_payment_condition: string;
-  advance_percentage: number;
-  cover_place: string;
-  maximum_nb_of_attempts: number;
-  hosting_specs: Record<string, SingularHostingSpecs>;
-}
-
-export interface IARTSpecs {
-  price: number;
-  balance_payment_condition: string;
-  advance_percentage: number;
-  nb_provided_straws: number;
-}
-
-export interface IACSpecs {
-  price: number;
-  balance_payment_condition: string;
-  advance_percentage: number;
-  nb_provided_straws: number;
-  left_straws_owner: string;
 }
 
 interface EditableStallionFields {
@@ -69,7 +40,7 @@ interface EditableStallionFields {
   city: string;
   postal_code: string;
   production_breeds: Array<string>;
-  cover_specs: Record<string, LIBandHANDSpecs | IAISpecs | IARTSpecs | IACSpecs>;
+  cover_specs: Record<string, LIBandHANDSpecs>;
   pedigree: Array<string>;
   pedigree_po: string;
   cover_additional_info: string;
@@ -99,12 +70,8 @@ export class StallionService {
     if (error.status === 400) {
         message.setValue("Un étalon avec ce même numéro SIRE a déjà été ajouté.");
     } else {
-        message.setValue('Une erreur est survenue. Merci de réessayer.');
+        message.setValue("Une erreur est survenue. C'est peut-être de notre côté. Merci de réessayer.");
     }
-    return throwError(() => new Error());
-  }
-
-  handleBasicError(error: HttpErrorResponse) {
     return throwError(() => new Error());
   }
 
@@ -112,9 +79,8 @@ export class StallionService {
     verificationFile: File,
     photos: Array<File | null>,
     stallionId: string,
-    submitted: Record<string, boolean>,
-    message: FormControl<any>,
-    triggerEmptyMandatoryFields: Record<string, boolean>
+    stallionFormStatus: Record<string, backendInteractionStatus>,
+    message: FormControl<any>
   ) {
     const formData = new FormData();
     photos.forEach((file) => {
@@ -128,15 +94,14 @@ export class StallionService {
     headers.append('Content-Type', 'multipart/form-data');
 
     return this.http.post(
-      `http://localhost:3001/stallions/stallion-files/${stallionId}`,
+      `${backendBaseUrl}/stallions/stallion-files/${stallionId}`,
       formData,
       {headers}
     ).pipe(
       catchError((error: HttpErrorResponse) => {
-        submitted["status"] = false; 
-        triggerEmptyMandatoryFields['status'] = true;
+        stallionFormStatus['status'] = backendInteractionStatus.BackendError;
         return this.http.delete(
-          `http://localhost:3001/stallions/stallion/${stallionId}`
+          `${backendBaseUrl}/stallions/stallion/${stallionId}`
         ).pipe(
           switchMap(() => {
             return this.handleRegisterError(error, message);
@@ -153,9 +118,8 @@ export class StallionService {
     keptPhotos: Array<number>,
     photos: Array<File | null>,
     stallionId: string,
-    submitted: Record<string, boolean>,
-    message: FormControl<any>,
-    triggerEmptyMandatoryFields: Record<string, boolean>
+    stallionFormStatus: Record<string, backendInteractionStatus>,
+    message: FormControl<any>
   ) {
     const formData = new FormData();
     photos.forEach((file) => {
@@ -170,12 +134,14 @@ export class StallionService {
     headers.append('Content-Type', 'multipart/form-data');
 
     return this.http.put(
-      `http://localhost:3001/stallions/stallion-files/${stallionId}`,
+      `${backendBaseUrl}/stallions/stallion-files/${stallionId}`,
       formData,
       {headers}
     ).pipe(
-      catchError((error: HttpErrorResponse) => {
-        return this.handleBasicError(error);
+      catchError(() => {
+        stallionFormStatus["status"] = backendInteractionStatus.BackendError;
+        message.setValue("Une erreur est survenue. C'est peut-être de notre côté. Merci de réessayer.");
+        return throwError(() => new Error());
       })
     )
   }
@@ -187,19 +153,16 @@ export class StallionService {
     productionBreeds: Array<string>,
     stallionStdNegativeTests: Array<string>,
     stallionVaccines: Array<string>,
-    hostingTypes: Record<string, Record<string, boolean>>,
     mareSTDs: Record<string, Record<string, boolean>>,
     mareVaccines: Record<string, Record<string, boolean>>,
-    submitted: Record<string, boolean>,
+    stallionFormStatus: Record<string, backendInteractionStatus>,
     message: FormControl<any>,
-    triggerEmptyMandatoryFields: Record<string, boolean>
   ) {
-
     const finalStallionFields: FinalStallionFields = {
       name: form["name"],
       breed: form["breed"],
       n_sire: form["nSIRE"],
-      birthdate: form["birthdate"],
+      birthdate: form["birthdate"]
     }
     
     let pedigreeL: string[] = [];
@@ -215,7 +178,7 @@ export class StallionService {
       }
     })
 
-    let coverSpecs: Record<string, LIBandHANDSpecs | IAISpecs | IARTSpecs | IACSpecs> = {};
+    let coverSpecs: Record<string, LIBandHANDSpecs> = {};
     for (let coverType of coverTypes) {
       let content: Record<string, any> = {};
 
@@ -223,35 +186,18 @@ export class StallionService {
       content['balance_payment_condition'] = form[coverType + 'BalancePaymentCondition'];
       content['advance_percentage'] = parseInt(form[coverType + 'AdvancePercentage']);
 
-      if (['lib', 'hand', 'iai'].includes(coverType)) {
-        content['cover_place'] = form[coverType + 'CoverPlace'];
-        content['maximum_nb_of_attempts'] = form[coverType + 'MaximumNumberOfAttempts']
-        let hostingSpecs: Record<string, SingularHostingSpecs | null> = {};
-        for (let [hostingType, value] of Object.entries(hostingTypes[coverType])) {
-          if (value) {
-            hostingSpecs[hostingType] = {price: parseInt(form[coverType + hostingType + 'Price'])};
-          }
+      content['cover_place'] = form[coverType + 'CoverPlace'];
+      content['maximum_nb_of_attempts'] = parseInt(form[coverType + 'MaximumNumberOfAttempts']);
+
+      let mareSTDSpecs: Record<string, SingularMareSTDSpecs | null> = {};
+      for (let [std, value] of Object.entries(mareSTDs[coverType])) {
+        if (value) {
+          mareSTDSpecs[std] = {test_oldness: parseInt(form[coverType + std + 'MareTestOldness'])};
         }
-        content["hosting_specs"] = deepCopy(hostingSpecs);
-
-        let mareSTDSpecs: Record<string, SingularMareSTDSpecs | null> = {};
-        for (let [std, value] of Object.entries(mareSTDs[coverType])) {
-          if (value) {
-            mareSTDSpecs[std] = {test_oldness: parseInt(form[coverType + std + 'MareTestOldness'])};
-          }
-        }
-        content["demanded_std_negative_tests"] = deepCopy(mareSTDSpecs);
-
-        content["demanded_vaccines"] = Object.keys(mareVaccines[coverType]).filter(key => mareVaccines[coverType][key]);
       }
+      content["demanded_std_negative_tests"] = deepCopy(mareSTDSpecs);
 
-      if (['iart', 'iac'].includes(coverType)) {
-        content['nb_provided_straws'] = parseInt(form[coverType + 'NbProvidedStraws']);
-      }
-
-      if ('iac' === coverType) {
-        content['left_straws_owner'] = form[coverType + 'LeftStrawsOwner'];
-      }
+      content["demanded_vaccines"] = Object.keys(mareVaccines[coverType]).filter(key => mareVaccines[coverType][key]);
 
       coverSpecs[coverType] = deepCopy(content);
     }
@@ -283,13 +229,13 @@ export class StallionService {
     }
 
     return this.http.post<PostStallionResponse>(
-      "http://localhost:3001/stallions/stallion",
+      `${backendBaseUrl}/stallions/stallion`,
       completeBody,
     ).pipe(
-      catchError((error: HttpErrorResponse) => {
-        submitted["status"] = false; 
-        triggerEmptyMandatoryFields['status'] = true;
-        return this.handleRegisterError(error, message);
+      catchError(() => {
+        stallionFormStatus["status"] = backendInteractionStatus.BackendError; 
+        message.setValue("Une erreur est survenue. C'est peut-être de notre côté. Merci de réessayer.");
+        return throwError(() => new Error());
       })
     )
   }
@@ -299,11 +245,11 @@ export class StallionService {
     .set('mode', 'for_edition');
 
     return this.http.get(
-      `http://localhost:3001/stallions/stallion/${stallionId}`,
+      `${backendBaseUrl}/stallions/stallion/${stallionId}`,
       { params }
     ).pipe(
-      catchError((error: HttpErrorResponse) => {
-        return this.handleBasicError(error);
+      catchError(() => {
+        return throwError(() => new Error());
       })
     )
   }
@@ -316,12 +262,10 @@ export class StallionService {
     productionBreeds: Array<string>,
     stallionStdNegativeTests: Array<string>,
     stallionVaccines: Array<string>,
-    hostingTypes: Record<string, Record<string, boolean>>,
     mareSTDs: Record<string, Record<string, boolean>>,
     mareVaccines: Record<string, Record<string, boolean>>,
-    submitted: Record<string, boolean>,
+    stallionFormStatus: Record<string, backendInteractionStatus>,
     message: FormControl<any>,
-    triggerEmptyMandatoryFields: Record<string, boolean>
   ) {
     let pedigreeL: string[] = [];
     for (let i = 1; i <= 14; i++) {
@@ -336,7 +280,7 @@ export class StallionService {
       }
     })
 
-    let coverSpecs: Record<string, LIBandHANDSpecs | IAISpecs | IARTSpecs | IACSpecs> = {};
+    let coverSpecs: Record<string, LIBandHANDSpecs> = {};
     for (let coverType of coverTypes) {
       let content: Record<string, any> = {};
 
@@ -344,35 +288,18 @@ export class StallionService {
       content['balance_payment_condition'] = form[coverType + 'BalancePaymentCondition'];
       content['advance_percentage'] = parseInt(form[coverType + 'AdvancePercentage']);
 
-      if (['lib', 'hand', 'iai'].includes(coverType)) {
-        content['cover_place'] = form[coverType + 'CoverPlace'];
-        content['maximum_nb_of_attempts'] = form[coverType + 'MaximumNumberOfAttempts']
-        let hostingSpecs: Record<string, SingularHostingSpecs | null> = {};
-        for (let [hostingType, value] of Object.entries(hostingTypes[coverType])) {
-          if (value) {
-            hostingSpecs[hostingType] = {price: parseInt(form[coverType + hostingType + 'Price'])};
-          }
+      content['cover_place'] = form[coverType + 'CoverPlace'];
+      content['maximum_nb_of_attempts'] = form[coverType + 'MaximumNumberOfAttempts']
+
+      let mareSTDSpecs: Record<string, SingularMareSTDSpecs | null> = {};
+      for (let [std, value] of Object.entries(mareSTDs[coverType])) {
+        if (value) {
+          mareSTDSpecs[std] = {test_oldness: parseInt(form[coverType + std + 'MareTestOldness'])};
         }
-        content["hosting_specs"] = deepCopy(hostingSpecs);
-
-        let mareSTDSpecs: Record<string, SingularMareSTDSpecs | null> = {};
-        for (let [std, value] of Object.entries(mareSTDs[coverType])) {
-          if (value) {
-            mareSTDSpecs[std] = {test_oldness: parseInt(form[coverType + std + 'MareTestOldness'])};
-          }
-        }
-        content["demanded_std_negative_tests"] = deepCopy(mareSTDSpecs);
-
-        content["demanded_vaccines"] = Object.keys(mareVaccines[coverType]).filter(key => mareVaccines[coverType][key]);
       }
+      content["demanded_std_negative_tests"] = deepCopy(mareSTDSpecs);
 
-      if (['iart', 'iac'].includes(coverType)) {
-        content['nb_provided_straws'] = parseInt(form[coverType + 'NbProvidedStraws']);
-      }
-
-      if ('iac' === coverType) {
-        content['left_straws_owner'] = form[coverType + 'LeftStrawsOwner'];
-      }
+      content["demanded_vaccines"] = Object.keys(mareVaccines[coverType]).filter(key => mareVaccines[coverType][key]);
 
       coverSpecs[coverType] = deepCopy(content);
     }
@@ -399,13 +326,13 @@ export class StallionService {
     }
 
     return this.http.put(
-      `http://localhost:3001/stallions/stallion/${stallionId}`,
+      `${backendBaseUrl}/stallions/stallion/${stallionId}`,
       editableFieldsBody,
     ).pipe(
-      catchError((error: HttpErrorResponse) => {
-        submitted["status"] = false; 
-        triggerEmptyMandatoryFields['status'] = true;
-        return this.handleRegisterError(error, message);
+      catchError(() => {
+        stallionFormStatus["status"] = backendInteractionStatus.BackendError;
+        message.setValue("Une erreur est survenue. C'est peut-être de notre côté. Merci de réessayer.");
+        return throwError(() => new Error());
       })
     )
   }
