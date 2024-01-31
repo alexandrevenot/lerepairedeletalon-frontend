@@ -2,6 +2,8 @@ import { Component, OnInit, HostListener, Input, OnChanges, SimpleChanges, Outpu
 import { StallionPanelService, searchData, searchItem } from './stallion-panel.service';
 import { updateFilterData } from '../filters/filters.component'
 import { getNumberArray } from 'src/environments/environment';
+import { FavoriteStallions, FavoriteStallionsService } from '../../dashboard/favorite-stallions/favorite-stallions.service';
+import { AuthService } from 'src/app/core/auth/auth.service';
 
 @Component({
   selector: 'app-stallion-panel',
@@ -24,7 +26,9 @@ export class StallionPanelComponent implements OnInit, OnChanges {
   @Output() loadingEndingEvent = new EventEmitter();
 
   constructor(
-    private stallionPanelService: StallionPanelService
+    private stallionPanelService: StallionPanelService,
+    private favoriteStallionsService: FavoriteStallionsService,
+    private authService: AuthService
   ) {}
   
   public getNumberArrayF = getNumberArray;
@@ -32,6 +36,8 @@ export class StallionPanelComponent implements OnInit, OnChanges {
   private iteration: number = 0;
   private shouldStopCalling: boolean = false;
   public isLoading: boolean = false;
+
+  public favoriteStallions: Array<string> = [];
 
   public items: searchItem[] = [];
   public emptyItem: searchItem = {
@@ -49,6 +55,9 @@ export class StallionPanelComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.loadProfiles();
+    if (this.authService.userIsLogged()) {
+      this.loadFavoriteStallions();
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -83,6 +92,27 @@ export class StallionPanelComponent implements OnInit, OnChanges {
       this.items.push(...data.content);
       this.isLoading = false;
       this.loadingEndingEvent.emit();
+    })
+  }
+
+  updateFavoriteStallion(event: any) {
+    if (this.favoriteStallions.includes(event)) {
+      this.favoriteStallionsService.removeFromFavorites(event)
+      .subscribe(() => this.loadFavoriteStallions());
+    } else {
+      this.favoriteStallionsService.addToFavorites(event)
+      .subscribe(() => this.loadFavoriteStallions());
+    }
+  }
+
+  isAFavoriteStallion(item: searchItem): boolean {
+    return this.favoriteStallions.includes(item.id);
+  }
+
+  loadFavoriteStallions() {
+    this.favoriteStallionsService.getFavorites()
+    .subscribe((data: FavoriteStallions) => {
+      this.favoriteStallions = data.favorite_stallions;
     })
   }
 }

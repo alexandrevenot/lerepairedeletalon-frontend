@@ -342,6 +342,18 @@
       </div>
     </form>
 
+    <div class="box is-flex is-flex-direction-column is-align-items-center" style="background-color: #f7faf7;">
+      <h4 class="subtitle is-4 has-text-weight-bold pb-4">Suppression du compte</h4>
+
+      <button class="button is-danger" [ngClass]="accountDeletionStatus['status'] == 'Loading'? 'is-loading': ''"
+        (click)="openAccountDeletionModal()">
+        Supprimer mon compte
+      </button>
+      <p class="help is-danger" *ngIf="accountDeletionStatus['status'] == 'BackendError'">
+        La suppression du compte n'a pas fonctionné. C'est peut-être de notre côté. Veuillez réessayer s'il vous plaît.
+      </p>
+    </div>
+
     <div class="modal" [ngClass]="bankIdentityFileModalIsActive? 'is-active': ''">
       <div class="modal-background" (click)="closeModal()"></div>
       <div class="modal-content">
@@ -359,6 +371,30 @@
               </div>
           </footer>
       </div>
-  </div>
+    </div>
+
+    <div class="modal" [ngClass]="accountDeletionModalIsActive? 'is-active': ''">
+      <div class="modal-background" (click)="closeModal()"></div>
+      <div class="modal-content">
+          <header class="modal-card-head">
+              <p class="modal-card-title">Êtes-vous sûr de vouloir supprimer votre compte?</p>
+              <button class="delete" aria-label="close" (click)="closeModal()"></button>
+          </header>
+          <section class="modal-card-body">
+              <p>Les profils de vos étalons, si vous en avez, seront supprimés.</p>
+              <p>Les évaluations que vous avez reçues et postées ne seront pas supprimées.</p>
+              <p>Vous resterez tenus de respecter les termes et conditions des contrats que vous avez signés.</p>
+              <p class="pt-3 pb-1">Entrez la phrase de confirmation suivante: "Supprimer mon compte"</p>
+              <input class="input is-danger" type="text" placeholder="Supprimer mon compte" [formControl]="accountDeletionInputFormControl">
+              <p class="help is-danger">{{accountDeletionModalHelperMessage}}</p>
+          </section>
+          <footer class="modal-card-foot is-justify-content-center">
+              <div class="buttons">
+                  <a class="button is-danger" (click)="deleteAccount()">Supprimer mon compte</a>
+                  <a class="button" (click)="closeModal()">Annuler</a>
+              </div>
+          </footer>
+      </div>
+    </div>
   </div>
 </section>

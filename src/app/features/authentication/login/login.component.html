@@ -1,29 +1,65 @@
 <app-navbar></app-navbar>
-<div class="columns">
-  <div class="column is-one-third is-offset-one-third">
+<section class="section">
+  <div class="container">
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-      <h1 class="title mb-6">Se connecter</h1>
+      <h3 class="subtitle is-3 has-text-weight-semibold mb-6">Se connecter</h3>
       <div class="field">
-        <label class="label">Email</label>
-        <div class="control">
-          <input class="input" type="text" formControlName="email">
+        <label class="label has-text-weight-semibold has-text-grey">Email</label>
+        <div class="control has-icons-left">
+          <input class="input" type="text" placeholder="michel.dupont@gmail.com" formControlName="email">
+          <span class="icon is-small is-left">
+            <i class="fas fa-envelope"></i>
+          </span>
         </div>
-        <p class="help">{{ message.value }}</p>
+        <p class="help">Pas encore de compte? <a (click)="navigateToRegister()">Créer un compte</a></p>
+      </div>
+      
+      <div class="field">
+        <label class="label has-text-weight-semibold has-text-grey">Mot de passe</label>
+        <div class="control has-icons-left">
+          <input class="input" type="password" formControlName="password">
+          <span class="icon is-small is-left">
+            <i class="fas fa-key"></i>
+          </span>
+        </div>
+        <p class="help">Mot de passe oublié? <a (click)="triggerModal()">Envoyer un e-mail de récupération</a></p>
       </div>
 
       <div class="field">
-        <label class="label">Mot de passe</label>
         <div class="control">
-          <input class="input" type="password" placeholder="" formControlName="password">
+          <button class="button is-primary" type="submit" [ngClass]="status['status'] == 'Loading' ? 'is-loading' : ''">Se connecter</button>
         </div>
       </div>
-
-      <div class="field">
-        <div class="control">
-          <button class="button is-primary" type="submit" [ngClass]="buttonIsClicked.status ? 'is-loading' : ''">Se connecter</button>
-        </div>
-      </div>
-
+      <p class="help" [ngClass]="['BackendError', 'UserError'].includes(status['status']) ? 'is-danger': 'is-success'">
+        {{ message.value }}
+      </p>
+      
     </form>
+
+    <div class="modal" [ngClass]="modalIsActive? 'is-active': ''">
+      <div class="modal-background" (click)="closeModal()"></div>
+      <div class="modal-content">
+          <header class="modal-card-head">
+              <p class="modal-card-title">Récupération du mot de passe</p>
+              <button class="delete" aria-label="close" (click)="closeModal()"></button>
+          </header>
+          <section class="modal-card-body">
+              <p>Entrez l'email associé à votre compte ci-dessous.</p>
+              <p class="pt-3 pb-1">Vous recevrez un email avec un lien permettant de changer votre mot de passe.</p>
+              <input class="input" type="text" placeholder="michel.dupont@gmail.com" [formControl]="passwordRecoveryEmailFC">
+              <p class="help" [ngClass]="['BackendError', 'UserError'].includes(passwordRecoveryStatus['status']) ? 'is-danger': 'is-success'">
+                {{passwordRecoveryHelperFC.value}}
+              </p>
+          </section>
+          <footer class="modal-card-foot is-justify-content-center">
+              <div class="buttons">
+                  <a class="button is-primary" [ngClass]="passwordRecoveryStatus['status'] == 'Loading' ? 'is-loading' : ''" (click)="recoverPassword()">
+                    Envoyer l'email de récupération
+                  </a>
+                  <a class="button" (click)="closeModal()">Annuler</a>
+              </div>
+          </footer>
+      </div>
+    </div>
   </div>
-</div>
+</section>

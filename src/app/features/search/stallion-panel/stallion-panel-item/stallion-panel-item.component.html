@@ -3,8 +3,8 @@
       <img [src]="objectStorageBaseUrl + photosPrefix + '/' + item.photo_url" style="object-fit: cover; width: 100%; height: 100%;">
     </figure>
     <span class="icon is-small" (click)="updateFavorite($event)">
-        <i class="fa-heart fa-xl" [ngClass]="item.id && favoriteStallions.includes(item.id)? 'fas': 'far'"
-          [style]="item.id && favoriteStallions.includes(item.id)? 'color: #DC143C;': 'color: #ffffff;'"></i>
+        <i class="fa-heart fa-xl" [ngClass]="item.id && isFavorite? 'fas': 'far'"
+          [style]="item.id && isFavorite? 'color: #DC143C;': 'color: #ffffff;'"></i>
       </span>
 </div>
 <div class="card-content px-0 pt-2 is-clickable" style="background-color: #f7faf7;" (click)="handleClick()">

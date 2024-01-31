@@ -3,6 +3,8 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { MyAccountService } from './my-account.service';
 import { UserScore, UserScoreService } from 'src/app/core/user-score/user-score.service';
 import { backendInteractionStatus } from 'src/environments/environment';
+import { Router } from '@angular/router';
+import { AuthService } from 'src/app/core/auth/auth.service';
 
 @Component({
   selector: 'app-my-account',
@@ -39,10 +41,17 @@ export class MyAccountComponent implements OnInit{
   public bankIdentityFileModalIsActive: boolean = false;
   public bankIdentityFileStatus: string = "";
 
+  // account deletion
+  public accountDeletionStatus: Record<string, backendInteractionStatus> = {"status": backendInteractionStatus.Init};
+  public accountDeletionModalIsActive: boolean = false;
+  public accountDeletionInputFormControl: FormControl = new FormControl('');
+  public accountDeletionModalHelperMessage: string = "";
+
   constructor(
     private myAccountService: MyAccountService,
     private formBuilder: FormBuilder,
-    private userScoreService: UserScoreService
+    private userScoreService: UserScoreService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -198,8 +207,29 @@ export class MyAccountComponent implements OnInit{
 
   }
 
+  deleteAccount() {
+    const value = this.accountDeletionInputFormControl.getRawValue();
+    if (value != "Supprimer mon compte") {
+      this.accountDeletionModalHelperMessage = "Il semble y avoir une faute dans la phrase de confirmation."
+    } else {
+      this.accountDeletionModalHelperMessage = "";
+      this.accountDeletionStatus['status'] = backendInteractionStatus.Loading;
+      this.closeModal();
+      this.myAccountService.deleteAccount(value, this.accountDeletionStatus, this.accountDeletionInputFormControl)
+      .subscribe(() => {
+        this.accountDeletionStatus['status'] = backendInteractionStatus.Success;
+        this.authService.disconnectUser();
+      })
+    }
+  }
+
+  openAccountDeletionModal() {
+    this.accountDeletionModalIsActive = true;
+  }
+
   closeModal() {
     this.bankIdentityFileModalIsActive = false;
+    this.accountDeletionModalIsActive = false;
   }
 
   @HostListener('document:keydown', ['$event'])

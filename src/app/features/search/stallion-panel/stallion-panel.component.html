@@ -1,7 +1,11 @@
 <div class="tile is-ancestor is-11" *ngFor="let row of getNumberArrayF(items.length/3)">
     <div class="tile is-parent" *ngFor="let col of [0,1,2]">
         <article class="tile is-child card is-shadowless" [ngClass]="!items[row*3+col] ? 'is-invisible' : ''">
-            <app-stallion-panel-item [item]="items[row*3+col]? items[row*3+col] : this.emptyItem"></app-stallion-panel-item>
+            <app-stallion-panel-item
+                [item]="items[row*3+col]? items[row*3+col] : this.emptyItem"
+                [isFavorite]="items[row*3+col]? isAFavoriteStallion(items[row*3+col]): false"
+                (updateFavoriteStallionEvent)="updateFavoriteStallion($event)">
+            </app-stallion-panel-item>
         </article>
     </div>
 </div>
@@ -9,5 +13,5 @@
 <div *ngIf="isLoading" class="loading-indicator has-text-centered">
     <span class="icon is-large" style="color:hsl(0, 0%, 71%)">
         <i class="fas fa-spinner fa-pulse"></i>
-      </span>
+    </span>
 </div>

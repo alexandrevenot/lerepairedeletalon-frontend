@@ -13,3 +13,8 @@
     background-color: #3B7C35;
     color: #ffffff;
 }
+
+.menu-list.disconnect a:hover {
+    background-color:  #ff3860;
+    color: #ffffff;
+}

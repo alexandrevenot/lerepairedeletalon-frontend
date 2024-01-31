@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, throwError } from 'rxjs';
-import { FormControl } from '@angular/forms';
-import { backendInteractionStatus } from 'src/environments/environment';
+import { Form, FormControl } from '@angular/forms';
+import { backendBaseUrl, backendInteractionStatus } from 'src/environments/environment';
 
 @Injectable()
 export class MyAccountService {
@@ -75,5 +75,19 @@ export class MyAccountService {
                 return this.handleError();
             })
         )
+    }
+
+    deleteAccount(passphrase: string, helper: Record<string, backendInteractionStatus>, inputFC: FormControl) {
+        const body = {
+            passphrase: passphrase
+        }
+        return this.http.put(
+            `${backendBaseUrl}/users/delete-account`,
+            body
+        ).pipe(catchError(() => {
+            inputFC.setValue("");
+            helper['status'] = backendInteractionStatus.BackendError;
+            return throwError(() => new Error());
+        }))
     }
 }
