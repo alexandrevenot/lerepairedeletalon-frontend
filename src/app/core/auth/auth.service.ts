@@ -57,4 +57,13 @@ export class AuthService {
         localStorage.removeItem("refreshToken");
         this.router.navigate(['/login']);
     }
+
+    userIsLogged() {
+        const token: string = this.getToken("access")
+        if (token) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

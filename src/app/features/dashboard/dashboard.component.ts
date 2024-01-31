@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CoverNotifications, DashboardService } from './dashboard.service';
 import { StallionComponentInput } from './my-stallions/stallion/stallion.component';
+import { AuthService } from 'src/app/core/auth/auth.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -74,10 +75,14 @@ export class DashboardComponent implements OnInit{
     seller: null
   }
 
+  // modal
+  public disconnectionModalIsActive: boolean = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private dashboardService: DashboardService
+    private dashboardService: DashboardService,
+    private authService: AuthService
     ) {}
 
   ngOnInit(): void {
@@ -210,5 +215,24 @@ export class DashboardComponent implements OnInit{
         this.coverNotifications[pov][group] = null;
       });
     }
+  }
+
+  triggerDisconnectionModal() {
+    this.disconnectionModalIsActive = true;
+  }
+
+  closeDisconnectionModal() {
+    this.disconnectionModalIsActive = false;
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    if (event.key === 'Escape') {
+      this.closeDisconnectionModal();
+    }
+  }
+
+  disconnect() {
+    this.authService.disconnectUser();
   }
 }

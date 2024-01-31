@@ -1,16 +1,16 @@
 <app-navbar></app-navbar>
-<div class="columns">
-  <div class="column is-one-third is-offset-one-third">
+<section class="section">
+  <div class="container">
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
 
-      <h1 class="title mb-6">Créer un compte</h1>
+      <h3 class="subtitle is-3 has-text-weight-semibold mb-6">Créer un compte</h3>
 
       <div class="columns">
         <div class="column">
           <div class="field">
-            <label class="label">Prénom</label>
+            <label class="label has-text-weight-semibold has-text-grey">Prénom</label>
             <div class="control has-icons-left">
-              <input class="input" type="text" placeholder="" formControlName="firstname">
+              <input class="input" type="text" placeholder="Michel" formControlName="firstname">
               <span class="icon is-small is-left">
                 <i class="fas fa-user"></i>
               </span>
@@ -19,9 +19,9 @@
         </div>
         <div class="column">
           <div class="field">
-            <label class="label">Nom</label>
+            <label class="label has-text-weight-semibold has-text-grey">Nom</label>
             <div class="control has-icons-left">
-              <input class="input" type="text" placeholder="" formControlName="lastname">
+              <input class="input" type="text" placeholder="Dupont" formControlName="lastname">
               <span class="icon is-small is-left">
                 <i class="fas fa-user"></i>
               </span>
@@ -33,9 +33,9 @@
       <div class="columns">
         <div class="column">
           <div class="field">
-            <label class="label">Email</label>
+            <label class="label has-text-weight-semibold has-text-grey">Email</label>
             <div class="control has-icons-left">
-              <input class="input" type="text" formControlName="email">
+              <input class="input" type="text" placeholder="michel.dupont@gmail.com" formControlName="email">
               <span class="icon is-small is-left">
                 <i class="fas fa-envelope"></i>
               </span>
@@ -44,11 +44,11 @@
         </div>
         <div class="column">
           <div class="field">
-            <label class="label">Numéro de téléphone</label>
+            <label class="label has-text-weight-semibold has-text-grey">Numéro de portable</label>
             <div class="control has-icons-left">
-              <input class="input" type="text" placeholder="" formControlName="phoneNumber">
+              <input class="input" (input)="parsePhoneNumber()" type="text" placeholder="06 12 34 56 78" formControlName="phoneNumber">
               <span class="icon is-small is-left">
-                <i class="fas fa-phone"></i>
+                <i class="fas fa-phone"></i>  
               </span>
             </div>
           </div>
@@ -58,9 +58,9 @@
 
 
       <div class="field">
-        <label class="label">Mot de passe</label>
+        <label class="label has-text-weight-semibold has-text-grey">Mot de passe</label>
         <div class="control has-icons-left">
-          <input class="input" type="password" placeholder="" formControlName="password">
+          <input class="input" type="password" formControlName="password">
           <span class="icon is-small is-left">
             <i class="fas fa-key"></i>
           </span>
@@ -69,10 +69,13 @@
 
       <div class="field">
         <div class="control">
-          <button class="button is-primary" type="submit" [ngClass]="buttonIsClicked.status ? 'is-loading' : ''">Créer un compte</button>
+          <button class="button is-primary" type="submit"
+            [ngClass]="status['status'] == 'Loading' ? 'is-loading' : ''">
+            Créer un compte
+          </button>
         </div>
       </div>
-      <p class="help">{{ message.value }}</p>
+      <p class="help" [ngClass]="['BackendError', 'UserError'].includes(status['status']) ? 'is-danger': 'is-success'">{{ message.value }}</p>
     </form>
   </div>
-</div>
+</section>

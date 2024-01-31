@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { FavoriteStallionsService, FavoriteStallions } from 'src/app/features/dashboard/favorite-stallions/favorite-stallions.service';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FavoriteStallionsService } from 'src/app/features/dashboard/favorite-stallions/favorite-stallions.service';
 import { searchItem } from '../stallion-panel.service';
 import { objectStorageBaseUrl, photosPrefix } from 'src/environments/environment';
 
@@ -20,8 +20,10 @@ export class StallionPanelItemComponent implements OnInit{
     dep_name: "",
     reg_name: "",
     price: 0,
-    photo_url: ""
+    photo_url: "",
   };
+  @Input() isFavorite: boolean = false;
+  @Output() updateFavoriteStallionEvent = new EventEmitter<string>();
 
   public objectStorageBaseUrl = objectStorageBaseUrl;
   public photosPrefix = photosPrefix;
@@ -30,16 +32,11 @@ export class StallionPanelItemComponent implements OnInit{
 
   public height: string = "";
 
-  public favoriteStallions: Array<string> = [];
-
-  constructor(
-    private favoriteStallionsService: FavoriteStallionsService
-  ) {}
+  constructor() {}
 
   ngOnInit() {
     this.location = (this.item.city + ", " + this.item.dep_name + ", " + this.item.reg_name).slice(0, 14) + '...';
     this.height = (this.item.height/100).toString().replace(".", "m");
-    this.loadFavoriteStallions();
   }
 
   handleClick(){
@@ -47,23 +44,10 @@ export class StallionPanelItemComponent implements OnInit{
     window.open(url, '_blank');
   }
 
-  loadFavoriteStallions() {
-    this.favoriteStallionsService.getFavorites()
-    .subscribe((data: FavoriteStallions) => {
-      this.favoriteStallions = data.favorite_stallions;
-    })
-  }
-
   updateFavorite(event: any) {
     event.stopPropagation();
     if (this.item.id) {
-      if (this.favoriteStallions.includes(this.item.id)) {
-        this.favoriteStallionsService.removeFromFavorites(this.item.id)
-        .subscribe(() => this.loadFavoriteStallions());
-      } else {
-        this.favoriteStallionsService.addToFavorites(this.item.id)
-        .subscribe(() => this.loadFavoriteStallions());
-      }
+      this.updateFavoriteStallionEvent.emit(this.item.id);
     }
   }
 }

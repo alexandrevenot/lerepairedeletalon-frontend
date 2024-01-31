@@ -72,6 +72,9 @@
                 <ul class="menu-list">
                     <li><a [ngClass]="isHighlighted('MyAccountComponent', 'admin')? 'is-active' : ''" (click)="onClick('MyAccountComponent', null, 'admin')">Mon compte</a></li>
                 </ul>
+                <ul class="menu-list disconnect">
+                    <li><a (click)="triggerDisconnectionModal()">Se déconnecter</a></li>
+                </ul>
             </aside>
         </section>
     </div>
@@ -113,5 +116,24 @@
                 <app-my-account></app-my-account>
             </ng-container>
         </div>
+    </div>
+</div>
+
+<div class="modal" [ngClass]="disconnectionModalIsActive? 'is-active': ''">
+    <div class="modal-background" (click)="closeDisconnectionModal()"></div>
+    <div class="modal-content">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Êtes-vous sûr de vouloir vous déconnecter?</p>
+            <button class="delete" aria-label="close" (click)="closeDisconnectionModal()"></button>
+        </header>
+        <section class="modal-card-body">
+            <p>À votre prochaine visite sur le site, vous devrez vous connecter à nouveau.</p>
+        </section>
+        <footer class="modal-card-foot is-justify-content-center">
+            <div class="buttons">
+                <a class="button is-danger" (click)="disconnect()">Se déconnecter</a>
+                <a class="button" (click)="closeDisconnectionModal()">Annuler</a>
+            </div>
+        </footer>
     </div>
 </div>
