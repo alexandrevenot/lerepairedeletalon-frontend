@@ -35,11 +35,14 @@ export class FavoriteStallionBoxComponent implements OnInit{
     console.log(this.stallionId)
     if (this.stallionId) {
       this.favoriteStallionBoxService.getStallionThumbnailProfite(this.stallionId)
-      .subscribe((data: FavoriteStallionprofile) => {
-        this.name = data.name;
-        this.breed = data.breed;
-        this.profileStatus = data.profile_status;
-        this.profilePicture = data.thumbnail_photo;
+      .subscribe({
+        next: (data: FavoriteStallionprofile) => {
+          this.name = data.name;
+          this.breed = data.breed;
+          this.profileStatus = data.profile_status;
+          this.profilePicture = data.thumbnail_photo;
+        },
+        error: () => {}
       })
     }
   }
@@ -48,10 +51,16 @@ export class FavoriteStallionBoxComponent implements OnInit{
     if (this.stallionId) {
       if (this.isFavorite) {
         this.favoriteStallionsService.removeFromFavorites(this.stallionId)
-        .subscribe(() => this.isFavorite = false);
+        .subscribe({
+          next: () => this.isFavorite = false,
+          error: () => {}
+        });
       } else {
         this.favoriteStallionsService.addToFavorites(this.stallionId)
-        .subscribe(() => this.isFavorite = true);
+        .subscribe({
+          next: () => this.isFavorite = true,
+          error: () => {}
+        });
       }
     }
   }

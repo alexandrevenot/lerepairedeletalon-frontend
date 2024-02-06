@@ -107,8 +107,11 @@ export class DashboardComponent implements OnInit{
     });
 
     this.dashboardService.getCoverNotifications()
-    .subscribe((coverNotifications: CoverNotifications) => {
-      this.coverNotifications = coverNotifications;
+    .subscribe({
+      next: (coverNotifications: CoverNotifications) => {
+        this.coverNotifications = coverNotifications;
+      },
+      error: () => {}
     })
   }
 
@@ -211,8 +214,11 @@ export class DashboardComponent implements OnInit{
         pov,
         group
       )
-      .subscribe(() => {
-        this.coverNotifications[pov][group] = null;
+      .subscribe({
+        next: () => {
+          this.coverNotifications[pov][group] = null;
+        },
+        error: () => {}
       });
     }
   }

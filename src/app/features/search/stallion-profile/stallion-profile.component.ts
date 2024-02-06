@@ -112,10 +112,13 @@ export class StallionProfileComponent implements OnInit{
         this.selectedCoverTypeValue = value;
 
         this.pricingService.getCheckout(this.getPriceOfCoverType(value))
-        .subscribe((data: checkoutResponse) => {
-          this.subtotal = data.subtotal;
-          this.serviceFees = data.service_fees;
-          this.total = data.total;
+        .subscribe({
+          next: (data: checkoutResponse) => {
+            this.subtotal = data.subtotal;
+            this.serviceFees = data.service_fees;
+            this.total = data.total;
+          },
+          error: () => {}
         })
       });
     }
@@ -127,71 +130,74 @@ export class StallionProfileComponent implements OnInit{
 
     if (typeof this.itemId === "string"){
       this.stallionProfileService.getStallionProfile(this.itemId)
-      .subscribe((content: StallionProfile) => {
-        this.owner = content.owner;
-        this.name = content.name;
-        this.breed = content.breed;
-        this.nSire = content.n_sire;
-        this.mainDesc = content.main_desc.replace(/(\r\n|\r|\n)/g, '<br>');
-        this.color = content.color;
-        this.age = (content.age < 2) ? content.age.toString() + " an" : content.age.toString() + " ans";
-        this.height = content.height;
-        this.pedigree = content.pedigree;
-        this.pedigreePO = content.pedigree_po.replace(/(\r\n|\r|\n)/g, '<br>');
-        this.offspring = content.offspring.replace(/(\r\n|\r|\n)/g, '<br>');
-        this.performance = content.performance.replace(/(\r\n|\r|\n)/g, '<br>');
-        this.stallionAdditionalInfo = content.stallion_additional_info.replace(/(\r\n|\r|\n)/g, '<br>');
-        this.crossbreedingAdvice = content.crossbreeding_advice.replace(/(\r\n|\r|\n)/g, '<br>');
-        this.city = content.city;
-        this.depName = content.dep_name;
-        this.regName = content.reg_name;
-        this.coverAdditionalInfo = content.cover_additional_info.replace(/(\r\n|\r|\n)/g, '<br>');
-        this.coverSpecs = content.cover_specs;
-        this.productionBreeds = content.production_breeds;
-        this.stallionVaccines = content.stallion_vaccines;
-        for (let std of this.availableSTDS) {
-          if (Object.keys(content.stallion_std_negative_tests).includes(std)
-          && content.stallion_std_negative_tests[std]) {
-            this.stallionSTDNegativeTests.push(std);
-            this.stallionSTDNegativeTestsTD[std] = content.stallion_std_negative_tests[std]['test_date']
+      .subscribe({
+        next: (content: StallionProfile) => {
+          this.owner = content.owner;
+          this.name = content.name;
+          this.breed = content.breed;
+          this.nSire = content.n_sire;
+          this.mainDesc = content.main_desc.replace(/(\r\n|\r|\n)/g, '<br>');
+          this.color = content.color;
+          this.age = (content.age < 2) ? content.age.toString() + " an" : content.age.toString() + " ans";
+          this.height = content.height;
+          this.pedigree = content.pedigree;
+          this.pedigreePO = content.pedigree_po.replace(/(\r\n|\r|\n)/g, '<br>');
+          this.offspring = content.offspring.replace(/(\r\n|\r|\n)/g, '<br>');
+          this.performance = content.performance.replace(/(\r\n|\r|\n)/g, '<br>');
+          this.stallionAdditionalInfo = content.stallion_additional_info.replace(/(\r\n|\r|\n)/g, '<br>');
+          this.crossbreedingAdvice = content.crossbreeding_advice.replace(/(\r\n|\r|\n)/g, '<br>');
+          this.city = content.city;
+          this.depName = content.dep_name;
+          this.regName = content.reg_name;
+          this.coverAdditionalInfo = content.cover_additional_info.replace(/(\r\n|\r|\n)/g, '<br>');
+          this.coverSpecs = content.cover_specs;
+          this.productionBreeds = content.production_breeds;
+          this.stallionVaccines = content.stallion_vaccines;
+          for (let std of this.availableSTDS) {
+            if (Object.keys(content.stallion_std_negative_tests).includes(std)
+            && content.stallion_std_negative_tests[std]) {
+              this.stallionSTDNegativeTests.push(std);
+              this.stallionSTDNegativeTestsTD[std] = content.stallion_std_negative_tests[std]['test_date']
+            }
           }
-        }
-        this.location = this.city + ", " + this.depName + ", " + this.regName
-        this.heightTagValue = this.height + " centimètres au garrot"
-        for (const [key, value] of Object.entries(this.coverSpecs)) {
-          if (value) {
-            this.coverTypes.push(key);
+          this.location = this.city + ", " + this.depName + ", " + this.regName
+          this.heightTagValue = this.height + " centimètres au garrot"
+          for (const [key, value] of Object.entries(this.coverSpecs)) {
+            if (value) {
+              this.coverTypes.push(key);
+            }
           }
-        }
-        for (const parent of this.pedigree) {
-          if (parent != "") {
-            this.hasPedigree = true;
+          for (const parent of this.pedigree) {
+            if (parent != "") {
+              this.hasPedigree = true;
+            }
           }
-        }
+    
+          content.photos.forEach((photoUrl: string) => {
+            this.photos.push(objectStorageBaseUrl + photosPrefix + '/' + photoUrl);
+          })
   
-        content.photos.forEach((photoUrl: string) => {
-          this.photos.push(objectStorageBaseUrl + photosPrefix + '/' + photoUrl);
-        })
-
-        this.userScoreService.getUserScore(
-          this.owner,
-          this.nSire,
-          "seller"
-        ).subscribe((userScore: UserScore) => {
-          this.ownerName = userScore.firstname + " " + userScore.lastname.toUpperCase();
-  
-          if (userScore.nb_reviews) {
-            this.nbReviewsAsSeller = userScore.nb_reviews;
-          }
-  
-          if (userScore.score) {
-            this.score = userScore.score;
-          }
-  
-          if (userScore.owner_has_other_reviews) {
-            this.ownerHasOtherReviews = true;
-          }
-        })
+          this.userScoreService.getUserScore(
+            this.owner,
+            this.nSire,
+            "seller"
+          ).subscribe((userScore: UserScore) => {
+            this.ownerName = userScore.firstname + " " + userScore.lastname.toUpperCase();
+    
+            if (userScore.nb_reviews) {
+              this.nbReviewsAsSeller = userScore.nb_reviews;
+            }
+    
+            if (userScore.score) {
+              this.score = userScore.score;
+            }
+    
+            if (userScore.owner_has_other_reviews) {
+              this.ownerHasOtherReviews = true;
+            }
+          })
+        },
+        error: () => {}
       })
     }
 
@@ -200,8 +206,11 @@ export class StallionProfileComponent implements OnInit{
   
   loadFavoriteStallions() {
     this.favoriteStallionsService.getFavorites()
-    .subscribe((data: FavoriteStallions) => {
-      this.favoriteStallions = data.favorite_stallions;
+    .subscribe({
+      next: (data: FavoriteStallions) => {
+        this.favoriteStallions = data.favorite_stallions;
+      },
+      error: () => {}
     })
   }
 
@@ -209,10 +218,16 @@ export class StallionProfileComponent implements OnInit{
     if (this.itemId) {
       if (this.favoriteStallions.includes(this.itemId)) {
         this.favoriteStallionsService.removeFromFavorites(this.itemId)
-        .subscribe(() => this.loadFavoriteStallions());
+        .subscribe({
+          next: () => {this.loadFavoriteStallions()},
+          error: () => {}
+        });
       } else {
         this.favoriteStallionsService.addToFavorites(this.itemId)
-        .subscribe(() => this.loadFavoriteStallions());
+        .subscribe({
+          next: () => {this.loadFavoriteStallions()},
+          error: () => {}
+        });
       }
     }
   }
@@ -284,9 +299,12 @@ export class StallionProfileComponent implements OnInit{
       this.nSire,
       this.demandStatus,
       this.sendFormMessage,
-    ).subscribe(() => {
-      this.demandStatus['status'] = backendInteractionStatus.Success;
-      this.sendFormMessage.setValue("Demande envoyée avec succès.");
+    ).subscribe({
+      next: () => {
+        this.demandStatus['status'] = backendInteractionStatus.Success;
+        this.sendFormMessage.setValue("Demande envoyée avec succès.");
+      },
+      error: () => {}
     })
   }
 }

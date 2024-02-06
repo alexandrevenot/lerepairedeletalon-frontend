@@ -101,10 +101,16 @@ export class StallionPanelComponent implements OnInit, OnChanges {
   updateFavoriteStallion(event: any) {
     if (this.favoriteStallions.includes(event)) {
       this.favoriteStallionsService.removeFromFavorites(event)
-      .subscribe(() => this.loadFavoriteStallions());
+      .subscribe({
+        next: () => {this.loadFavoriteStallions()},
+        error: () => {}
+      });
     } else {
       this.favoriteStallionsService.addToFavorites(event)
-      .subscribe(() => this.loadFavoriteStallions());
+      .subscribe({
+        next: () => {this.loadFavoriteStallions()},
+        error: () => {}
+      });
     }
   }
 
@@ -114,8 +120,11 @@ export class StallionPanelComponent implements OnInit, OnChanges {
 
   loadFavoriteStallions() {
     this.favoriteStallionsService.getFavorites()
-    .subscribe((data: FavoriteStallions) => {
-      this.favoriteStallions = data.favorite_stallions;
+    .subscribe({
+      next: (data: FavoriteStallions) => {
+        this.favoriteStallions = data.favorite_stallions;
+      },
+      error: () => {}
     })
   }
 }

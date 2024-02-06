@@ -40,8 +40,11 @@ export class EmailVerificationComponent implements OnInit{
             }
             throw new Error();
           })
-        ).subscribe(() => {
-          this.message.setValue('Merci, votre email est à présent vérifié.');
+        ).subscribe({
+          next: () => {
+            this.message.setValue('Merci, votre email est à présent vérifié.');
+          },
+          error: () => {}
         });
       }
     })

@@ -49,8 +49,11 @@ export class PasswordUpdateComponent implements OnInit{
       newPassword1,
       this.status
     )
-    .subscribe(() => {
-      this.status["value"] = backendInteractionStatus.Success
+    .subscribe({
+      next: () => {
+        this.status["value"] = backendInteractionStatus.Success
+      },
+      error: () => {}
     })
   }
 }

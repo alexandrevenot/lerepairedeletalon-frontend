@@ -32,17 +32,20 @@ export class MyCoversComponent implements OnInit{
 
     if (["pendingApproval", "pendingSignature", "onGoing", "done", "denied"].includes(this.coverStatus)) {
       this.myCoversService.getCovers(this.coverStatus, this.pointOfView)
-      .subscribe((data: coversData) => {
-        for (let item of data.items) {
-          this.covers.push({
-            id: item.id,
-            stallion_name: item.stallion_name,
-            mare_name: item.mare_name,
-            status: item.status,
-            price: item.price,
-            pov: this.pointOfView
-          });
-        }
+      .subscribe({
+        next: (data: coversData) => {
+          for (let item of data.items) {
+            this.covers.push({
+              id: item.id,
+              stallion_name: item.stallion_name,
+              mare_name: item.mare_name,
+              status: item.status,
+              price: item.price,
+              pov: this.pointOfView
+            });
+          }
+        },
+        error: () => {}
       })
     }
   }

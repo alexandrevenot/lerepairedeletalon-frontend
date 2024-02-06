@@ -59,55 +59,58 @@ export class ReviewsComponent implements OnInit{
           this.reviewPov,
           this.coverPov
         )
-        .subscribe((reviewsJSON: Reviews) => {
-          reviewsJSON.reviews.forEach((review: Review) => {
-            if (!this.nameHasBeenFetched) {
-              if (this.reviewPov == "given") {
-                this.firstname = review.reviewer_firstname;
-                this.lastname = review.reviewer_lastname;
-              } else {
-                this.firstname = review.reviewed_firstname;
-                this.lastname = review.reviewed_lastname;
+        .subscribe({
+          next: (reviewsJSON: Reviews) => {
+            reviewsJSON.reviews.forEach((review: Review) => {
+              if (!this.nameHasBeenFetched) {
+                if (this.reviewPov == "given") {
+                  this.firstname = review.reviewer_firstname;
+                  this.lastname = review.reviewer_lastname;
+                } else {
+                  this.firstname = review.reviewed_firstname;
+                  this.lastname = review.reviewed_lastname;
+                }
+                this.nameHasBeenFetched = true;
               }
-              this.nameHasBeenFetched = true;
-            }
-
-            if (
-              !this.stallionNameHasBeenFetched
-              && this.stallionNSIRE
-              && this.coverPov === "seller"
-              && this.reviewPov === "received"
-              && review.stallion_nsire == this.stallionNSIRE
-              ) {
-                this.displayOnlyOneStallion = true;
-                this.stallionName = review.stallion_name;
-                this.stallionNameHasBeenFetched = true;
-            }
-
-            this.reviews.push({
-              "stallionName": review.stallion_name,
-              "stallionNSIRE": review.stallion_nsire,
-              "reviewedFirstname": review.reviewed_firstname,
-              "reviewedLastname": review.reviewed_lastname,
-              "reviewerFirstname": review.reviewer_firstname,
-              "reviewerLastname": review.reviewer_lastname,
-              "content": review.content,
-              "score": review.score,
-              "writingDate": review.writing_date
+  
+              if (
+                !this.stallionNameHasBeenFetched
+                && this.stallionNSIRE
+                && this.coverPov === "seller"
+                && this.reviewPov === "received"
+                && review.stallion_nsire == this.stallionNSIRE
+                ) {
+                  this.displayOnlyOneStallion = true;
+                  this.stallionName = review.stallion_name;
+                  this.stallionNameHasBeenFetched = true;
+              }
+  
+              this.reviews.push({
+                "stallionName": review.stallion_name,
+                "stallionNSIRE": review.stallion_nsire,
+                "reviewedFirstname": review.reviewed_firstname,
+                "reviewedLastname": review.reviewed_lastname,
+                "reviewerFirstname": review.reviewer_firstname,
+                "reviewerLastname": review.reviewer_lastname,
+                "content": review.content,
+                "score": review.score,
+                "writingDate": review.writing_date
+              })
             })
-          })
-
-          const scoreSum = this.reviews.reduce((sum, object) => sum + object["score"], 0);
-          this.averageScore = Math.floor(scoreSum * 10 / this.reviews.length) / 10;
-
-          if (this.stallionNSIRE) {
-            this.filteredReviews = this.reviews.filter((review) => review["stallionNSIRE"] === this.stallionNSIRE);
-            const filteredNoteSum = this.filteredReviews.reduce((sum, object) => sum + object["score"], 0);
-            if (this.filteredReviews.length > 0) {
-              this.filteredAverageScore = Math.floor(filteredNoteSum * 10 / this.filteredReviews.length) / 10;
+  
+            const scoreSum = this.reviews.reduce((sum, object) => sum + object["score"], 0);
+            this.averageScore = Math.floor(scoreSum * 10 / this.reviews.length) / 10;
+  
+            if (this.stallionNSIRE) {
+              this.filteredReviews = this.reviews.filter((review) => review["stallionNSIRE"] === this.stallionNSIRE);
+              const filteredNoteSum = this.filteredReviews.reduce((sum, object) => sum + object["score"], 0);
+              if (this.filteredReviews.length > 0) {
+                this.filteredAverageScore = Math.floor(filteredNoteSum * 10 / this.filteredReviews.length) / 10;
+              }
             }
-          }
-          this.reviewsHaveBeenFetched = true;
+            this.reviewsHaveBeenFetched = true;
+          },
+          error: () => {}
         })
       }
     });
