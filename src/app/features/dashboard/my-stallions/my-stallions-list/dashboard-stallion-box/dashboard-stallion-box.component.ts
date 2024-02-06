@@ -69,11 +69,14 @@ export class DashboardStallionBoxComponent{
     if (this.item.id) {
       this.closeStallionDeletionModal();
       this.dashboardStallionBoxService.deleteStallion(this.item.id)
-      .subscribe(() => {
-        this.stallionAction.emit({
-          stallionId: null,
-          action: 'reload'
-        });
+      .subscribe({
+        next: () => {
+          this.stallionAction.emit({
+            stallionId: null,
+            action: 'reload'
+          });
+        },
+        error: () => {}
       })
     }
   }
@@ -92,11 +95,14 @@ export class DashboardStallionBoxComponent{
       this.dashboardStallionBoxService.changeStallionProfileStatus(
         this.item.id,
         'hidden'
-      ).subscribe(() => {
-        this.stallionAction.emit({
-          stallionId: null,
-          action: 'reload'
-        });
+      ).subscribe({
+        next: () => {
+          this.stallionAction.emit({
+            stallionId: null,
+            action: 'reload'
+          });
+        },
+        error: () => {}
       })
     }
   }
@@ -107,11 +113,14 @@ export class DashboardStallionBoxComponent{
         this.item.id,
         'visible'
       )
-      .subscribe(() => {
-        this.stallionAction.emit({
-          stallionId: null,
-          action: 'reload'
-        });
+      .subscribe({
+        next: () => {
+          this.stallionAction.emit({
+            stallionId: null,
+            action: 'reload'
+          });
+        },
+        error: () => {}
       })
     }
   }

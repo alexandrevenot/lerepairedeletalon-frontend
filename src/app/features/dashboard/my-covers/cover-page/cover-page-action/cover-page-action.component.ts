@@ -38,16 +38,22 @@ export class CoverPageActionComponent implements OnInit{
   ngOnInit(): void {
     if (this.coverActionType == "signature") {
       this.coverPageActionService.getSignUrl(this.coverId)
-      .subscribe((data: GetSignUrl) => {
-        this.iframe_url = this.sanitizer.bypassSecurityTrustResourceUrl(data.url);
+      .subscribe({
+        next: (data: GetSignUrl) => {
+          this.iframe_url = this.sanitizer.bypassSecurityTrustResourceUrl(data.url);
+        },
+        error: () => {}
       })
     } else if (this.coverActionType == "payment") {
       this.coverPageActionService.getCheckout(this.coverId)
-      .subscribe((data: GetCheckout) => {
-        this.subtotal = data.subtotal;
-        this.serviceFees = data.service_fees;
-        this.total = data.total;
-        this.paymentTitle = this.statusToTitle[data.status];
+      .subscribe({
+        next: (data: GetCheckout) => {
+          this.subtotal = data.subtotal;
+          this.serviceFees = data.service_fees;
+          this.total = data.total;
+          this.paymentTitle = this.statusToTitle[data.status];
+        },
+        error: () => {}
       })
     }
 
@@ -55,11 +61,14 @@ export class CoverPageActionComponent implements OnInit{
 
   pay() {
     this.coverPageActionService.stepForwardPayment(this.coverId)
-    .subscribe(() => {
-      this.router.navigate(
-        ['/dashboard'],
-        { queryParams: { coverId: this.coverId } }
-        );
+    .subscribe({
+      next: () => {
+        this.router.navigate(
+          ['/dashboard'],
+          { queryParams: { coverId: this.coverId } }
+          );
+      },
+      error: () => {}
     })
   }
 }

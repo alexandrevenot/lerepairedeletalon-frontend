@@ -161,115 +161,121 @@ export class CoverPageComponent implements OnInit{
 
   loadCoverInfo() {
     this.coverPageService.getCoverInfo(this.coverId)
-    .subscribe((data: GetCoverInfo) => {
-      this.stallionName = data.stallion_name;
-      this.stallionBreed = data.stallion_breed;
-      this.stallionNSIRE = data.stallion_nsire;
-
-      let stallionProductionBreedsString = "";
-      data.stallion_production_breeds.forEach(
-        (value: string) => {
-          stallionProductionBreedsString += (value + ", ");
-        }
-      );
-      this.stallionProductionBreeds = stallionProductionBreedsString.slice(0, -2);
-
-      let stallionVaccinesString = "";
-      data.stallion_vaccines.forEach(
-        (value: string) => {
-          stallionVaccinesString += (vaccines[value] + ", ");
-        }
-      )
-      this.stallionVaccines = stallionVaccinesString.slice(0, -2);
-
-      this.stallionSTDNegativeTests = [];
-      for (let std of this.availableSTDS) {
-        if (Object.keys(data.stallion_std_negative_tests).includes(std)
-        && data.stallion_std_negative_tests[std]) {
-          this.stallionSTDNegativeTests.push(this.stdsMapping[std] + ", testé le " + data.stallion_std_negative_tests[std]['test_date']);
-        }
-      }
-      this.mareName = data.mare_name;
-      this.mareBreed = data.mare_breed;
-      this.mareNSIRE = data.mare_nsire;
-      this.contactId = data.contact_id;
-      this.contactFirstname = data.contact_firstname;
-      this.contactLastname = data.contact_lastname;
-      this.contactPhoneNumber = data.contact_phone_number;
-      this.contactEmail = data.contact_email;
-      this.coverType = data.cover_type;
-      this.price = data.price;
-      this.basePrice = data.base_price;
-      this.coverPlace = data.cover_specs.cover_place;
-
-      this.balancePaymentCondition = shortBalancePaymentConditions[data.cover_specs.balance_payment_condition];
-
-      this.advancePercentage = data.cover_specs.advance_percentage.toString() + '% du prix total';
-
-      this.maxNbOfAttempts = data.cover_specs.maximum_nb_of_attempts;
-
-      this.demandedSTDNegativeTests = [];
-      for (let std of this.availableSTDS) {
-        if (Object.keys(data.cover_specs.demanded_std_negative_tests).includes(std)
-        && data.cover_specs.demanded_std_negative_tests[std]) {
-          this.demandedSTDNegativeTests.push(this.stdsMapping[std] + ", " + data.cover_specs.demanded_std_negative_tests[std]['test_oldness'] + ' jours avant la saillie');
-        }
-      }
-
-      let demandedVaccinesString = "";
-      data.cover_specs.demanded_vaccines.forEach(
-        (value: string) => {
-          demandedVaccinesString += (vaccines[value] + ", ");
-        }
-      )
-      this.demandedVaccines = demandedVaccinesString.slice(0, -2);
-
-      this.arrivalDate = data.arrival_date;
-
-      this.messageFromBuyer = data.buyer_message.replace(/(\r\n|\r|\n)/g, '<br>');
-      this.timestamps = data.timestamps;
-      this.status = data.status;
-      this.pov = data.pov;
-
-      this.alreadyReviewed = (this.pov == "seller" && data.reviewed_by_seller) || (this.pov == "buyer" && data.reviewed_by_buyer);
-
-      this.notesFormControl.setValue(data.notes);
-      this.lastSavedNotesValue = data.notes;
-      this.notesFormControl.value;
-
-      this.reviewPlaceholder = "Donnez votre avis sur le déroulement de cette saillie, ";
-      if (this.pov == "seller") {
-        this.reviewPlaceholder += "et sur l'acheteur.";
-      } else {
-        this.reviewPlaceholder += "sur l'étalon et sur le vendeur."
-      }
-
-      let userScoreObservable: Observable<UserScore>;
-      if (this.pov == "seller") {
-        userScoreObservable = this.userScoreService.getUserScore(
-          this.contactId,
-          null,
-          "buyer"
+    .subscribe({
+      next: (data: GetCoverInfo) => {
+        this.stallionName = data.stallion_name;
+        this.stallionBreed = data.stallion_breed;
+        this.stallionNSIRE = data.stallion_nsire;
+  
+        let stallionProductionBreedsString = "";
+        data.stallion_production_breeds.forEach(
+          (value: string) => {
+            stallionProductionBreedsString += (value + ", ");
+          }
+        );
+        this.stallionProductionBreeds = stallionProductionBreedsString.slice(0, -2);
+  
+        let stallionVaccinesString = "";
+        data.stallion_vaccines.forEach(
+          (value: string) => {
+            stallionVaccinesString += (vaccines[value] + ", ");
+          }
         )
-      } else {
-        userScoreObservable = this.userScoreService.getUserScore(
-          this.contactId,
-          this.stallionNSIRE,
-          "seller"
-        )
-      }
-
-      userScoreObservable.subscribe((userScore: UserScore) => {
-        if (userScore.score) {
-          this.contactScoreString = userScore.score.toString() + "/5";
-        }
-        if (userScore.nb_reviews) {
-          this.contactNbReviewsString = userScore.nb_reviews.toString() + " évaluation";
-          if (userScore.nb_reviews > 1) {
-            this.contactNbReviewsString += "s";
+        this.stallionVaccines = stallionVaccinesString.slice(0, -2);
+  
+        this.stallionSTDNegativeTests = [];
+        for (let std of this.availableSTDS) {
+          if (Object.keys(data.stallion_std_negative_tests).includes(std)
+          && data.stallion_std_negative_tests[std]) {
+            this.stallionSTDNegativeTests.push(this.stdsMapping[std] + ", testé le " + data.stallion_std_negative_tests[std]['test_date']);
           }
         }
-      })
+        this.mareName = data.mare_name;
+        this.mareBreed = data.mare_breed;
+        this.mareNSIRE = data.mare_nsire;
+        this.contactId = data.contact_id;
+        this.contactFirstname = data.contact_firstname;
+        this.contactLastname = data.contact_lastname;
+        this.contactPhoneNumber = data.contact_phone_number;
+        this.contactEmail = data.contact_email;
+        this.coverType = data.cover_type;
+        this.price = data.price;
+        this.basePrice = data.base_price;
+        this.coverPlace = data.cover_specs.cover_place;
+  
+        this.balancePaymentCondition = shortBalancePaymentConditions[data.cover_specs.balance_payment_condition];
+  
+        this.advancePercentage = data.cover_specs.advance_percentage.toString() + '% du prix total';
+  
+        this.maxNbOfAttempts = data.cover_specs.maximum_nb_of_attempts;
+  
+        this.demandedSTDNegativeTests = [];
+        for (let std of this.availableSTDS) {
+          if (Object.keys(data.cover_specs.demanded_std_negative_tests).includes(std)
+          && data.cover_specs.demanded_std_negative_tests[std]) {
+            this.demandedSTDNegativeTests.push(this.stdsMapping[std] + ", " + data.cover_specs.demanded_std_negative_tests[std]['test_oldness'] + ' jours avant la saillie');
+          }
+        }
+  
+        let demandedVaccinesString = "";
+        data.cover_specs.demanded_vaccines.forEach(
+          (value: string) => {
+            demandedVaccinesString += (vaccines[value] + ", ");
+          }
+        )
+        this.demandedVaccines = demandedVaccinesString.slice(0, -2);
+  
+        this.arrivalDate = data.arrival_date;
+  
+        this.messageFromBuyer = data.buyer_message.replace(/(\r\n|\r|\n)/g, '<br>');
+        this.timestamps = data.timestamps;
+        this.status = data.status;
+        this.pov = data.pov;
+  
+        this.alreadyReviewed = (this.pov == "seller" && data.reviewed_by_seller) || (this.pov == "buyer" && data.reviewed_by_buyer);
+  
+        this.notesFormControl.setValue(data.notes);
+        this.lastSavedNotesValue = data.notes;
+        this.notesFormControl.value;
+  
+        this.reviewPlaceholder = "Donnez votre avis sur le déroulement de cette saillie, ";
+        if (this.pov == "seller") {
+          this.reviewPlaceholder += "et sur l'acheteur.";
+        } else {
+          this.reviewPlaceholder += "sur l'étalon et sur le vendeur."
+        }
+  
+        let userScoreObservable: Observable<UserScore>;
+        if (this.pov == "seller") {
+          userScoreObservable = this.userScoreService.getUserScore(
+            this.contactId,
+            null,
+            "buyer"
+          )
+        } else {
+          userScoreObservable = this.userScoreService.getUserScore(
+            this.contactId,
+            this.stallionNSIRE,
+            "seller"
+          )
+        }
+  
+        userScoreObservable.subscribe({
+          next: (userScore: UserScore) => {
+            if (userScore.score) {
+              this.contactScoreString = userScore.score.toString() + "/5";
+            }
+            if (userScore.nb_reviews) {
+              this.contactNbReviewsString = userScore.nb_reviews.toString() + " évaluation";
+              if (userScore.nb_reviews > 1) {
+                this.contactNbReviewsString += "s";
+              }
+            }
+          },
+          error: () => {}
+        })
+      },
+      error: () => {}
     })
   }
 
@@ -294,13 +300,16 @@ export class CoverPageComponent implements OnInit{
     this.closeModal("arrivalDate");
     this.coverPageService.putCover(this.coverId, "arrivalDate", this.valueForPutCover,
       this.arrivalDateChangeFailed, this.displayArrivalDateHelper)
-    .subscribe(() => {
-      this.loadCoverInfo();
-      if (!this.arrivalDateChangeFailed["value"]) {
-        this.displayArrivalDateHelper["value"] = false;
-      }
-      this.arrivalDateChangeFailed["value"] = false;
-      this.newArrivalDate.setValue("");
+    .subscribe({
+      next: () => {
+        this.loadCoverInfo();
+        if (!this.arrivalDateChangeFailed["value"]) {
+          this.displayArrivalDateHelper["value"] = false;
+        }
+        this.arrivalDateChangeFailed["value"] = false;
+        this.newArrivalDate.setValue("");
+      },
+      error: () => {}
     });
 
   }
@@ -309,13 +318,16 @@ export class CoverPageComponent implements OnInit{
     this.closeModal("basePrice");
     this.coverPageService.putCover(this.coverId, "basePrice", this.valueForPutCover,
       this.basePriceChangeFailed, this.displayBasePriceHelper)
-    .subscribe(() => {
-      this.loadCoverInfo();
-      if (!this.basePriceChangeFailed["value"]) {
-        this.displayBasePriceHelper["value"] = false;
-      }
-      this.basePriceChangeFailed["value"] = false;
-      this.newBasePrice.setValue("");
+    .subscribe({
+      next: () => {
+        this.loadCoverInfo();
+        if (!this.basePriceChangeFailed["value"]) {
+          this.displayBasePriceHelper["value"] = false;
+        }
+        this.basePriceChangeFailed["value"] = false;
+        this.newBasePrice.setValue("");
+      },
+      error: () => {}
     });
 
   }
@@ -380,11 +392,14 @@ export class CoverPageComponent implements OnInit{
 
   updateNotes() {
     this.coverPageService.updateNotes(this.coverId, this.notesFormControl.value, this.updateNotesMessage, this.updateNotesSuccess)
-    .subscribe(() => {
-      this.lastSavedNotesValue = this.notesFormControl.value;
-      this.updateNotesMessage.setValue("Les notes ont bien été sauvegardées.")
-      this.updateNotesSuccess['status'] = true;
-      this.notesAreBeingModified = false;
+    .subscribe({
+      next: () => {
+        this.lastSavedNotesValue = this.notesFormControl.value;
+        this.updateNotesMessage.setValue("Les notes ont bien été sauvegardées.")
+        this.updateNotesSuccess['status'] = true;
+        this.notesAreBeingModified = false;
+      },
+      error: () => {}
     })
   }
 
@@ -417,10 +432,13 @@ export class CoverPageComponent implements OnInit{
       this.reviewComment,
       this.reviewStatus
     )
-    .subscribe(() => {
-      this.reviewStatus['status'] = "success";
-      this.alreadyReviewedMessage = "L'évaluation a bien été postée.";
-      this.alreadyReviewed = true;
+    .subscribe({
+      next: () => {
+        this.reviewStatus['status'] = "success";
+        this.alreadyReviewedMessage = "L'évaluation a bien été postée.";
+        this.alreadyReviewed = true;
+      },
+      error: () => {}
     })
   }
 
@@ -429,9 +447,12 @@ export class CoverPageComponent implements OnInit{
     buttonStatus["status"] = backendInteractionStatus.Loading;
     this.greenAndRedButtonFormControl.setValue("");
     this.coverPageService.stepForwardCover(this.coverId, nextStatus, buttonStatus, this.greenAndRedButtonFormControl)
-    .subscribe(() => {
-      buttonStatus["status"] = backendInteractionStatus.Success;
-      this.loadCoverInfo();
+    .subscribe({
+      next: () => {
+        buttonStatus["status"] = backendInteractionStatus.Success;
+        this.loadCoverInfo();
+      },
+      error: () => {}
     })
   }
 

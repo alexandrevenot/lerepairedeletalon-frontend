@@ -17,8 +17,11 @@ export class FavoriteStallionsComponent implements OnInit {
 
   ngOnInit(): void {
     this.favoriteStallionsService.getFavorites()
-    .subscribe((data: FavoriteStallions) => {
-      this.favorites = data.favorite_stallions;
+    .subscribe({
+      next: (data: FavoriteStallions) => {
+        this.favorites = data.favorite_stallions;
+      },
+      error: () => {}
     })
   }
 }

@@ -35,19 +35,22 @@ export class MyStallionsListComponent implements OnInit {
 
   loadStallionBoxes() {
     this.myStallionsListService.getStallionsList()
-    .subscribe((data: getStallionsListArray) => {
-      this.nbOfStallions = data.content.length;
-
-      for (let item of data.content) {
-        this.items.push({
-          id: item.id,
-          name: item.name,
-          breed: item.breed,
-          profilePicture: item.photo_url,
-          lastUpdateTimestamp: item.last_update_timestamp,
-          profileStatus: item.profile_status
-        });
-      }
+    .subscribe({
+      next: (data: getStallionsListArray) => {
+        this.nbOfStallions = data.content.length;
+  
+        for (let item of data.content) {
+          this.items.push({
+            id: item.id,
+            name: item.name,
+            breed: item.breed,
+            profilePicture: item.photo_url,
+            lastUpdateTimestamp: item.last_update_timestamp,
+            profileStatus: item.profile_status
+          });
+        }
+      },
+      error: () => {}
     })
   }
 

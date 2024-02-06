@@ -79,78 +79,93 @@ export class MyAccountComponent implements OnInit{
     })
 
     this.contractualIdentityForm.get('companyOrIndividualRadio')?.valueChanges
-    .subscribe(value => {
-      this.selectedProfileType = value;
+    .subscribe({
+      next: value => {
+        this.selectedProfileType = value;
+      },
+      error: () => {}
     });
 
     this.myAccountService.getAccountInformation()
-    .subscribe((data: any) => {
-      this.userId = data.user_id;
-
-      this.accountInformationForm.get("firstname")?.setValue(data.firstname);
-      this.accountInformationForm.get("lastname")?.setValue(data.lastname);
-      this.accountInformationForm.get("email")?.setValue(data.email);
-      this.email = data.email;
-      this.accountInformationForm.get("phoneNumber")?.setValue(data.phone_number);
-
-      if (data.contractual_identity) {
-        this.contractualIdentityForm.get("gender")?.setValue(data.contractual_identity.gender);
-        this.contractualIdentityForm.get("gender")?.disable();
-        this.contractualIdentityForm.get("postalAddress")?.setValue(data.contractual_identity.postal_address);
-        this.contractualIdentityForm.get("birthdate")?.setValue(data.contractual_identity.birthdate);
-        this.contractualIdentityForm.get("birthplace")?.setValue(data.contractual_identity.birthplace);
-        this.contractualIdentityForm.get("citizenship")?.setValue(data.contractual_identity.citizenship);
-        if (data.contractual_identity.type == "company") {
-          this.contractualIdentityForm.get("companyName")?.setValue(data.contractual_identity.company_name);
-          this.contractualIdentityForm.get("companyStatus")?.setValue(data.contractual_identity.company_status);
-          this.contractualIdentityForm.get("capital")?.setValue(data.contractual_identity.capital);
-          this.contractualIdentityForm.get("headOfficeAddress")?.setValue(data.contractual_identity.head_office_address);
-          this.contractualIdentityForm.get("siret")?.setValue(data.contractual_identity.siret);
+    .subscribe({
+      next: (data: any) => {
+        this.userId = data.user_id;
+  
+        this.accountInformationForm.get("firstname")?.setValue(data.firstname);
+        this.accountInformationForm.get("lastname")?.setValue(data.lastname);
+        this.accountInformationForm.get("email")?.setValue(data.email);
+        this.email = data.email;
+        this.accountInformationForm.get("phoneNumber")?.setValue(data.phone_number);
+  
+        if (data.contractual_identity) {
+          this.contractualIdentityForm.get("gender")?.setValue(data.contractual_identity.gender);
+          this.contractualIdentityForm.get("gender")?.disable();
+          this.contractualIdentityForm.get("postalAddress")?.setValue(data.contractual_identity.postal_address);
+          this.contractualIdentityForm.get("birthdate")?.setValue(data.contractual_identity.birthdate);
+          this.contractualIdentityForm.get("birthplace")?.setValue(data.contractual_identity.birthplace);
+          this.contractualIdentityForm.get("citizenship")?.setValue(data.contractual_identity.citizenship);
+          if (data.contractual_identity.type == "company") {
+            this.contractualIdentityForm.get("companyName")?.setValue(data.contractual_identity.company_name);
+            this.contractualIdentityForm.get("companyStatus")?.setValue(data.contractual_identity.company_status);
+            this.contractualIdentityForm.get("capital")?.setValue(data.contractual_identity.capital);
+            this.contractualIdentityForm.get("headOfficeAddress")?.setValue(data.contractual_identity.head_office_address);
+            this.contractualIdentityForm.get("siret")?.setValue(data.contractual_identity.siret);
+          }
+          this.contractualIdentityForm.get("companyOrIndividualRadio")?.setValue(data.contractual_identity.type);
+          this.contractualIdentityForm.get("companyOrIndividualRadio")?.disable();
+          this.savedProfileType = data.contractual_identity.type;
+          this.userHasAContractualIdentity = true;
         }
-        this.contractualIdentityForm.get("companyOrIndividualRadio")?.setValue(data.contractual_identity.type);
-        this.contractualIdentityForm.get("companyOrIndividualRadio")?.disable();
-        this.savedProfileType = data.contractual_identity.type;
-        this.userHasAContractualIdentity = true;
-      }
-      if (data.seller_note) {
-        this.sellerScore = data.seller_note;
-        this.nbReviewsAsSeller = data.nb_reviews_as_seller;
-      }
-      if (data.buyer_note) {
-        this.buyerScore = data.buyer_note;
-        this.nbReviewsAsBuyer = data.nb_reviews_as_buyer;
-      }
-
-      if (data.bank_identity) {
-
-      }
-
-      this.userScoreService.getUserScore(this.userId, null, "seller")
-      .subscribe((userScore: UserScore) => {
-        if (userScore.score) {
-          this.sellerScore = userScore.score
+        if (data.seller_note) {
+          this.sellerScore = data.seller_note;
+          this.nbReviewsAsSeller = data.nb_reviews_as_seller;
         }
-        if (userScore.nb_reviews) {
-          this.nbReviewsAsSeller = userScore.nb_reviews;
+        if (data.buyer_note) {
+          this.buyerScore = data.buyer_note;
+          this.nbReviewsAsBuyer = data.nb_reviews_as_buyer;
         }
-      })
-
-      this.userScoreService.getUserScore(this.userId, null, "buyer")
-      .subscribe((userScore: UserScore) => {
-        if (userScore.score) {
-          this.buyerScore = userScore.score
+  
+        if (data.bank_identity) {
+  
         }
-        if (userScore.nb_reviews) {
-          this.nbReviewsAsBuyer = userScore.nb_reviews;
-        }
-      })
+  
+        this.userScoreService.getUserScore(this.userId, null, "seller")
+        .subscribe({
+          next: (userScore: UserScore) => {
+            if (userScore.score) {
+              this.sellerScore = userScore.score
+            }
+            if (userScore.nb_reviews) {
+              this.nbReviewsAsSeller = userScore.nb_reviews;
+            }
+          },
+          error: () => {}
+        })
+  
+        this.userScoreService.getUserScore(this.userId, null, "buyer")
+        .subscribe({
+          next: (userScore: UserScore) => {
+            if (userScore.score) {
+              this.buyerScore = userScore.score
+            }
+            if (userScore.nb_reviews) {
+              this.nbReviewsAsBuyer = userScore.nb_reviews;
+            }
+          },
+          error: () => {}
+        })
+      },
+      error: () => {}
     })
   }
 
   sendPasswordUpdateEmail() {
     this.myAccountService.sendPasswordUpdateEmail(this.email, this.passwordChangeStatus)
-    .subscribe(() => {
-      this.passwordChangeStatus["status"] = backendInteractionStatus.Success;
+    .subscribe({
+      next: () => {
+        this.passwordChangeStatus["status"] = backendInteractionStatus.Success;
+      },
+      error: () => {}
     })
   }
 
@@ -181,15 +196,18 @@ export class MyAccountComponent implements OnInit{
       this.contractualIdentityFormHelperIsTriggered,
       this.updateFormMessage,
       this.contractualIdentityFormButtonIsLoading
-    ).subscribe(() => {
-      this.updateFormMessage.setValue("Les informations ont bien été sauvegardées.")
-      this.savedProfileType = this.selectedProfileType;
-      this.contractualIdentityFormHelperIsTriggered['status'] = false;
-      this.contractualIdentityFormButtonIsLoading['status'] = false;
-      this.contractualIdentityFormIsBeingModified = false;
-      this.userHasAContractualIdentity = true;
-      this.contractualIdentityForm.get("companyOrIndividualRadio")?.disable();
-      this.contractualIdentityForm.get("gender")?.disable();
+    ).subscribe({
+      next: () => {
+        this.updateFormMessage.setValue("Les informations ont bien été sauvegardées.")
+        this.savedProfileType = this.selectedProfileType;
+        this.contractualIdentityFormHelperIsTriggered['status'] = false;
+        this.contractualIdentityFormButtonIsLoading['status'] = false;
+        this.contractualIdentityFormIsBeingModified = false;
+        this.userHasAContractualIdentity = true;
+        this.contractualIdentityForm.get("companyOrIndividualRadio")?.disable();
+        this.contractualIdentityForm.get("gender")?.disable();
+      },
+      error: () => {}
     })
   }
 
@@ -216,9 +234,12 @@ export class MyAccountComponent implements OnInit{
       this.accountDeletionStatus['status'] = backendInteractionStatus.Loading;
       this.closeModal();
       this.myAccountService.deleteAccount(value, this.accountDeletionStatus, this.accountDeletionInputFormControl)
-      .subscribe(() => {
-        this.accountDeletionStatus['status'] = backendInteractionStatus.Success;
-        this.authService.disconnectUser();
+      .subscribe({
+        next: () => {
+          this.accountDeletionStatus['status'] = backendInteractionStatus.Success;
+          this.authService.disconnectUser();
+        },
+        error: () => {}
       })
     }
   }

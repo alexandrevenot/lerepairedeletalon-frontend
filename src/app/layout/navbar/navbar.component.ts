@@ -29,10 +29,13 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit() {
     this.navbarService.loadNavbarEvent
-    .subscribe((data: connectionStatus) => {
-      this.firstname = data.firstname;
-      this.lastname = data.lastname;
-      this.userIsLoggedIn = data.userIsLoggedIn;
+    .subscribe({
+      next: (data: connectionStatus) => {
+        this.firstname = data.firstname;
+        this.lastname = data.lastname;
+        this.userIsLoggedIn = data.userIsLoggedIn;
+      },
+      error: () => {}
     })
 
     this.navbarService.loadNavbar();
