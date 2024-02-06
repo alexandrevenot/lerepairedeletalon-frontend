@@ -194,7 +194,7 @@ export const profileStatuses: Record<string, string> = {
 }
 
 export enum backendInteractionStatus {
-  Init = "",
+  Init = "Init",
   UserError = "UserError",
   Loading = "Loading",
   BackendError = "BackendError",

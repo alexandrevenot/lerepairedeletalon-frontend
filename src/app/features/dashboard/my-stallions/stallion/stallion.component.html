@@ -180,34 +180,27 @@
     </div>
 
     <h5 class="subtitle is-5 has-text-weight-bold">Localisation de l'étalon</h5>
-    <div class="columns is-align-items-self-end">
-      <div class="column">
-        <div class="field">
-          <label class="label has-text-weight-semibold has-text-grey">Ville de résidence</label>
-          <div class="control" [ngClass]="locationIsValidated? 'has-icons-right' : ''">
-            <input class="input" [ngClass]="{
-              'is-success': locationIsValidated,
-              'is-danger': !locationIsValidated && (isLookingForLocation || 'UserError' == stallionFormStatus['status'])
-              }" type="text" placeholder="Toulouse" formControlName="location">
-            <span class="icon is-right" *ngIf="locationIsValidated">
-              <i class="fas fa-check fa-sm"></i>
-            </span>
-          </div>
-        </div>
+
+    <div class="field">
+      <label class="label has-text-weight-semibold has-text-grey">Ville de résidence</label>
+      <div class="control" [ngClass]="locationIsValidated? 'has-icons-right' : ''">
+        <input class="input" [ngClass]="{
+                  'is-success': locationIsValidated,
+                  'is-danger': !locationIsValidated && 'Init' != geolocStatus['status']
+                  }" type="text" placeholder="Toulouse" formControlName="location" (input)="onGeolocationInput()"
+          (focus)="onGeolocationFocus()" (blur)="onGeolocationBlur()">
+          <span class="icon is-right" *ngIf="locationIsValidated">
+            <i class="fas fa-check fa-sm"></i>
+          </span>
       </div>
-
-
-      <div class="column">
-        <div class="control" *ngIf="!locationIsValidated">
-          <button class="button is-primary" (click)="findCity()">Valider la ville</button>
-        </div>
-        <div class="control" *ngIf="locationIsValidated">
-          <button class="button is-primary" (click)="resetCity()">
-            <span class="icon">
-              <i class="fas fa-arrows-rotate"></i>
-            </span>
-            <span>Sélectionner une autre ville</span>
-          </button>
+      <div class="dropdown is-active" *ngIf="displayGeolocDd">
+        <div class="dropdown-menu" id="dropdown-menu" role="menu">
+          <div class="dropdown-content" style="background-color: #f7faf7;">
+            <a class="dropdown-item" *ngFor="let index of getNumberArray(locationTagValues.length)"
+              (click)="confirmLocationValue(index)">
+              {{locationTagValues[index]}}
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -646,23 +639,3 @@
       }">{{ submitHelper.value }}</p>
   </form>
 </section>
-
-<div class="modal" [ngClass]="locationModalIsActive? 'is-active': ''">
-  <div class="modal-background" (click)="resetCity()"></div>
-  <div class="modal-content">
-      <header class="modal-card-head">
-          <p class="modal-card-title">Cliquez sur votre code postal:</p>
-          <button class="delete" aria-label="close" (click)="resetCity()"></button>
-      </header>
-      <section class="modal-card-body">
-          <div class="tags">
-              <span class="tag is-medium is-clickable" *ngFor="let index of getNumberArray(locationTagValues.length)" (click)="confirmLocationValue(index)">{{locationTagValues[index]}}</span>
-            </div>
-      </section>
-      <footer class="modal-card-foot is-justify-content-center">
-          <div class="buttons">
-              <a class="button" (click)="resetCity()">Annuler</a>
-          </div>
-      </footer>
-  </div>
-</div>
