@@ -85,13 +85,16 @@ export class StallionPanelComponent implements OnInit, OnChanges {
 
   loadProfiles() {
     this.stallionPanelService.getSearch(16, ++this.iteration, this.filters)
-    .subscribe((data: searchData) => {
-      if (data.content.length < 16) {
-        this.shouldStopCalling = true;
-      }
-      this.items.push(...data.content);
-      this.isLoading = false;
-      this.loadingEndingEvent.emit();
+    .subscribe({
+      next: (data: searchData) => {
+        if (data.content.length < 16) {
+          this.shouldStopCalling = true;
+        }
+        this.items.push(...data.content);
+        this.isLoading = false;
+        this.loadingEndingEvent.emit();
+      },
+      error: () => {}
     })
   }
 

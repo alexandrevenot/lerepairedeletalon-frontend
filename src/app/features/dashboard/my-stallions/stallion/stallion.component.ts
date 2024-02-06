@@ -83,7 +83,9 @@ export class StallionComponent implements OnInit {
     lat: 0,
     lng: 0
   };
-  public locationModalIsActive = false;
+  public geolocationInputTimer: any;
+  public geolocStatus: Record<string, backendInteractionStatus> = {"status": backendInteractionStatus.Init};
+  public displayGeolocDd: boolean = false;
   public productionBreedsAddedByHand: Array<string> = [];
   public saveButtonIsDisabled: boolean = false;
 
@@ -369,38 +371,44 @@ export class StallionComponent implements OnInit {
   }
 
   // geoloc
-  triggerModal() {
-    this.locationModalIsActive = true;
+  onGeolocationInput() {
+    clearTimeout(this.geolocationInputTimer);
+    this.locationIsValidated = false;
+    this.geolocationInputTimer = setTimeout(() => {
+      this.findCity()
+    }, 750)
   }
 
-  closeModal() {
-    this.locationModalIsActive = false;
+  onGeolocationFocus() {
+    this.displayGeolocDd = true;
   }
 
-  @HostListener('document:keydown', ['$event'])
-  handleKeyboardEvent(event: KeyboardEvent) {
-    if (this.locationModalIsActive && event.key === 'Escape') {
-      this.resetCity();
-    }
+  onGeolocationBlur() {
+    clearTimeout(this.geolocationInputTimer);
+    setTimeout(() => {
+      this.displayGeolocDd = false;
+    }, 200)
   }
 
   findCity() {
-    this.isLookingForLocation = true;
+    this.geolocStatus["status"] = backendInteractionStatus.Loading;
     this.locations.splice(0, this.locations.length);
     this.locationTagValues.splice(0, this.locationTagValues.length);
     this.geolocationService.getCity(
-      this.stallionForm.get('location')?.value,
-      this.locationSearchSuccess,
+      this.stallionForm.getRawValue().location,
+      this.geolocStatus,
       this.locationHelper)
-    .subscribe((data: getCityData) => {
-      for (let item of data.content) {
-        this.locations.push(item);
-        this.locationTagValues.push(item.city + " (" + item.postal_code + ")")
-      }
-      this.locationHelper.setValue("");
-      this.locationSearchSuccess['status'] = true;
-      this.triggerModal();
-    })
+      .subscribe({
+        next: (data: getCityData) => {
+          for (let item of data.content) {
+            this.locations.push(item);
+            this.locationTagValues.push(item.city + " (" + item.postal_code + ")")
+          }
+          this.locationHelper.setValue("");
+          this.geolocStatus["status"] = backendInteractionStatus.Success;
+        },
+        error: () => {}
+      })
   }
 
   resetCity() {
@@ -410,20 +418,18 @@ export class StallionComponent implements OnInit {
     if (locationControl) {
       locationControl.setValue("");
     }
-    this.closeModal();
   }
 
   confirmLocationValue(index: number) {
+    this.displayGeolocDd = false;
     const locationControl = this.stallionForm.get('location');
     if (locationControl) {
-      locationControl.setValue(this.locationTagValues[index]);
+      locationControl.setValue(this.locations[index].city);
     }
     this.locationHelper.setValue("");
-    this.isLookingForLocation = false;
     this.selectedLocation = this.locations[index];
     this.locationTagValues.splice(0, this.locationTagValues.length);
     this.locationIsValidated = true;
-    this.closeModal();
   }
 
   // numbers
