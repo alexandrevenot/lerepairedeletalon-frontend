@@ -138,11 +138,15 @@ export class FiltersComponent implements OnInit {
 
 
   findCity() {
+    const locationInputValue = this.filterForm.getRawValue().location;
+    if (locationInputValue == "") {
+      return
+    }
     this.geolocStatus["status"] = backendInteractionStatus.Loading;
     this.locations.splice(0, this.locations.length);
     this.locationTagValues.splice(0, this.locationTagValues.length);
     this.geolocationService.getCity(
-      this.filterForm.getRawValue().location,
+      locationInputValue,
       this.geolocStatus,
       this.locationMessage)
       .subscribe({

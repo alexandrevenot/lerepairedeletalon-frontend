@@ -100,6 +100,9 @@ export class LoginComponent {
         this.message.setValue('Connexion réussie.');
         this.status['status'] = backendInteractionStatus.Success;
         this.navbarService.loadNavbar();
+        setTimeout(() => {
+          this.router.navigate(['/search']);
+        }, 1000);
       },
       error: () => {},
     })

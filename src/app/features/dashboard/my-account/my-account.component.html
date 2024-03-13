@@ -2,7 +2,7 @@
 
 <section class="section">
   <div class="container">
-    <form [formGroup]="accountInformationForm"  class="box" style="background-color: #f7faf7;">
+    <form [formGroup]="legalIdentity0Form"  class="box" style="background-color: #f7faf7;">
       <h4 class="subtitle is-4 has-text-weight-bold pb-4 has-text-centered">Identité, mot de passe et coordonnées</h4>
 
       <div class="columns">
@@ -57,11 +57,18 @@
 
     </form>
 
-    <form [formGroup]="contractualIdentityForm" class="box" style="background-color: #f7faf7;">
-      <h4 class="subtitle is-4 has-text-weight-bold pb-4 has-text-centered">Complément d'identité pour les contrats</h4>
+    <form [formGroup]="legalIdentity1Form" class="box" style="background-color: #f7faf7;">
+      <h4 class="subtitle is-4 has-text-weight-bold pb-1 mb-1 has-text-centered">Complément d'identité: niveau 1
+        <span class="tag has-text-weight-normal is-medium mb-1 ml-3" [ngClass]="(legalIdentityLevel > 0)? 'is-success':''">
+          {{(legalIdentityLevel > 0)? 'Terminé': 'Non renseigné'}}
+        </span>
+      </h4>
+      <h5 class="subtitle is-5 has-text-weight-semibold has-text-grey-light pb-4 has-text-centered">Pour pouvoir acheter des saillies</h5>
+
+
       <div class="columns is-align-items-center">
         <div class="column is-2 has-text-right">
-          <label class="label">Je suis un</label>
+          <label class="label">Je suis un *</label>
         </div>
 
         <div class="column">
@@ -81,38 +88,38 @@
         </div>
       </div>
 
-      <div *ngIf="selectedProfileType == 'company'">
+      <div *ngIf="selectedBusinessType == 'company'">
         <div class="columns is-align-items-end">
           <div class="column is-2 has-text-right">
-            <label class="label pb-4">Mon entreprise</label>
+            <label class="label pb-4">Immatriculation de l'entreprise</label>
           </div>
 
           <div class="column">
-            <label class="label has-text-grey-light has-text-weight-semibold">Nom</label>
+            <label class="label has-text-grey-light has-text-weight-semibold">Nom légal *</label>
             <div class="field">
               <p class="control is-expanded">
                 <input class="input" type="text" placeholder="Élevage de ..." formControlName="companyName"
-                  [readonly]="!contractualIdentityFormIsBeingModified && userHasAContractualIdentity">
+                  [readonly]="!legalIdentityForm1IsBeingModified && (legalIdentityLevel > 0)">
               </p>
             </div>
           </div>
 
           <div class="column">
-            <label class="label has-text-grey-light has-text-weight-semibold">Forme juridique</label>
+            <label class="label has-text-grey-light has-text-weight-semibold">Forme juridique *</label>
             <div class="field">
               <p class="control is-expanded">
-                <input class="input" type="text" placeholder="SARL" formControlName="companyStatus"
-                  [readonly]="!contractualIdentityFormIsBeingModified && userHasAContractualIdentity">
+                <input class="input" type="text" placeholder="SARL" formControlName="companyStructure"
+                  [readonly]="!legalIdentityForm1IsBeingModified && (legalIdentityLevel > 0)">
               </p>
             </div>
           </div>
 
           <div class="column">
-            <label class="label has-text-grey-light has-text-weight-semibold">Capital</label>
+            <label class="label has-text-grey-light has-text-weight-semibold">Capital *</label>
             <div class="field has-addons">
               <p class="control is-expanded">
                 <input class="input" type="text" placeholder="10000" formControlName="capital"
-                  [readonly]="!contractualIdentityFormIsBeingModified && userHasAContractualIdentity">
+                  [readonly]="!legalIdentityForm1IsBeingModified && (legalIdentityLevel > 0)">
               </p>
               <p class="control">
                 <a class="button is-static">
@@ -129,95 +136,219 @@
           </div>
 
           <div class="column">
-            <label class="label has-text-grey-light has-text-weight-semibold">Siège social</label>
+            <label class="label has-text-grey-light has-text-weight-semibold">SIREN *</label>
             <div class="field">
               <p class="control is-expanded">
-                <input class="input" type="text" placeholder="5 allée des Platanes"
-                  formControlName="headOfficeAddress"
-                  [readonly]="!contractualIdentityFormIsBeingModified && userHasAContractualIdentity">
+                <input class="input" type="text" placeholder="123456789" formControlName="siren"
+                  [readonly]="!legalIdentityForm1IsBeingModified && (legalIdentityLevel > 0)">
               </p>
             </div>
           </div>
 
           <div class="column">
-            <label class="label has-text-grey-light has-text-weight-semibold">SIRET</label>
+            <label class="label has-text-grey-light has-text-weight-semibold">RCS d'immatriculation</label>
             <div class="field">
               <p class="control is-expanded">
-                <input class="input" type="text" placeholder="12345678900012" formControlName="siret"
-                  [readonly]="!contractualIdentityFormIsBeingModified && userHasAContractualIdentity">
+                <input class="input" type="text" placeholder="Toulouse" formControlName="rcs"
+                  [readonly]="!legalIdentityForm1IsBeingModified && (legalIdentityLevel > 0)">
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="columns is-align-items-center">
+          <div class="column is-2 has-text-right">
+            <label class="label">Adresse du siège social</label>
+          </div>
+
+          <div class="column">
+            <label class="label has-text-grey-light has-text-weight-semibold">Nom et numéro de la voie *</label>
+            <div class="field">
+              <p class="control is-expanded">
+                <input class="input" type="text" placeholder="5 allée des Platanes" formControlName="headOfficeAddressLine1"
+                  [readonly]="!legalIdentityForm1IsBeingModified && (legalIdentityLevel > 0)">
+              </p>
+            </div>
+          </div>
+          <div class="column">
+            <label class="label has-text-grey-light has-text-weight-semibold">Complément d'adresse</label>
+            <div class="field">
+              <p class="control is-expanded">
+                <input class="input" type="text" placeholder="Appartement 13, Bâtiment K" formControlName="headOfficeAddressLine2"
+                  [readonly]="!legalIdentityForm1IsBeingModified && (legalIdentityLevel > 0)">
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="columns is-align-items-center">
+          <div class="column is-2 has-text-right">
+            <label class="label"></label>
+          </div>
+
+          <div class="column">
+            <label class="label has-text-grey-light has-text-weight-semibold">Ville *</label>
+            <div class="field">
+              <p class="control is-expanded">
+                <input class="input" type="text" placeholder="Toulouse" formControlName="headOfficeAddressCity"
+                  [readonly]="!legalIdentityForm1IsBeingModified && (legalIdentityLevel > 0)">
+              </p>
+            </div>
+          </div>
+
+          <div class="column">
+            <label class="label has-text-grey-light has-text-weight-semibold">Code postal *</label>
+            <div class="field">
+              <p class="control is-expanded">
+                <input class="input" type="text" placeholder="31000" formControlName="headOfficeAddressPostalCode"
+                  [readonly]="!legalIdentityForm1IsBeingModified && (legalIdentityLevel > 0)">
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="columns is-align-items-center">
+          <div class="column is-2 has-text-right">
+            <label class="label">Mes informations</label>
+          </div>
+
+          <div class="column">
+            <label class="label has-text-grey-light has-text-weight-semibold">Titre de civilité *</label>
+            <div class="field">
+              <div class="control is-expanded">
+                <div class="select is-fullwidth">
+                  <select formControlName="gender">
+                    <option>Titre de civilité</option>
+                    <option value="Monsieur">Monsieur</option>
+                    <option value="Madame">Madame</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="column">
+            <label class="label has-text-grey-light has-text-weight-semibold">Rôle dans l'entreprise *</label>
+            <div class="field">
+              <p class="control is-expanded">
+                <input class="input" type="text" placeholder="Président" formControlName="roleInCompany"
+                  [readonly]="!legalIdentityForm1IsBeingModified && (legalIdentityLevel > 0)">
               </p>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="columns is-align-items-end">
-        <div class="column is-2 has-text-right">
-          <label class="label pb-4">Mes informations</label>
+      <div *ngIf="selectedBusinessType == 'individual'">
+        <div class="columns is-align-items-end">
+          <div class="column is-2 has-text-right">
+            <label class="label pb-4">Mes informations</label>
+          </div>
+
+          <div class="column">
+            <label class="label has-text-grey-light has-text-weight-semibold">Titre de civilité *</label>
+            <div class="field">
+              <div class="control is-expanded">
+                <div class="select is-fullwidth">
+                  <select formControlName="gender">
+                    <option>Titre de civilité</option>
+                    <option value="Monsieur">Monsieur</option>
+                    <option value="Madame">Madame</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="column">
+            <label class="label has-text-grey-light has-text-weight-semibold">Nationalité *</label>
+            <div class="field">
+              <p class="control is-expanded">
+                <input class="input" type="text" placeholder="Française" formControlName="citizenship"
+                  [readonly]="!legalIdentityForm1IsBeingModified && (legalIdentityLevel > 0)">
+              </p>
+            </div>
+          </div>
+
         </div>
 
-        <div class="column">
-          <label class="label has-text-grey-light has-text-weight-semibold">Sexe</label>
-          <div class="field">
-            <div class="control is-expanded">
-              <div class="select is-fullwidth">
-                <select formControlName="gender">
-                  <option>Sexe</option>
-                  <option *ngFor="let gender of ['Monsieur', 'Madame']">{{gender}}</option>
-                </select>
-              </div>
+        <div class="columns is-align-items-center">
+          <div class="column is-2 has-text-right">
+            <label class="label"></label>
+          </div>
+
+          <div class="column">
+            <label class="label has-text-grey-light has-text-weight-semibold">Date de naissance <small>(JJ/MM/AAAA)</small>*</label>
+            <div class="field">
+              <p class="control is-expanded">
+                <input class="input" type="text" placeholder="01/01/2000" formControlName="birthdate"
+                  [readonly]="!legalIdentityForm1IsBeingModified && (legalIdentityLevel > 0)">
+              </p>
+            </div>
+          </div>
+
+          <div class="column">
+            <label class="label has-text-grey-light has-text-weight-semibold">Lieu de naissance *</label>
+            <div class="field">
+              <p class="control is-expanded">
+                <input class="input" type="text" placeholder="Toulouse" formControlName="birthplace"
+                  [readonly]="!legalIdentityForm1IsBeingModified && (legalIdentityLevel > 0)">
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="columns is-align-items-center">
+          <div class="column is-2 has-text-right">
+            <label class="label">Adresse</label>
+          </div>
+
+          <div class="column">
+            <label class="label has-text-grey-light has-text-weight-semibold">Nom et numéro de la voie *</label>
+            <div class="field">
+              <p class="control is-expanded">
+                <input class="input" type="text" placeholder="5 allée des Platanes" formControlName="addressLine1"
+                  [readonly]="!legalIdentityForm1IsBeingModified && (legalIdentityLevel > 0)">
+              </p>
+            </div>
+          </div>
+          <div class="column">
+            <label class="label has-text-grey-light has-text-weight-semibold">Complément d'adresse</label>
+            <div class="field">
+              <p class="control is-expanded">
+                <input class="input" type="text" placeholder="Appartement 13, Bâtiment K" formControlName="addressLine2"
+                  [readonly]="!legalIdentityForm1IsBeingModified && (legalIdentityLevel > 0)">
+              </p>
             </div>
           </div>
         </div>
 
-        <div class="column">
-          <label class="label has-text-grey-light has-text-weight-semibold">Date de naissance</label>
-          <div class="field">
-            <p class="control is-expanded">
-              <input class="input" type="text" placeholder="01/01/2000" formControlName="birthdate"
-                [readonly]="!contractualIdentityFormIsBeingModified && userHasAContractualIdentity">
-            </p>
+        <div class="columns is-align-items-center">
+          <div class="column is-2 has-text-right">
+            <label class="label"></label>
+          </div>
+
+          <div class="column">
+            <label class="label has-text-grey-light has-text-weight-semibold">Ville *</label>
+            <div class="field">
+              <p class="control is-expanded">
+                <input class="input" type="text" placeholder="Toulouse" formControlName="addressCity"
+                  [readonly]="!legalIdentityForm1IsBeingModified && (legalIdentityLevel > 0)">
+              </p>
+            </div>
+          </div>
+
+          <div class="column">
+            <label class="label has-text-grey-light has-text-weight-semibold">Code postal *</label>
+            <div class="field">
+              <p class="control is-expanded">
+                <input class="input" type="text" placeholder="31000" formControlName="addressPostalCode"
+                  [readonly]="!legalIdentityForm1IsBeingModified && (legalIdentityLevel > 0)">
+              </p>
+            </div>
           </div>
         </div>
-
-        <div class="column">
-          <label class="label has-text-grey-light has-text-weight-semibold">Lieu de naissance</label>
-          <div class="field">
-            <p class="control is-expanded">
-              <input class="input" type="text" placeholder="Toulouse" formControlName="birthplace"
-                [readonly]="!contractualIdentityFormIsBeingModified && userHasAContractualIdentity">
-            </p>
-          </div>
-        </div>
-
-        <div class="column">
-          <label class="label has-text-grey-light has-text-weight-semibold">Nationalité</label>
-          <div class="field">
-            <p class="control is-expanded">
-              <input class="input" type="text" placeholder="Française" formControlName="citizenship"
-                [readonly]="!contractualIdentityFormIsBeingModified && userHasAContractualIdentity">
-            </p>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="columns is-align-items-center">
-        <div class="column is-2 has-text-right">
-          <label class="label"></label>
-        </div>
-
-        <div class="column">
-          <label class="label has-text-grey-light has-text-weight-semibold">Adresse postale complète</label>
-          <div class="field">
-            <p class="control is-expanded">
-              <textarea class="textarea" type="text" placeholder="7 rue des Alouettes 31000 Toulouse"
-                formControlName="postalAddress" rows="2"
-                [readonly]="!contractualIdentityFormIsBeingModified && userHasAContractualIdentity"></textarea>
-            </p>
-          </div>
-        </div>
-
       </div>
 
 
@@ -229,12 +360,15 @@
 
         <div class="column">
 
-          <p class="help pb-3" [ngClass]="!contractualIdentityFormHelperIsTriggered['status'] ? 'has-text-success' : 'has-text-danger'">{{
-            updateFormMessage.value }}</p>
+          <p class="help pb-3" [ngClass]="{
+            'has-text-success': legalIdentity1Status['status'] == 'Success',
+            'has-text-danger': ['UserError', 'BackendError'].includes(legalIdentity1Status['status'])
+          }">{{
+            updateLegalIdentity1FormMessage.value }}</p>
 
           <div class="control">
             <button class="button is-primary is-outlined"
-              *ngIf="!contractualIdentityFormIsBeingModified && userHasAContractualIdentity" (click)="askForContractualIdentityFormEdit()">
+              *ngIf="!legalIdentityForm1IsBeingModified && (legalIdentityLevel > 0) && !['pending'].includes(userLegalIdentity2Status)" (click)="askForFormEdit(1)">
               <span class="icon">
                 <i class="fas fa-pen-to-square"></i>
               </span>
@@ -244,17 +378,18 @@
 
           <div class="field is-grouped py-2">
             <p class="control">
-              <button class="button is-primary" (click)="saveContractualIdentity()"
-                *ngIf="contractualIdentityFormIsBeingModified || !userHasAContractualIdentity">
+              <button class="button is-primary" [ngClass]="legalIdentity1Status['status'] == 'Loading' ? 'is-loading': ''" (click)="handleLegalIdentity1Click()"
+                *ngIf="legalIdentityForm1IsBeingModified || !(legalIdentityLevel > 0)">
                 <span class="icon">
                   <i class="fas fa-check"></i>
                 </span>
-                <span>{{userHasAContractualIdentity? 'Enregistrer les changements' : 'Enregistrer les
-                  informations du profil'}}</span>
+                <span>{{(legalIdentityLevel > 0)? 'Enregistrer les changements' : 'Enregistrer les
+                  informations'}}</span>
               </button>
             </p>
             <p class="control">
-              <button class="button is-danger is-outlined" (click)="cancelContractualIdentityFormEdition()" *ngIf="contractualIdentityFormIsBeingModified">
+              <button class="button is-danger is-outlined" (click)="cancelFormEdition(1)"
+              *ngIf="legalIdentityForm1IsBeingModified && legalIdentity1Status['status'] != 'Loading'">
                 <span class="icon">
                   <i class="fas fa-xmark"></i>
                 </span>
@@ -265,6 +400,345 @@
 
         </div>
       </div>
+    </form>
+
+    <form [formGroup]="legalIdentity2Form" class="box" style="background-color: #f7faf7;">
+      <h4 class="subtitle is-4 has-text-weight-bold pb-1 mb-1 has-text-centered">Complément d'identité: niveau 2
+        <span class="tag has-text-weight-normal is-medium mb-1 ml-3" [ngClass]="{
+          '': userLegalIdentity2Status == 'none',
+          'is-warning': ['unverified', 'pending'].includes(userLegalIdentity2Status),
+          'is-success': ['verified'].includes(userLegalIdentity2Status)
+        }">
+          {{legalIdentity2StatusToTag[userLegalIdentity2Status]}}
+        </span>
+      </h4>
+      <h5 class="subtitle is-5 has-text-weight-semibold has-text-grey-light pb-4 has-text-centered">Pour pouvoir vendre des saillies</h5>
+
+      <div *ngIf="legalIdentityLevel >= 1">
+        <div class="columns is-align-items-center" *ngIf="selectedBusinessType == 'company'">
+          <div class="column is-2 has-text-right">
+            <label class="label">Mes informations</label>
+          </div>
+
+          <div class="column">
+            <label class="label has-text-grey-light has-text-weight-semibold">Date de naissance <small>(JJ/MM/AAAA)</small>*</label>
+            <div class="field">
+              <p class="control is-expanded">
+                <input class="input" type="text" placeholder="01/01/2000" formControlName="birthdate"
+                  [readonly]="!legalIdentityForm2IsBeingModified && userLegalIdentity2Status != 'none'">
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="columns is-align-items-center">
+          <div class="column is-2 has-text-right">
+            <label class="label">Compte bancaire</label>
+          </div>
+
+          <div class="column">
+            <label class="label has-text-grey-light has-text-weight-semibold">IBAN de destination des revenus *</label>
+            <div class="field">
+              <p class="control is-expanded">
+                <input class="input" (input)="parseIBAN()" type="text" placeholder="FR00 0000 0000 0000 0000 000 000" formControlName="iban"
+                  [readonly]="!legalIdentityForm2IsBeingModified && userLegalIdentity2Status != 'none'">
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="columns is-align-items-center" *ngIf="selectedBusinessType == 'company'">
+          <div class="column is-2 has-text-right">
+            <label class="label">Adresse personnelle</label>
+          </div>
+
+          <div class="column">
+            <label class="label has-text-grey-light has-text-weight-semibold">Nom et numéro de la voie *</label>
+            <div class="field">
+              <p class="control is-expanded">
+                <input class="input" type="text" placeholder="5 allée des Platanes" formControlName="addressLine1"
+                  [readonly]="!legalIdentityForm2IsBeingModified && userLegalIdentity2Status != 'none'">
+              </p>
+            </div>
+          </div>
+
+          <div class="column">
+            <label class="label has-text-grey-light has-text-weight-semibold">Complément d'adresse</label>
+            <div class="field">
+              <p class="control is-expanded">
+                <input class="input" type="text" placeholder="Appartement 13, Bâtiment K" formControlName="addressLine2"
+                  [readonly]="!legalIdentityForm2IsBeingModified && userLegalIdentity2Status != 'none'">
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="columns is-align-items-center" *ngIf="selectedBusinessType == 'company'">
+          <div class="column is-2 has-text-right">
+            <label class="label"></label>
+          </div>
+
+          <div class="column">
+            <label class="label has-text-grey-light has-text-weight-semibold">Ville *</label>
+            <div class="field">
+              <p class="control is-expanded">
+                <input class="input" type="text" placeholder="Toulouse" formControlName="addressCity"
+                  [readonly]="!legalIdentityForm2IsBeingModified && userLegalIdentity2Status != 'none'">
+              </p>
+            </div>
+          </div>
+
+          <div class="column">
+            <label class="label has-text-grey-light has-text-weight-semibold">Code postal *</label>
+            <div class="field">
+              <p class="control is-expanded">
+                <input class="input" type="text" placeholder="31000" formControlName="addressPostalCode"
+                  [readonly]="!legalIdentityForm2IsBeingModified && userLegalIdentity2Status != 'none'">
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="columns is-align-items-end mt-4">
+          <div class="column is-2 has-text-right">
+            <label class="label mb-6 pb-6">Pièces justificatives</label>
+          </div>
+
+          <div class="column">
+            <label class="label has-text-grey-light has-text-weight-semibold">
+              Justificatif de domicile *
+              <span class="tag ml-2 has-text-weight-normal" *ngIf="'none' != proofOfResidenceStatus" [ngClass]="{
+                'is-warning': ['pending', 'unverified'].includes(proofOfResidenceStatus),
+                'is-success': ['verified', 'not_under_verification'].includes(proofOfResidenceStatus)
+              }">
+                {{fileTagFormControls['proofOfResidence'].value}}
+              </span>
+            </label>
+            <div class="file is-primary" *ngIf="'none' == proofOfResidenceStatus || (legalIdentityForm2IsBeingModified && 'unverified' == proofOfResidenceStatus)">
+              <label class="file-label">
+                <div class="control">
+                  <input class="file-input" type="file" name="resume" (change)="fetchFile($event, 'proofOfResidence')" accept=".png,.pdf,.jpeg,.jpg">
+                </div>
+                <span class="file-cta">
+                  <span class="file-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                  </span>
+                  <span class="file-label" *ngIf="!proofOfResidenceFile">
+                    Sélectionner un fichier
+                  </span>
+                  <span class="file-label" *ngIf="proofOfResidenceFile">
+                    Fichier sélectionné
+                  </span>
+                </span>
+                <span class="file-name" *ngIf="proofOfResidenceFile">
+                  {{proofOfResidenceFile.name}}
+                </span>
+              </label>
+            </div>
+            <p class="help has-text-danger">
+            {{fileHelpers['proofOfResidence'].value}}
+            </p>
+          </div>
+
+          <div class="column" *ngIf="'none' == proofOfResidenceStatus || (legalIdentityForm2IsBeingModified && 'unverified' == proofOfResidenceStatus)">
+            <p>Facture de téléphone portable, gaz, eau, électricité,
+              attestation d'assurance ou facture d'assurance du logement de moins de 6 mois, ou acte de propriété</p>
+            <p class="is-size-7 has-text-grey">10 Mo maximum. Formats acceptés: .png, .pdf, .jpeg, .jpg</p>
+          </div>
+
+        </div>
+
+        <div class="columns is-align-items-end mt-4 mb-0 pb-0">
+          <div class="column is-2 has-text-right">
+          </div>
+
+          <div class="column">
+            <label class="label has-text-grey-light has-text-weight-semibold">
+              Justificatif d'identité *
+              <span class="tag ml-2 has-text-weight-normal" *ngIf="'none' != identityDocumentStatus" [ngClass]="{
+                'is-warning': ['pending', 'unverified'].includes(identityDocumentStatus),
+                'is-success': ['verified', 'not_under_verification'].includes(identityDocumentStatus)
+              }">
+                {{fileTagFormControls['identityDocumentFront'].value}}
+              </span>
+            </label>
+            <label class="label has-text-weight-normal is-size-7" *ngIf="'none' == identityDocumentStatus || (legalIdentityForm2IsBeingModified && 'unverified' == identityDocumentStatus)">Recto <small>(ou unique page d'information si passeport)</small></label>
+            <div class="file is-primary" *ngIf="'none' == identityDocumentStatus || (legalIdentityForm2IsBeingModified && 'unverified' == identityDocumentStatus)">
+              <label class="file-label">
+                <div class="control">
+                  <input class="file-input" type="file" name="resume" (change)="fetchFile($event, 'identityDocumentFront')" accept=".png,.jpeg,.jpg">
+                </div>
+                <span class="file-cta">
+                  <span class="file-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                  </span>
+                  <span class="file-label" *ngIf="!identityDocumentFrontFile">
+                    Sélectionner un fichier
+                  </span>
+                  <span class="file-label" *ngIf="identityDocumentFrontFile">
+                    Fichier sélectionné
+                  </span>
+                </span>
+                <span class="file-name" *ngIf="identityDocumentFrontFile">
+                  {{identityDocumentFrontFile.name}}
+                </span>
+              </label>
+            </div>
+
+            <p class="help has-text-danger">
+            {{fileHelpers['identityDocumentFront'].value}}
+            </p>
+          </div>
+
+          <div class="column" *ngIf="'none' == identityDocumentStatus || (legalIdentityForm2IsBeingModified && 'unverified' == identityDocumentStatus)">
+            <p class="">Carte d'identité, passeport, permis de conduire</p>
+            <p class="is-size-7 has-text-grey">En couleur, 10 Mo maximum. Formats acceptés: .png, .jpeg, .jpg</p>
+          </div>
+
+        </div>
+
+        <div class="columns is-align-items-end" *ngIf="'none' == identityDocumentStatus || (legalIdentityForm2IsBeingModified && 'unverified' == identityDocumentStatus)">
+          <div class="column is-2 has-text-right">
+          </div>
+
+          <div class="column">
+            <label class="label mb-0 pb-1 has-text-weight-normal is-size-7">Verso <small>(si carte d'identité ou permis de conduire)</small></label>
+            <div class="file is-primary">
+              <label class="file-label">
+                <div class="control">
+                  <input class="file-input" type="file" name="resume" (change)="fetchFile($event, 'identityDocumentBack')" accept=".png,.jpeg,.jpg">
+                </div>
+                <span class="file-cta">
+                  <span class="file-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                  </span>
+                  <span class="file-label" *ngIf="!identityDocumentBackFile">
+                    Sélectionner un fichier
+                  </span>
+                  <span class="file-label" *ngIf="identityDocumentBackFile">
+                    Fichier sélectionné
+                  </span>
+                </span>
+                <span class="file-name" *ngIf="identityDocumentBackFile">
+                  {{identityDocumentBackFile.name}}
+                </span>
+              </label>
+            </div>
+            <p class="help has-text-danger">{{ fileHelpers['identityDocumentBack'].value }}</p>
+          </div>
+
+        </div>
+
+        <div class="columns is-align-items-end mt-4 mb-0 pb-0" *ngIf="selectedBusinessType == 'company'">
+          <div class="column is-2 has-text-right">
+          </div>
+
+          <div class="column">
+            <label class="label">
+              <span class="has-text-grey-light has-text-weight-semibold">Justificatif d'existence de la société *</span>
+              <span class="tag ml-2 has-text-weight-normal" *ngIf="'none' != proofOfCompanyStatus" [ngClass]="{
+                'is-warning': ['pending', 'unverified'].includes(proofOfCompanyStatus),
+                'is-success': ['verified', 'not_under_verification'].includes(proofOfCompanyStatus)
+              }">
+                {{fileTagFormControls['proofOfCompany'].value}}
+              </span>
+            </label>
+
+            <div class="file is-primary" *ngIf="'none' == proofOfCompanyStatus || (legalIdentityForm2IsBeingModified && 'unverified' == proofOfCompanyStatus)">
+              <label class="file-label">
+                <div class="control">
+                  <input class="file-input" type="file" name="resume" (change)="fetchFile($event, 'proofOfCompany')" accept=".png,.pdf,.jpeg,.jpg">
+                </div>
+                <span class="file-cta">
+                  <span class="file-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                  </span>
+                  <span class="file-label" *ngIf="!proofOfCompanyFile">
+                    Sélectionner un fichier
+                  </span>
+                  <span class="file-label" *ngIf="proofOfCompanyFile">
+                    Fichier sélectionné
+                  </span>
+                </span>
+                <span class="file-name" *ngIf="proofOfCompanyFile">
+                  {{proofOfCompanyFile.name}}
+                </span>
+              </label>
+            </div>
+
+            <p class="help has-text-danger">
+            {{fileHelpers['proofOfCompany'].value}}
+            </p>
+          </div>
+
+          <div class="column" *ngIf="'none' == proofOfCompanyStatus || (legalIdentityForm2IsBeingModified && 'unverified' == proofOfCompanyStatus)">
+            <p class="">Extrait K, L, Kbis, Lbis, ou Avis de situation au répertoire Sirene</p>
+            <p class="is-size-7 has-text-grey">10 Mo maximum. Formats acceptés: .png, .pdf, .jpeg, .jpg</p>
+          </div>
+
+        </div>
+
+
+
+        <div class="columns is-align-items-center">
+          <div class="column is-2 has-text-right">
+
+          </div>
+
+          <div class="column">
+            <label class="checkbox pt-6" *ngIf="legalIdentityLevel < 3">
+              <input type="checkbox" formControlName="tos">
+              En cochant cette case, vous acceptez les <a href="https://stripe.com/connect-account/legal">
+                Conditions d'Utilisation des Comptes Connectés Stripe</a> .*
+            </label>
+
+            <p class="help pb-3" [ngClass]="{
+              'has-text-success': legalIdentity2Status['status'] == 'Success',
+              'has-text-danger': ['UserError', 'BackendError'].includes(legalIdentity2Status['status'])
+            }">{{
+              updateLegalIdentity2FormMessage.value }}</p>
+
+            <div class="control">
+              <button class="button is-primary is-outlined"
+                *ngIf="!legalIdentityForm2IsBeingModified && 'none' != userLegalIdentity2Status" (click)="askForFormEdit(2)">
+                <span class="icon">
+                  <i class="fas fa-pen-to-square"></i>
+                </span>
+                <span>Éditer cette section</span>
+              </button>
+            </div>
+
+            <progress class="progress" [value]="legalIdentity2ProgressBarValue" max="100"
+            *ngIf="legalIdentity2Status['status'] == 'Loading' && legalIdentityLevel < 3"></progress>
+
+            <div class="field is-grouped py-2">
+              <p class="control">
+                <button class="button is-primary" [ngClass]="legalIdentity2Status['status'] == 'Loading' ? 'is-loading': ''"
+                (click)="handleLegalIdentity2Click()"
+                  *ngIf="legalIdentityForm2IsBeingModified || userLegalIdentity2Status == 'none'">
+                  <span class="icon">
+                    <i class="fas fa-check"></i>
+                  </span>
+                  <span>{{userLegalIdentity2Status == 'verified'? 'Enregistrer les changements' : 'Enregistrer les
+                    informations'}}</span>
+                </button>
+              </p>
+              <p class="control">
+                <button class="button is-danger is-outlined" (click)="cancelFormEdition(2)" *ngIf="legalIdentityForm2IsBeingModified">
+                  <span class="icon">
+                    <i class="fas fa-xmark"></i>
+                  </span>
+                  <span>Annuler</span>
+                </button>
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
     </form>
 
     <div class="box" style="background-color: #f7faf7;">
@@ -280,12 +754,12 @@
                   <p class="subtitle">en tant qu'acheteur</p>
                 </div>
                 <div class="column has-text-right">
-                  <span class="tag is-large is-rounded has-text-weight-semibold py-2">{{buyerScore? buyerScore: "-"}}/5</span>
-                  <p class="subtitle pt-2">{{nbReviewsAsBuyer > 0? nbReviewsAsBuyer: 'Aucune'}} évaluation{{nbReviewsAsBuyer >= 2? "s": ""}}</p>
+                  <span class="tag is-large is-rounded has-text-weight-semibold">{{buyerScore? buyerScore: "-"}}/5</span>
+                  <p class="subtitle">{{nbReviewsAsBuyer > 0? nbReviewsAsBuyer: 'Aucune'}} évaluation{{nbReviewsAsBuyer >= 2? "s": ""}}</p>
                 </div>
               </div>
             </article>
-            <article class="tile is-child notification is-clickable" style="color: #ffffff; background-color: #3B7C35;"
+            <article class="tile is-child notification is-clickable is-items-align-end" style="color: #ffffff; background-color: #3B7C35;"
             (click)="handleClickReviews('received', 'seller')">
               <div class="columns">
                 <div class="column">
@@ -293,8 +767,8 @@
                   <p class="subtitle">en tant que vendeur</p>
                 </div>
                 <div class="column has-text-right">
-                  <span class="tag is-large is-rounded has-text-weight-semibold py-2">{{sellerScore? sellerScore: "-"}}/5</span>
-                  <p class="subtitle pt-2">{{nbReviewsAsSeller > 0? nbReviewsAsSeller: 'Aucune'}} évaluation{{nbReviewsAsSeller >= 2? "s": ""}}</p>
+                  <span class="tag is-large is-rounded has-text-weight-semibold">{{sellerScore? sellerScore: "-"}}/5</span>
+                  <p class="subtitle">{{nbReviewsAsSeller > 0? nbReviewsAsSeller: 'Aucune'}} évaluation{{nbReviewsAsSeller >= 2? "s": ""}}</p>
                 </div>
               </div>
             </article>
@@ -314,33 +788,6 @@
         </div>
       </div>
     </div>
-  
-    <form class="box is-flex is-flex-direction-column is-align-items-center" style="background-color: #f7faf7;">
-      <h4 class="subtitle is-4 has-text-weight-bold pb-4">Versements</h4>
-
-      <label class="label has-text-weight-semibold has-text-grey-light">RIB du compte vers lequel envoyer les revenus <small>(Formats acceptés: PNG, PDF, JPEG, JPG)</small></label>
-      <div class="file is-primary">
-        <label class="file-label">
-          <div class="control">
-            <input class="file-input" type="file" name="resume" (change)="fetchBankIdentityFile($event)" accept=".png,.pdf,.jpeg,.jpg">
-          </div>
-          <span class="file-cta">
-            <span class="file-icon">
-              <i class="fas fa-cloud-upload-alt"></i>
-            </span>
-            <span class="file-label" *ngIf="!bankIdentityFile">
-              Sélectionner un fichier 
-            </span>
-            <span class="file-label" *ngIf="bankIdentityFile">
-              Fichier sélectionné
-            </span>
-          </span>
-          <span class="file-name" *ngIf="bankIdentityFile">
-            {{bankIdentityFile.name}}
-          </span>
-        </label>
-      </div>
-    </form>
 
     <div class="box is-flex is-flex-direction-column is-align-items-center" style="background-color: #f7faf7;">
       <h4 class="subtitle is-4 has-text-weight-bold pb-4">Suppression du compte</h4>
@@ -354,19 +801,23 @@
       </p>
     </div>
 
-    <div class="modal" [ngClass]="bankIdentityFileModalIsActive? 'is-active': ''">
+    <div class="modal" [ngClass]="legalIdentity2ModalIsActive? 'is-active': ''">
       <div class="modal-background" (click)="closeModal()"></div>
       <div class="modal-content">
           <header class="modal-card-head">
-              <p class="modal-card-title">Confirmer l'envoi du RIB</p>
+              <p class="modal-card-title">Confirmer l'envoi des informations</p>
               <button class="delete" aria-label="close" (click)="closeModal()"></button>
           </header>
           <section class="modal-card-body">
-              <p>Les revenus TTC générés par les ventes de vos saillies seront envoyés sur le compte bancaire associé à ce RIB.</p>
+            <p>Les informations que vous avez entrées dans les compléments d'identité 1 et 2, et notamment leur concordance avec les pièces
+              justificatives que vous avez sélectionnées, vont faire l'objet d'une vérification manuelle.</p>
+            <p>Cette vérification prendra quelques jours. Une fois que les informations auront été vérifiées,
+              tout changement dans les compléments d'identité 1 ou 2 entraînera la nécessité de faire re-vérifier les pièces.
+            </p>
           </section>
           <footer class="modal-card-foot is-justify-content-center">
               <div class="buttons">
-                  <a class="button is-success" (click)="sendBankIdentityFile()">Envoyer le RIB</a>
+                  <a class="button is-success" (click)="saveLegalIdentity2()">Enregistrer les informations</a>
                   <a class="button" (click)="closeModal()">Annuler</a>
               </div>
           </footer>
@@ -396,5 +847,32 @@
           </footer>
       </div>
     </div>
+
+    <div class="modal" [ngClass]="legalIdentity1ModalIsActive || legalIdentity3ModalIsActive? 'is-active': ''">
+      <div class="modal-background" (click)="closeModal()"></div>
+      <div class="modal-content">
+          <header class="modal-card-head">
+              <p class="modal-card-title">Confirmer l'envoi des informations</p>
+              <button class="delete" aria-label="close" (click)="closeModal()"></button>
+          </header>
+          <section class="modal-card-body">
+            <p>Attention: selon les informations que vous changez, il se peut que les pièces justificatives doivent à nouveau être vérifiées.</p>
+            <p>Ne mettez à jour les compléments d'identité que si cela est strictement nécessaire.</p>
+            <label class="checkbox pt-6" *ngIf="tosNeedToBeAcceptedAgain">
+              <input type="checkbox" [formControl]="tosModalFormControl">
+              {{userLegalIdentity2Status == "verified"? "Aussi, v": "V"}}ous semblez avoir modifié le SIREN: vous devez à nouveau accepter les <a href="https://stripe.com/connect-account/legal">
+                Conditions d'Utilisation des Comptes Connectés Stripe</a> .*
+            </label>
+            <p class="help is-danger">{{tosModalHelperMessage}}</p>
+          </section>
+          <footer class="modal-card-foot is-justify-content-center">
+              <div class="buttons">
+                  <a class="button is-success" (click)="legalIdentity1ModalIsActive? confirmLegalIdentity1Modal(): confirmLegalIdentity2Modal()">Enregistrer les changements</a>
+                  <a class="button" (click)="closeModal()">Annuler</a>
+              </div>
+          </footer>
+      </div>
+    </div>
+
   </div>
 </section>
