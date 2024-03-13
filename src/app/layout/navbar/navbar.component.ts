@@ -38,7 +38,9 @@ export class NavbarComponent implements OnInit {
       error: () => {}
     })
 
-    this.navbarService.loadNavbar();
+    setTimeout(() => {
+      this.navbarService.loadNavbar();
+    }, 300)
   }
 
   disconnectUser() {

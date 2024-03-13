@@ -25,7 +25,6 @@ export class StallionPanelService {
   constructor(private http: HttpClient) { }
 
   handleError(error: HttpErrorResponse) {
-    console.log(error);
     return throwError(() => new Error());
   }
 

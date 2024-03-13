@@ -27,7 +27,7 @@
 
       <div class="field">
         <div class="control">
-          <button class="button is-primary" type="submit" [ngClass]="status['status'] == 'Loading' ? 'is-loading' : ''">Se connecter</button>
+          <button class="button is-primary" type="submit" [ngClass]="['Loading', 'Success'].includes(status['status']) ? 'is-loading' : ''">Se connecter</button>
         </div>
       </div>
       <p class="help" [ngClass]="['BackendError', 'UserError'].includes(status['status']) ? 'is-danger': 'is-success'">

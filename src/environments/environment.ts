@@ -204,3 +204,6 @@ export enum backendInteractionStatus {
 export const objectStorageBaseUrl: string = "https://storage.googleapis.com"
 export const photosPrefix: string = "/lrde-public-photos"
 export const backendBaseUrl: string = "http://localhost:3001"
+
+export const stripeFilesMaxSizeInBytes: number = 10 * 1024 * 1024; // 10 Mo
+export const stripePK: string = "pk_test_51On3f0GVBynFT930kIOxj8AUxuxoD8qHlph0eKrjUOVInELB4JrPZT6Ad5hvhFXDy5iSUcDfxty4XNAejGTdZ1Xk0025kkjxIS";

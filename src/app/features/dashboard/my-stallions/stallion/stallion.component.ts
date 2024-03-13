@@ -394,11 +394,15 @@ export class StallionComponent implements OnInit {
   }
 
   findCity() {
+    const inputLocationValue = this.stallionForm.getRawValue().location;
+    if (inputLocationValue == "") {
+      return
+    }
     this.geolocStatus["status"] = backendInteractionStatus.Loading;
     this.locations.splice(0, this.locations.length);
     this.locationTagValues.splice(0, this.locationTagValues.length);
     this.geolocationService.getCity(
-      this.stallionForm.getRawValue().location,
+      inputLocationValue,
       this.geolocStatus,
       this.locationHelper)
       .subscribe({
