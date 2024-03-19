@@ -1,7 +1,7 @@
 import { Component, Input, EventEmitter, Output, OnInit, HostListener } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
 import { breedsRecord, getAvailableBreeds, availableCoverTypes, getNumberArray, backendInteractionStatus } from '../../../../environments/environment';
-import { GeolocationService, getCityData, getCityItem } from 'src/environments/geolocation';
+import { GeolocationService, getCityData, getCityItem } from 'src/app/core/geolocation/geolocation.service';
 
 interface distanceData {
   max: number,
@@ -100,6 +100,14 @@ export class FiltersComponent implements OnInit {
     });
     
     this.distanceControl = new FormControl('');
+  }
+
+  parseToInt(valueType: string) {
+    let value = this.filterForm.value[valueType];
+    if (value) {
+      value = value.replace(/[^0-9]/g, '');
+      this.filterForm.get(valueType)?.setValue(value);
+    }
   }
 
   swapFilter(field: string) {

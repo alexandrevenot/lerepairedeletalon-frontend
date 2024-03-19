@@ -3,7 +3,7 @@ import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms'
 import { StallionProfileService, StallionProfile } from './stallion-profile.service'
 import { getNumberArray, availableCoverTypes, getAvailableBreeds, coverPlaceNames, balancePaymentConditions, stds, vaccines, objectStorageBaseUrl, photosPrefix, backendInteractionStatus } from '../../../../environments/environment'
 import { ActivatedRoute } from '@angular/router';
-import { PricingService, checkoutResponse } from 'src/environments/pricing';
+import { PricingService, checkoutResponse } from 'src/app/core/pricing/pricing.service';
 import { FavoriteStallionsService, FavoriteStallions } from '../../dashboard/favorite-stallions/favorite-stallions.service';
 import { UserScore, UserScoreService } from 'src/app/core/user-score/user-score.service';
 

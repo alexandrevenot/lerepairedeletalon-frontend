@@ -128,7 +128,7 @@
                 <label class="label has-text-weight-semibold has-text-grey-light" *ngIf="pov == 'buyer'">Prix</label>
                 <label class="label has-text-weight-semibold has-text-grey-light" *ngIf="pov == 'seller'">Revenus bruts</label>
                 <div class="control has-icons-right">
-                    <input class="input is-primary" [value]="price" readonly>
+                    <input class="input is-primary" [value]="price.toFixed(2)" readonly>
                     <span class="icon is-right">
                         <i class="fa-solid fa-euro" style="color: hsl(0, 0%, 71%);"></i>
                     </span>
@@ -293,7 +293,7 @@
 
 <section class="section" *ngIf="['downpaid', 'fullypaid'].includes(status)">
     <div class="container">
-        <div class="box">
+        <div class="box" style="background-color: #f7faf7;">
             <div class="is-flex is-flex-direction-column is-align-items-center">
                 <h4 class="subtitle is-4 has-text-weight-bold is-centered">Rédiger l'évaluation de cette saillie</h4>
                 <label class="label has-text-weight-semibold has-text-success pt-4" *ngIf="alreadyReviewed">

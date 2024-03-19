@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { catchError, throwError } from "rxjs";
+import { backendBaseUrl } from "src/environments/environment";
 
 export interface UserScore {
     firstname: string;
@@ -23,7 +24,7 @@ export class UserScoreService {
         }
 
         return this.http.get<UserScore>(
-            `http://localhost:3001/users/user-score/${userId}`,
+            `${backendBaseUrl}/users/user-score/${userId}`,
             { params }
         ).pipe(
             catchError(() => {

@@ -1,6 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { catchError, throwError } from "rxjs";
+import { backendBaseUrl } from "src/environments/environment";
 
 export interface checkoutResponse {
     subtotal: number,
@@ -21,7 +22,7 @@ export class PricingService {
       .set('subtotal', price);
 
       return this.http.get<checkoutResponse>(
-        "http://localhost:3001/pricing/checkout-simulation",
+        `${backendBaseUrl}/payments/checkout-simulation`,
         { params }
       ).pipe(
           catchError((error: HttpErrorResponse) => {

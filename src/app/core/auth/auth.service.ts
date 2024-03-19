@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpRequest, HttpHandler } from '@angular/common/http';
 import { catchError, switchMap, throwError } from 'rxjs';
 import { Router } from '@angular/router';
+import { backendBaseUrl } from 'src/environments/environment';
 
 export interface refreshData {
     accessToken: string;
@@ -32,7 +33,7 @@ export class AuthService {
 
     handle401InvalidToken(req: HttpRequest<any>, next: HttpHandler) {
         return this.http.post<refreshData>(
-            "http://localhost:3001/auth/refresh-token",
+            `${backendBaseUrl}/auth/refresh-token`,
             {
                 token: this.getToken("refresh")
             }

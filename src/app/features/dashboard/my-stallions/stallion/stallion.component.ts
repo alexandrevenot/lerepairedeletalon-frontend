@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms'
 import { PostStallionResponse, StallionService } from './stallion.service';
 import { getAvailableBreeds, breedsRecord, availableCoverTypes, coverPlaceNames, getNumberArray, photosMaxSizeInBytes, splitListOrKeysList, balancePaymentConditions, stds, vaccines, objectStorageBaseUrl, photosPrefix, backendInteractionStatus, backendBaseUrl, verificationFileMaxSizeInBytes } from 'src/environments/environment';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { GeolocationService, getCityData, getCityItem } from 'src/environments/geolocation';
+import { GeolocationService, getCityData, getCityItem } from 'src/app/core/geolocation/geolocation.service';
 import { Router } from '@angular/router';
 
 export interface StallionComponentInput {

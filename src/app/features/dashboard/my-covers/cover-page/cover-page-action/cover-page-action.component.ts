@@ -1,7 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { CoverPageActionService, GetCheckout, GetSignUrl } from './cover-page-action.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { Stripe, StripeEmbeddedCheckout, loadStripe } from '@stripe/stripe-js';
+import { stripePK } from 'src/environments/environment';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-cover-page-action',
@@ -9,7 +12,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./cover-page-action.component.css'],
   providers: [CoverPageActionService]
 })
-export class CoverPageActionComponent implements OnInit{
+export class CoverPageActionComponent implements OnInit, OnDestroy {
   @Input() coverId: string = "";
   @Input() coverActionType: string = "";
 
@@ -21,13 +24,13 @@ export class CoverPageActionComponent implements OnInit{
   public subtotal: number = 0;
   public serviceFees: number = 0;
   public total: number = 0;
-
   public statusToTitle: Record<string, string> = {
     sellersigned: "Paiement de l'acompte de la saillie",
     downpaid: "Paiement du solde de la saillie"
   }
-
   public paymentTitle: string = "Paiement de la saillie";
+  public stripe: Stripe | null = null;
+  public checkout: StripeEmbeddedCheckout | undefined;
 
   constructor(
     private coverPageActionService: CoverPageActionService,
@@ -35,7 +38,7 @@ export class CoverPageActionComponent implements OnInit{
     private router: Router
   ) {}
 
-  ngOnInit(): void {
+  async ngOnInit() {
     if (this.coverActionType == "signature") {
       this.coverPageActionService.getSignUrl(this.coverId)
       .subscribe({
@@ -45,18 +48,20 @@ export class CoverPageActionComponent implements OnInit{
         error: () => {}
       })
     } else if (this.coverActionType == "payment") {
-      this.coverPageActionService.getCheckout(this.coverId)
-      .subscribe({
-        next: (data: GetCheckout) => {
-          this.subtotal = data.subtotal;
-          this.serviceFees = data.service_fees;
-          this.total = data.total;
-          this.paymentTitle = this.statusToTitle[data.status];
-        },
-        error: () => {}
-      })
-    }
+      try {
+        this.stripe = await loadStripe(stripePK);
+      } catch {
+        return
+      }
 
+      const fetchClientSecret = async () => {
+        const response = await firstValueFrom(this.coverPageActionService.getCheckout(this.coverId));
+        return response.client_secret;
+      }
+
+      this.checkout = await this.stripe?.initEmbeddedCheckout({fetchClientSecret});
+      this.checkout?.mount('#checkout');
+    }
   }
 
   pay() {
@@ -70,5 +75,10 @@ export class CoverPageActionComponent implements OnInit{
       },
       error: () => {}
     })
+  }
+
+  async ngOnDestroy() {
+    this.checkout?.unmount();
+    this.checkout?.destroy();
   }
 }
