@@ -449,8 +449,8 @@ export class CoverPageComponent implements OnInit{
     this.coverPageService.stepForwardCover(this.coverId, nextStatus, buttonStatus, this.greenAndRedButtonFormControl)
     .subscribe({
       next: () => {
-        buttonStatus["status"] = backendInteractionStatus.Success;
         this.loadCoverInfo();
+        buttonStatus["status"] = backendInteractionStatus.Success;
       },
       error: () => {}
     })

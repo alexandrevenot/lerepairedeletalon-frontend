@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse, HttpParams } from "@angular/common/http"
 import { Injectable } from "@angular/core";
 import { FormControl } from "@angular/forms";
 import { catchError, throwError } from "rxjs";
-import { backendInteractionStatus } from "./environment";
+import { backendBaseUrl, backendInteractionStatus } from "src/environments/environment";
 
 export interface getCityItem {
     city: string,
@@ -37,7 +37,7 @@ export class GeolocationService {
     .set('city', city);
 
     return this.http.get<getCityData>(
-      "http://localhost:3001/geoloc/city",
+      `${backendBaseUrl}/geoloc/city`,
       { params }
     ).pipe(
         catchError((error: HttpErrorResponse) => {

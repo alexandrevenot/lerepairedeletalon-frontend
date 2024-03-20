@@ -3,7 +3,7 @@ import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http'
 import { catchError, throwError } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import {LIBandHANDSpecs, SingularStallionSTDSpecs } from '../../dashboard/my-stallions/stallion/stallion.service';
-import { backendInteractionStatus } from 'src/environments/environment';
+import { backendBaseUrl, backendInteractionStatus } from 'src/environments/environment';
 
 export interface CoverSpecs {
     lib: LIBandHANDSpecs | null;
@@ -51,7 +51,7 @@ export class StallionProfileService {
         .set('mode', 'profile');
 
         return this.http.get<StallionProfile>(
-            `http://localhost:3001/stallions/stallion/${stallionId}`,
+            `${backendBaseUrl}/stallions/stallion/${stallionId}`,
             {params}
         ).pipe(
             catchError((error: HttpErrorResponse) => {
@@ -78,7 +78,7 @@ export class StallionProfileService {
         }
 
         return this.http.post(
-            "http://localhost:3001/covers/cover",
+            `${backendBaseUrl}/covers/cover`,
             body
         ).pipe(
             catchError((error: HttpErrorResponse) => {

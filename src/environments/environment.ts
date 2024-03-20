@@ -206,4 +206,4 @@ export const photosPrefix: string = "/lrde-public-photos"
 export const backendBaseUrl: string = "http://localhost:3001"
 
 export const stripeFilesMaxSizeInBytes: number = 10 * 1024 * 1024; // 10 Mo
-export const stripePK: string = "pk_test_51On3f0GVBynFT930kIOxj8AUxuxoD8qHlph0eKrjUOVInELB4JrPZT6Ad5hvhFXDy5iSUcDfxty4XNAejGTdZ1Xk0025kkjxIS";
+export const stripePK: string = "pk_test_51OvTQH2M9MS38ftifqO8oI6rggNLvDsaTNl00YUK1HQ9ZJtQ6Zl0LYy0pDiqy8bdia7co5okdM2PUAKbi5RpzMKJ00dTaTFfR2";

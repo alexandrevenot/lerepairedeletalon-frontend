@@ -32,7 +32,6 @@ export class FavoriteStallionBoxComponent implements OnInit{
   ) {}
 
   ngOnInit(): void {
-    console.log(this.stallionId)
     if (this.stallionId) {
       this.favoriteStallionBoxService.getStallionThumbnailProfite(this.stallionId)
       .subscribe({

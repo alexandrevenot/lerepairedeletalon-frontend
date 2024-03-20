@@ -3,7 +3,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular
 import { FormControl} from '@angular/forms';
 import { throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
-import { getCityItem } from 'src/environments/geolocation';
+import { getCityItem } from 'src/app/core/geolocation/geolocation.service';
 import { backendBaseUrl, backendInteractionStatus, deepCopy } from 'src/environments/environment';
 
 interface FinalStallionFields {
