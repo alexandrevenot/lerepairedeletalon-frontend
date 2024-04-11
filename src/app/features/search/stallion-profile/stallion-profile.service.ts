@@ -11,7 +11,7 @@ export interface CoverSpecs {
 }
 
 export interface StallionProfile {
-    owner: string;
+    handler_id: string;
     name: string;
     breed: string;
     n_sire: string;
@@ -62,13 +62,13 @@ export class StallionProfileService {
 
     sendDemandToVendor(
         form: Record<string, string>,
-        owner: string,
+        handlerId: string,
         nSire: string,
         demandStatus: Record<string, backendInteractionStatus>,
         messageFormControl: FormControl,
         ) {
         const body: Record<string, string> = {
-            seller_id: owner,
+            seller_id: handlerId,
             stallion_nsire: nSire,
             mare_nsire: form['mareNSIRE'],
             mare_name: form['mareName'],

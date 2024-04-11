@@ -51,16 +51,6 @@ export const breedsRecord: Record<string, Array<string>> = {
     'Trait du Nord',
     'Franches-Montagnes'
   ],
-  "Ânes": [
-    'Âne Bourbonnais',
-    'Âne Corse',
-    'Âne Grand Noir du Berry',
-    'Âne Normand',
-    'Âne de Provence',
-    'Âne des Pyrénées',
-    'Âne du Cotentin',
-    'Baudet du Poitou'
-  ],
   "Autres": [
     "Origines Constatées",
     "Origines Non Constatées"
@@ -202,7 +192,7 @@ export enum backendInteractionStatus {
 }
 
 export const objectStorageBaseUrl: string = "https://storage.googleapis.com"
-export const photosPrefix: string = "/lrde-public-photos"
+export const photosPrefix: string = "/lerepairedeletalon-public"
 export const backendBaseUrl: string = "http://localhost:3001"
 
 export const stripeFilesMaxSizeInBytes: number = 10 * 1024 * 1024; // 10 Mo

@@ -1,6 +1,6 @@
-import { Component, HostListener, Input, OnInit  } from '@angular/core';
+import { Component, Input, OnInit  } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
-import { PostStallionResponse, StallionService } from './stallion.service';
+import { PostStallionOwnerResponse, PostStallionResponse, StallionOwnerItem, StallionOwners, StallionService } from './stallion.service';
 import { getAvailableBreeds, breedsRecord, availableCoverTypes, coverPlaceNames, getNumberArray, photosMaxSizeInBytes, splitListOrKeysList, balancePaymentConditions, stds, vaccines, objectStorageBaseUrl, photosPrefix, backendInteractionStatus, backendBaseUrl, verificationFileMaxSizeInBytes } from 'src/environments/environment';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { GeolocationService, getCityData, getCityItem } from 'src/app/core/geolocation/geolocation.service';
@@ -51,16 +51,20 @@ export class StallionComponent implements OnInit {
   public verificationFileHelper: FormControl= new FormControl('');
   public locationHelper: FormControl = new FormControl('');
   public birthdateHelper: FormControl = new FormControl('');
+  public stallionOwnersFormHelper: FormControl = new FormControl('');
 
   // form validation status
   public stallionFormStatus: Record<string, backendInteractionStatus> = {"status": backendInteractionStatus.Init};
   public locationSearchSuccess: Record<string, boolean> = {status: false};
+  public stallionOwnersFormPostPutStatus: Record<string, backendInteractionStatus> = {"status": backendInteractionStatus.Init};
+  public stallionOwnersFormDeleteStatus: Record<string, backendInteractionStatus> = {"status": backendInteractionStatus.Init};
 
   // form booleans
   public isLookingForLocation: boolean = false;
   public locationIsValidated: boolean = false;
   public stallionHasUnregisteredBreed: boolean = false;
   public stallionHasUnregisteredProductionBreeds: boolean = false;
+  public displayStallionOwnerForm: boolean = false;
 
   // form variables
   public coverTypes: Record<string, boolean> = {};
@@ -71,6 +75,12 @@ export class StallionComponent implements OnInit {
   public photos: Array<File | null> = [];
   public mareSTDs: Record<string, Record<string, boolean>> = {};
   public mareVaccines: Record<string, Record<string, boolean>> = {};
+  public availableStallionOwnerIds: Array<string> = [];
+  public stallionOwnerIdToName: Record<string, string> = {'handler': 'Moi'}
+  public availableStallionOwners: Record<string, StallionOwnerItem> = {};
+
+  // modal booleans
+  public deleteStallionOwnerModalIsActive: boolean = false;
 
   // tools variables
   public title: 'Ajouter un nouvel étalon' | "Éditer le profil d'un étalon" = 'Ajouter un nouvel étalon';
@@ -88,12 +98,18 @@ export class StallionComponent implements OnInit {
   public displayGeolocDd: boolean = false;
   public productionBreedsAddedByHand: Array<string> = [];
   public saveButtonIsDisabled: boolean = false;
+  public stallionOwnersFormIsBeingModified: boolean = false;
+  public aStallionOwnerIsBeingCreated: boolean = false;
+  public stallionOwnersFormLastSavedValue: any;
+  public savedStallionOwnerBusinessType: string = "";
+  public selectedStallionOwnerBusinessType: string = "";
 
   // only when editing
   public keptPhotos: Array<number> = [];
 
   // form values variables
   public stallionForm!: FormGroup;
+  public stallionOwnersForm!: FormGroup;
 
   constructor(
     private stallionService: StallionService,
@@ -102,7 +118,7 @@ export class StallionComponent implements OnInit {
     private sanitizer: DomSanitizer,
     private router: Router
     ) {}
-  
+
   ngOnInit(): void {
     this.stallionComponentInput.mode === 'edition' ? this.title = "Éditer le profil d'un étalon" : this.title = "Ajouter un nouvel étalon";
 
@@ -135,7 +151,32 @@ export class StallionComponent implements OnInit {
       offspring: '',
       crossbreedingAdvice: '',
       location: ['', Validators.required],
-      newProductionBreed: ''
+      newProductionBreed: '',
+      stallionOwner: ['Sélectionner', Validators.required]
+    })
+
+    this.stallionOwnersForm = this.formBuilder.group({
+      companyOrIndividualRadio: ['', Validators.required],
+      companyName: [''],
+      companyStructure: [''],
+      capital: [''],
+      siren: [''],
+      rcs: [''],
+      headOfficeAddressLine1: [''],
+      headOfficeAddressLine2: [''],
+      headOfficeAddressCity: [''],
+      headOfficeAddressPostalCode: [''],
+      gender: ['Titre de civilité', Validators.required],
+      roleInCompany: [''],
+      birthdate: [''],
+      birthplace: [''],
+      citizenship: [''],
+      addressLine1: [''],
+      addressLine2: [''],
+      addressCity: [''],
+      addressPostalCode: [''],
+      firstname: [''],
+      lastname: ['']
     })
 
     for (const std of this.availableStds) {
@@ -165,6 +206,39 @@ export class StallionComponent implements OnInit {
       this.coverTypes[coverType] = false;
     }
 
+    this.stallionForm.get('stallionOwner')?.valueChanges.subscribe((value) => {
+      this.stallionOwnersFormHelper.setValue("");
+      if (this.stallionOwnersFormIsBeingModified) {
+        this.cancelStallionOwnersFormEdition();
+      }
+
+      if (value == 'Ajouter un propriétaire') {
+        this.stallionOwnersForm.get('companyOrIndividualRadio')?.enable();
+        this.stallionOwnersForm.get('gender')?.enable();
+        this.displayStallionOwnerForm = true;
+        this.aStallionOwnerIsBeingCreated = true;
+      } else if (['Sélectionner', 'Moi'].includes(value)){
+        this.displayStallionOwnerForm = false;
+        this.aStallionOwnerIsBeingCreated = false;
+      } else {
+        this.stallionOwnersForm.get('companyOrIndividualRadio')?.disable();
+        this.stallionOwnersForm.get('gender')?.disable();
+        this.displayStallionOwnerForm = true;
+        this.aStallionOwnerIsBeingCreated = false;
+        this.assignStallionOwnerDataToForm(value);
+      }
+    })
+
+    this.stallionOwnersForm.get('companyOrIndividualRadio')?.valueChanges
+    .subscribe({
+      next: value => {
+        this.selectedStallionOwnerBusinessType = value;
+      },
+      error: () => {}
+    });
+
+    this.getStallionOwners();
+
     if (this.stallionComponentInput.mode === 'edition') {
       this.fetchStallionProfile();
     }
@@ -181,23 +255,25 @@ export class StallionComponent implements OnInit {
           this.stallionForm.get('breed')?.disable();
           this.stallionForm.get('nSIRE')?.setValue(data.n_sire);
           this.stallionForm.get('nSIRE')?.disable();
-  
+          this.stallionForm.get('stallionOwner')?.setValue(data.stallion_owner_id);
+          this.stallionOwnersForm.get('gender')?.disable();
+
           data.photos.forEach((url: string) => {
             this.photosURLs.push(objectStorageBaseUrl + photosPrefix + '/' + url);
             this.photos.push(null);
           })
           this.keptPhotos = getNumberArray(data.photos.length);
-  
+
           this.stallionForm.get('mainDesc')?.setValue(data.main_desc);
           this.stallionForm.get('color')?.setValue(data.color);
           this.stallionForm.get('height')?.setValue(data.height);
           this.stallionForm.get('birthdate')?.setValue(data.birthdate);
           this.stallionForm.get('birthdate')?.disable();
-  
+
           for (let [index, parent] of data.pedigree.entries()) {
             this.stallionForm.get('p' + (index + 1).toString())?.setValue(parent);
           }
-  
+
           this.locationSearchSuccess['status'] = true;
           this.stallionForm.get('location')?.setValue(data.city + ' (' + data.postal_code + ')');
           this.locationIsValidated = true;
@@ -205,13 +281,13 @@ export class StallionComponent implements OnInit {
           this.selectedLocation.postal_code = data.postal_code;
           this.selectedLocation.lat = data.lat;
           this.selectedLocation.lng = data.lng;
-  
+
           this.stallionForm.get('crossbreedingAdvice')?.setValue(data.crossbreeding_advice);
-  
+
           for (let vaccine of data.stallion_vaccines) {
             this.stallionVaccines[vaccine] = true;
           }
-  
+
           for (let std of this.availableStds) {
             if (data.stallion_std_negative_tests[std]) {
               this.stallionStdNegativeTests[std] = true;
@@ -219,12 +295,12 @@ export class StallionComponent implements OnInit {
               this.stallionForm.get(std + 'StallionTestDate')?.enable();
             }
           }
-  
+
           this.stallionForm.get('offspring')?.setValue(data.offspring);
           this.stallionForm.get('performance')?.setValue(data.performance);
           this.stallionForm.get('pedigreePO')?.setValue(data.pedigree_po);
           this.stallionForm.get('stallionAdditionalInfo')?.setValue(data.stallion_additional_info);
-  
+
           for (let productionBreed of data.production_breeds) {
             if (this.availableBreeds.includes(productionBreed)) {
               this.productionBreeds[productionBreed] = true;
@@ -233,29 +309,29 @@ export class StallionComponent implements OnInit {
               this.productionBreedsAddedByHand.push(productionBreed);
             }
           }
-  
+
           for (let coverType of Object.keys(this.availableCoverTypes)) {
             if (data.cover_specs[coverType]) {
               this.coverTypes[coverType] = true;
               this.stallionForm.get(coverType + 'Price')?.setValue(data.cover_specs[coverType].price);
               this.stallionForm.get(coverType + 'BalancePaymentCondition')?.setValue(data.cover_specs[coverType].balance_payment_condition);
               this.stallionForm.get(coverType + 'AdvancePercentage')?.setValue(data.cover_specs[coverType].advance_percentage);
-  
+
               this.stallionForm.get(coverType + 'CoverPlace')?.setValue(data.cover_specs[coverType].cover_place);
               this.stallionForm.get(coverType + 'MaximumNumberOfAttempts')?.setValue(data.cover_specs[coverType].maximum_nb_of_attempts);
-  
+
               for (let vaccine of data.cover_specs[coverType].demanded_vaccines) {
                 this.mareVaccines[coverType][vaccine] = true;
               }
-  
+
               for (let std of this.availableStds) {
                 if (data.cover_specs[coverType].demanded_std_negative_tests[std]) {
                   this.stallionForm.get(coverType + std + 'MareTestOldness')?.setValue(data.cover_specs[coverType].demanded_std_negative_tests[std].test_oldness);
                   this.stallionForm.get(coverType + std + 'MareTestOldness')?.enable();
                   this.mareSTDs[coverType][std] = true;
                 }
-              }              
-  
+              }
+
               this.stallionForm.get('coverAdditionalInfo')?.setValue(data.cover_additional_info);
             }
           }
@@ -263,6 +339,277 @@ export class StallionComponent implements OnInit {
         error: () => {}
       })
     }
+  }
+
+  // stallion owners
+  getStallionOwners() {
+    this.stallionService.getStallionOwners()
+    .subscribe({
+      next: (data: StallionOwners) => {
+        for (let item of data.stallion_owners) {
+          const nameInSelect = item.firstname + ' ' + item.lastname;
+          this.availableStallionOwnerIds.push(item.id);
+          this.stallionOwnerIdToName[item.id] = nameInSelect;
+          this.availableStallionOwners[item.id] = item;
+        }
+      },
+      error: () => {}
+    })
+  }
+
+  createStallionOwnerItemFromForm(id: string, formValue: any, businessType: string) {
+    let stallionOwnerItem: StallionOwnerItem = {
+      id: id,
+      business_type: businessType,
+      firstname: formValue['firstname'],
+      lastname: formValue['lastname'],
+      gender: formValue['gender'],
+      company_structure: formValue['companyStructure'],
+      company_name: formValue['companyName'],
+      capital: formValue['capital'],
+      rcs: formValue['rcs'],
+      siren: formValue['siren'],
+      head_office_address_line1: formValue['headOfficeAddressLine1'],
+      head_office_address_line2: formValue['headOfficeAddressLine2'],
+      head_office_address_postal_code: formValue['headOfficeAddressPostalCode'],
+      head_office_address_city: formValue['headOfficeAddressCity'],
+      role_in_company: formValue['roleInCompany'],
+      birthdate: formValue['birthdate'],
+      birthplace: formValue['birthplace'],
+      citizenship: formValue['citizenship'],
+      address_line1: formValue['addressLine1'],
+      address_line2: formValue['addressLine1'],
+      address_postal_code: formValue['addressPostalCode'],
+      address_city: formValue['addressCity']
+    }
+
+    return stallionOwnerItem;
+  }
+
+  assignStallionOwnerDataToForm(id: string) {
+    const item = this.availableStallionOwners[id];
+
+    this.stallionOwnersForm.get("companyOrIndividualRadio")?.setValue(item.business_type);
+    this.stallionOwnersForm.get("companyOrIndividualRadio")?.disable();
+    this.stallionOwnersForm.get('firstname')?.setValue(item.firstname);
+    this.stallionOwnersForm.get('lastname')?.setValue(item.lastname);
+    this.stallionOwnersForm.get('gender')?.setValue(item.gender);
+    if (item.company_name != null) {
+      this.stallionOwnersForm.get('companyName')?.setValue(item.company_name);
+    }
+    if (item.company_structure != null) {
+      this.stallionOwnersForm.get('companyStructure')?.setValue(item.company_structure);
+    }
+    if (item.capital != null) {
+      this.stallionOwnersForm.get('capital')?.setValue(item.capital);
+    }
+    if (item.siren != null) {
+      this.stallionOwnersForm.get('siren')?.setValue(item.siren);
+    }
+    if (item.rcs != null) {
+      this.stallionOwnersForm.get('rcs')?.setValue(item.rcs);
+    }
+    if (item.head_office_address_line1 != null) {
+      this.stallionOwnersForm.get('headOfficeAddressLine1')?.setValue(item.head_office_address_line1);
+    }
+    if (item.head_office_address_line2 != null) {
+      this.stallionOwnersForm.get('headOfficeAddressLine2')?.setValue(item.head_office_address_line2);
+    }
+    if (item.head_office_address_city != null) {
+      this.stallionOwnersForm.get('headOfficeAddressCity')?.setValue(item.head_office_address_city);
+    }
+    if (item.head_office_address_postal_code != null) {
+      this.stallionOwnersForm.get('headOfficeAddressPostalCode')?.setValue(item.head_office_address_postal_code);
+    }
+    if (item.role_in_company != null) {
+      this.stallionOwnersForm.get('roleInCompany')?.setValue(item.role_in_company);
+    }
+    if (item.birthdate != null) {
+      this.stallionOwnersForm.get('birthdate')?.setValue(item.birthdate);
+    }
+    if (item.birthplace != null) {
+      this.stallionOwnersForm.get('birthplace')?.setValue(item.birthplace);
+    }
+    if (item.citizenship != null) {
+      this.stallionOwnersForm.get('citizenship')?.setValue(item.citizenship);
+    }
+    if (item.address_line1 != null) {
+      this.stallionOwnersForm.get('addressLine1')?.setValue(item.address_line1);
+    }
+    if (item.address_line2 != null) {
+      this.stallionOwnersForm.get('addressLine2')?.setValue(item.address_line2);
+    }
+    if (item.address_city != null) {
+      this.stallionOwnersForm.get('addressCity')?.setValue(item.address_city);
+    }
+    if (item.address_postal_code != null) {
+      this.stallionOwnersForm.get('addressPostalCode')?.setValue(item.address_postal_code);
+    }
+  }
+
+  askForStallionOwnersFormEdit() {
+    this.stallionOwnersFormLastSavedValue = this.stallionOwnersForm.getRawValue();
+    this.savedStallionOwnerBusinessType = this.stallionOwnersForm.get("companyOrIndividualRadio")?.getRawValue();
+    this.stallionOwnersFormIsBeingModified = true;
+    this.stallionOwnersForm.get("companyOrIndividualRadio")?.enable();
+    this.stallionOwnersForm.get("gender")?.enable();
+  }
+
+  cancelStallionOwnersFormEdition() {
+    this.stallionOwnersForm.patchValue(this.stallionOwnersFormLastSavedValue);
+    this.stallionOwnersFormIsBeingModified = false;
+    this.stallionOwnersForm.get("companyOrIndividualRadio")?.setValue(this.savedStallionOwnerBusinessType);
+    this.stallionOwnersForm.get("companyOrIndividualRadio")?.disable();
+    this.stallionOwnersForm.get("gender")?.disable();
+  }
+
+  checkUserErrorInStallionOwnersForm() {
+    if (!this.stallionOwnersForm.valid) {
+      this.stallionOwnersFormPostPutStatus['status'] = backendInteractionStatus.UserError;
+      this.stallionOwnersFormHelper.setValue("Tous les champs du formulaire suivis d'un astérisque (*) doivent être remplis.");
+      throw new Error();
+    }
+
+    const stallionOwnersFormValue = this.stallionOwnersForm.getRawValue();
+    if (this.selectedStallionOwnerBusinessType == "company") {
+      if (
+        stallionOwnersFormValue["gender"] == "Titre de civilité"
+        || stallionOwnersFormValue["companyName"] == ""
+        || stallionOwnersFormValue["companyStructure"] == ""
+        || stallionOwnersFormValue["capital"] == ""
+        || stallionOwnersFormValue["siren"] == ""
+        || stallionOwnersFormValue["headOfficeAddressLine1"] == ""
+        || stallionOwnersFormValue["headOfficeAddressCity"] == ""
+        || stallionOwnersFormValue["headOfficeAddressPostalCode"] == ""
+        || stallionOwnersFormValue["roleInCompany"] == ""
+      ) {
+        this.stallionOwnersFormPostPutStatus['status'] = backendInteractionStatus.UserError;
+        this.stallionOwnersFormHelper.setValue("Tous les champs du formulaire suivis d'un astérisque (*) doivent être remplis.");
+        throw new Error();
+      }
+    } else if (this.selectedStallionOwnerBusinessType == "individual") {
+      if (
+        stallionOwnersFormValue["gender"] == "Titre de civilité"
+        || stallionOwnersFormValue["birthdate"] == ""
+        || stallionOwnersFormValue["birthplace"] == ""
+        || stallionOwnersFormValue["citizenship"] == ""
+        || stallionOwnersFormValue["addressLine1"] == ""
+        || stallionOwnersFormValue["addressCity"] == ""
+        || stallionOwnersFormValue["addressPostalCode"] == ""
+      ) {
+        this.stallionOwnersFormPostPutStatus['status'] = backendInteractionStatus.UserError;
+        this.stallionOwnersFormHelper.setValue("Tous les champs du formulaire suivis d'un astérisque (*) doivent être remplis.");
+        throw new Error();
+      }
+    }
+
+    return [this.selectedStallionOwnerBusinessType, stallionOwnersFormValue];
+  }
+
+  handleStallionOwnersValidation() {
+    const stallionOwnerValue = this.stallionForm.get('stallionOwner')?.getRawValue();
+    if ("Sélectionner" != stallionOwnerValue) {
+      let businessType: string;
+      let stallionOwnersFormValue: any;
+      try {
+        [businessType, stallionOwnersFormValue] = this.checkUserErrorInStallionOwnersForm()
+      } catch {
+        return
+      }
+
+      this.stallionOwnersFormPostPutStatus['status'] = backendInteractionStatus.Loading;
+      if (this.aStallionOwnerIsBeingCreated) {
+        this.stallionService.postStallionOwner(businessType, stallionOwnersFormValue, this.stallionOwnersFormPostPutStatus, this.stallionOwnersFormHelper)
+        .subscribe({
+          next: (response: PostStallionOwnerResponse) => {
+            this.availableStallionOwnerIds.push(response.id);
+            this.stallionForm.get('stallionOwner')?.setValue(this.availableStallionOwnerIds[this.availableStallionOwnerIds.length-1]);
+            const nameInSelect: string = stallionOwnersFormValue['firstname'] + ' ' + stallionOwnersFormValue['lastname'];
+            this.stallionOwnerIdToName[response.id] = nameInSelect;
+            const stallionOwnerItem: StallionOwnerItem = this.createStallionOwnerItemFromForm(
+              response.id,
+              stallionOwnersFormValue,
+              businessType
+            );
+            this.availableStallionOwners[response.id] = stallionOwnerItem;
+            this.stallionOwnersForm.get("companyOrIndividualRadio")?.disable();
+            this.stallionOwnersForm.get("gender")?.disable();
+            this.aStallionOwnerIsBeingCreated = false;
+            this.stallionOwnersFormPostPutStatus['status'] = backendInteractionStatus.Success;
+            this.stallionOwnersFormHelper.setValue('Propriétaire ajouté avec succès.');
+          }
+        })
+      } else {
+        this.stallionService.putStallionOwner(
+          businessType,
+          stallionOwnersFormValue,
+          stallionOwnerValue,
+          this.stallionOwnersFormPostPutStatus,
+          this.stallionOwnersFormHelper
+        )
+        .subscribe({
+          next: () => {
+            const nameInSelect: string = stallionOwnersFormValue['firstname'] + ' ' + stallionOwnersFormValue['lastname'];
+            this.stallionOwnerIdToName[stallionOwnerValue] = nameInSelect;
+            const stallionOwnerItem: StallionOwnerItem = this.createStallionOwnerItemFromForm(
+              stallionOwnerValue,
+              stallionOwnersFormValue,
+              this.selectedStallionOwnerBusinessType
+            );
+            this.availableStallionOwners[stallionOwnerValue] = stallionOwnerItem;
+            this.stallionOwnersFormIsBeingModified = false;
+            this.stallionOwnersFormPostPutStatus['status'] = backendInteractionStatus.Success;
+            this.stallionOwnersFormHelper.setValue('Propriétaire modifié avec succès.');
+          },
+          error: () => {
+
+          }
+        })
+      }
+    } 
+  }
+
+  triggerStallionOwnerDeletionModal() {
+    this.deleteStallionOwnerModalIsActive = true;
+  }
+
+  closeStallionOwnerDeletionModal() {
+    this.deleteStallionOwnerModalIsActive = false;
+  }
+
+  confirmStallionOwnerDeletion() {
+    this.closeStallionOwnerDeletionModal();
+    const selectedStallionOwnerId = this.stallionForm.get('stallionOwner')?.getRawValue();
+    if (['Ajouter un propriétaire', 'Sélectionner', 'Moi'].includes(selectedStallionOwnerId)) {
+      return
+    }
+    this.stallionOwnersFormDeleteStatus['status'] = backendInteractionStatus.Loading;
+    this.stallionService.deleteStallionOwner(
+      selectedStallionOwnerId,
+      this.stallionComponentInput.stallionId,
+      this.stallionOwnersFormPostPutStatus,
+      this.stallionOwnersFormHelper
+    ).subscribe({
+      next: () => {
+        const index = this.availableStallionOwnerIds.indexOf(selectedStallionOwnerId);
+        if (index > -1) {
+          this.availableStallionOwnerIds.splice(index, 1);
+        }
+        delete this.availableStallionOwners[selectedStallionOwnerId];
+        delete this.stallionOwnerIdToName[selectedStallionOwnerId];
+        if (this.availableStallionOwnerIds.length > 0) {
+          this.stallionForm.get('stallionOwner')?.setValue(this.availableStallionOwnerIds[this.availableStallionOwnerIds.length-1]);
+        } else {
+          this.stallionForm.get('stallionOwner')?.setValue("Sélectionner");
+          this.stallionOwnersForm.get('companyOrIndividualRadio')?.enable();
+          this.stallionOwnersForm.get('gender')?.enable();
+        }
+        this.stallionOwnersFormDeleteStatus['status'] = backendInteractionStatus.Success;
+      },
+      error: () => {
+        this.stallionOwnersFormDeleteStatus['status'] = backendInteractionStatus.BackendError;
+      }
+    })
   }
 
   // checkboxes
@@ -312,10 +659,10 @@ export class StallionComponent implements OnInit {
     if (file.size > verificationFileMaxSizeInBytes) {
       this.verificationFileHelper.setValue('La taille du fichier doit être inférieure à 10 Mo. Celle du fichier sélectionné les dépasse.');
       return
-    } 
+    }
 
     this.verificationFile = event.target.files[0];
-    this.verificationFileHelper.setValue('');    
+    this.verificationFileHelper.setValue('');
   }
 
   fetchPhotos(event: any) {
@@ -334,9 +681,9 @@ export class StallionComponent implements OnInit {
     const img = new Image();
     img.src = URL.createObjectURL(file);
 
-    img.onload = () => {  
+    img.onload = () => {
       URL.revokeObjectURL(img.src);
-      
+
       this.photosURLs.push(this.sanitizer.bypassSecurityTrustUrl(img.src));
       this.photosHelper.setValue('');
     };
@@ -461,11 +808,11 @@ export class StallionComponent implements OnInit {
     return /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/.test(this.getValueInStallionForm("birthdate"));
   }
 
-  dropdownIsSelected(field: 'breed') {
+  dropdownIsSelected(field: 'breed' | 'stallionOwner') {
     if (field === 'breed') {
       return this.stallionForm.get('breed')?.value && (this.stallionForm.get('breed')?.value != "Sélectionner");
     } else {
-      return false;
+      return this.stallionForm.get('stallionOwner')?.value && (this.stallionForm.get('stallionOwner')?.value != "Sélectionner");
     }
   }
 
@@ -510,7 +857,10 @@ export class StallionComponent implements OnInit {
       shouldThrowError = true;
     }
 
-    const stallionFormValue = this.stallionForm.getRawValue();
+    if (["Moi", "Sélectionner"].includes(this.stallionForm.get('stallionOwner')?.getRawValue())) {
+      shouldThrowError = true;
+    }
+
     for (let coverType of this.getSelectedCheckboxes('coverTypes')) {
       if (
         !this.getValueInStallionForm(coverType + "Price")
@@ -604,7 +954,6 @@ export class StallionComponent implements OnInit {
       shouldThrowError = true;
     }
 
-    const stallionFormValue = this.stallionForm.getRawValue();
     for (let coverType of this.getSelectedCheckboxes('coverTypes')) {
       if (
         !this.getValueInStallionForm(coverType + "Price")
@@ -628,7 +977,7 @@ export class StallionComponent implements OnInit {
         }
       }
     }
-    
+
     // if data is not validated
     if (shouldThrowError) {
       this.stallionFormStatus['status'] = backendInteractionStatus.UserError;

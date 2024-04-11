@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
-import { FormControl} from '@angular/forms';
+import { Form, FormControl} from '@angular/forms';
 import { throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { getCityItem } from 'src/app/core/geolocation/geolocation.service';
@@ -32,6 +32,7 @@ export interface LIBandHANDSpecs {
 }
 
 interface EditableStallionFields {
+  stallion_owner_id: string;
   main_desc: string;
   color: string;
   height: number;
@@ -60,6 +61,40 @@ interface StallionBody {
 export interface PostStallionResponse {
   message: string;
   stallion_id: string;
+}
+
+export interface PostStallionOwnerResponse {
+  message: string;
+  id: string;
+}
+
+export interface StallionOwnerItem {
+  id: string;
+  business_type: string;
+  firstname: string;
+  lastname: string;
+  gender: string;
+  company_structure: string | null;
+  company_name: string | null;
+  capital: string | null;
+  rcs: string | null;
+  siren: string | null;
+  head_office_address_line1: string | null;
+  head_office_address_line2: string | null;
+  head_office_address_postal_code: string | null;
+  head_office_address_city: string | null;
+  role_in_company: string | null;
+  birthdate: string | null;
+  birthplace: string | null;
+  citizenship: string | null;
+  address_line1: string | null;
+  address_line2: string | null;
+  address_postal_code: string | null;
+  address_city: string | null;
+}
+
+export interface StallionOwners {
+  stallion_owners: Array<StallionOwnerItem>
 }
 
 @Injectable()
@@ -203,6 +238,7 @@ export class StallionService {
     }
 
     const editableFieldsBody: EditableStallionFields = {
+      stallion_owner_id: form["stallionOwner"],
       main_desc: form["mainDesc"],
       color: form["color"],
       height: parseFloat(form["height"]),
@@ -305,6 +341,7 @@ export class StallionService {
     }
 
     const editableFieldsBody: EditableStallionFields = {
+      stallion_owner_id: form["stallionOwner"],
       main_desc: form["mainDesc"],
       color: form["color"],
       height: parseFloat(form["height"]),
@@ -333,6 +370,145 @@ export class StallionService {
         stallionFormStatus["status"] = backendInteractionStatus.BackendError;
         message.setValue("Une erreur est survenue. C'est peut-être de notre côté. Merci de réessayer.");
         return throwError(() => new Error());
+      })
+    )
+  }
+
+  getStallionOwners() {
+    return this.http.get<StallionOwners>(`${backendBaseUrl}/stallion-owners/stallion-owner-names`)
+    .pipe(
+      catchError(() => {
+          return throwError(() => new Error());
+      })
+  )
+  }
+
+  handlePostAndPutStallionOwnerError(
+    error: HttpErrorResponse,
+    status: Record<string, backendInteractionStatus>,
+    fc: FormControl
+  ) {
+    if (error.status == 422 && error.error.detail == "incorrect birthdate date format") {
+      status['status'] = backendInteractionStatus.UserError;
+      fc.setValue("La date de naissance doit être au format JJ/MM/AAAA, exemple: 07/10/1995.");
+    }  else {
+        status['status'] = backendInteractionStatus.BackendError;
+        fc.setValue("Une erreur est survenue. C'est probablement de notre côté. Merci de réessayer.");
+    }
+    return throwError(() => new Error());
+  }
+
+  buildStallionOwnerBodyFromForm(
+    businessType: string,
+    form: Record<string, string>
+  ) {
+    let body: Record<string, any> = {}
+
+    body["gender"] = form["gender"];
+    body["firstname"] = form["firstname"];
+    body["lastname"] = form["lastname"];
+
+    if (businessType == 'company') {
+        body["business_type"] = "company";
+        body["company_name"] = form["companyName"];
+        body["company_structure"] = form["companyStructure"];
+        body["capital"] = form["capital"];
+        body["siren"] = form["siren"];
+        body["head_office_address_line1"] = form["headOfficeAddressLine1"];
+        body["head_office_address_postal_code"] = form["headOfficeAddressPostalCode"];
+        body["head_office_address_city"] = form["headOfficeAddressCity"];
+        body["role_in_company"] = form["roleInCompany"];
+        body["head_office_address_line2"] = form["headOfficeAddressLine2"]
+        body["rcs"] = form["rcs"]
+    } else {
+        body["business_type"] = "individual";
+        body["birthdate"] = form["birthdate"];
+        body["birthplace"] = form["birthplace"];
+        body["citizenship"] = form["citizenship"];
+        body["address_line1"] = form["addressLine1"];
+        body["address_postal_code"] = form["addressPostalCode"];
+        body["address_city"] = form["addressCity"];
+        body["address_line2"] = form["addressLine2"]
+    }
+
+    return body;
+  }
+
+  postStallionOwner(
+    businessType: string,
+    form: Record<string, string>,
+    status: Record<string, backendInteractionStatus>,
+    messageFormControl: FormControl
+    ) {
+    const body = this.buildStallionOwnerBodyFromForm(businessType, form);
+    return this.http.post<PostStallionOwnerResponse>(
+      `${backendBaseUrl}/stallion-owners/stallion-owner`,
+      body
+    ).pipe(
+        catchError((error: HttpErrorResponse) => {
+          return this.handlePostAndPutStallionOwnerError(error, status, messageFormControl);
+      })
+    )
+  }
+
+  putStallionOwner(
+    businessType: string,
+    form: Record<string, string>,
+    stallionOwnerId: string,
+    status: Record<string, backendInteractionStatus>,
+    messageFormControl: FormControl
+    ) {
+    const body = this.buildStallionOwnerBodyFromForm(businessType, form);
+    return this.http.put(
+      `${backendBaseUrl}/stallion-owners/stallion-owner/${stallionOwnerId}`,
+      body
+    ).pipe(
+        catchError((error: HttpErrorResponse) => {
+          return this.handlePostAndPutStallionOwnerError(error, status, messageFormControl);
+      })
+    )
+  }
+
+  handleDeleteStallionOwnerError(
+    error: HttpErrorResponse,
+    status: Record<string, backendInteractionStatus>,
+    fc: FormControl
+  ) {
+    if (error.status === 409 && error.error.detail) {
+      if (error.error.detail === "this stallion is linked to this stallion owner") {
+        fc.setValue("Avant de supprimer ce propriétaire, vous devez d'abord sélectionner un "
+        + "nouveau propriétaire pour cet étalon, et valider les modifications en cliquant sur le bouton "
+        + "tout en bas de cette page.")
+      } else if (error.error.detail === "a stallion is linked to this stallion owner") {
+        fc.setValue(
+          "D'autres étalons de votre liste sont enregistrés comme ayant ce propriétaire. "
+          + "Vous devez assigner un nouveau propriétaire aux étalons concernés, ensuite seulement "
+          + "vous pourrez le supprimer."
+        )
+      }
+    }
+    status['status'] = backendInteractionStatus.UserError;
+    return throwError(() => new Error());
+  }
+
+  deleteStallionOwner(
+    id: string,
+    stallionId: string | null,
+    status: Record<string, backendInteractionStatus>,
+    messageFormControl: FormControl
+  ) {
+    if (stallionId === null) {
+      stallionId = ""
+    }
+    const params: HttpParams = new HttpParams().set('stallion_id', stallionId);
+
+    return this.http.delete(
+      `${backendBaseUrl}/stallion-owners/stallion-owner/${id}`,
+      { params }
+    )
+    .pipe(
+      catchError((error: HttpErrorResponse) => {
+        return this.handleDeleteStallionOwnerError(error, status, messageFormControl);
       })
     )
   }
