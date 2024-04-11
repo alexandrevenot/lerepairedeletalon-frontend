@@ -32,7 +32,7 @@ export class StallionProfileComponent implements OnInit{
   public photosPrefix = photosPrefix;
 
   // raw data
-  public ownerName: string = "";
+  public handlerName: string = "";
   public name: string = "";
   public breed: string = "";
   public nSire: string = "";
@@ -53,7 +53,7 @@ export class StallionProfileComponent implements OnInit{
   public stallionAdditionalInfo: string = "";
   public coverSpecs: any = {};
   public productionBreeds: Array<string> = [];
-  public owner: string = "";
+  public handlerId: string = "";
   public stallionVaccines: Array<string> = [];
   public crossbreedingAdvice: string = "";
 
@@ -67,7 +67,7 @@ export class StallionProfileComponent implements OnInit{
   public stallionSTDNegativeTestsTD: Record<string, string> = {};
   public score: number = 0;
   public nbReviewsAsSeller: number = 0;
-  public ownerHasOtherReviews: boolean = false;
+  public handlerHasOtherReviews: boolean = false;
 
   // form data
   public askForMatingForm!: FormGroup;
@@ -132,7 +132,7 @@ export class StallionProfileComponent implements OnInit{
       this.stallionProfileService.getStallionProfile(this.itemId)
       .subscribe({
         next: (content: StallionProfile) => {
-          this.owner = content.owner;
+          this.handlerId = content.handler_id;
           this.name = content.name;
           this.breed = content.breed;
           this.nSire = content.n_sire;
@@ -178,11 +178,11 @@ export class StallionProfileComponent implements OnInit{
           })
   
           this.userScoreService.getUserScore(
-            this.owner,
+            this.handlerId,
             this.nSire,
             "seller"
           ).subscribe((userScore: UserScore) => {
-            this.ownerName = userScore.firstname + " " + userScore.lastname.toUpperCase();
+            this.handlerName = userScore.firstname + " " + userScore.lastname.toUpperCase();
     
             if (userScore.nb_reviews) {
               this.nbReviewsAsSeller = userScore.nb_reviews;
@@ -192,8 +192,8 @@ export class StallionProfileComponent implements OnInit{
               this.score = userScore.score;
             }
     
-            if (userScore.owner_has_other_reviews) {
-              this.ownerHasOtherReviews = true;
+            if (userScore.handler_has_other_reviews) {
+              this.handlerHasOtherReviews = true;
             }
           })
         },
@@ -257,12 +257,12 @@ export class StallionProfileComponent implements OnInit{
   }
 
   openReviewsForStallion() {
-    const url = `/user-reviews?id=${this.owner}&reviewPov=received&coverPov=seller&stallionNSIRE=${this.nSire}`;
+    const url = `/user-reviews?id=${this.handlerId}&reviewPov=received&coverPov=seller&stallionNSIRE=${this.nSire}`;
     window.open(url, '_blank');
   }
 
   openAllReviews() {
-    const url = `/user-reviews?id=${this.owner}&reviewPov=received&coverPov=seller`;
+    const url = `/user-reviews?id=${this.handlerId}&reviewPov=received&coverPov=seller`;
     window.open(url, '_blank');
   }
 
@@ -295,7 +295,7 @@ export class StallionProfileComponent implements OnInit{
     this.demandStatus['status'] = backendInteractionStatus.Loading;
     this.stallionProfileService.sendDemandToVendor(
       this.askForMatingForm.getRawValue(),
-      this.owner,
+      this.handlerId,
       this.nSire,
       this.demandStatus,
       this.sendFormMessage,

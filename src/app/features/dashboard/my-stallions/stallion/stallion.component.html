@@ -105,6 +105,428 @@
     </div>
 
     <div class="field py-3">
+      <h5 class="subtitle is-5 has-text-weight-bold mb-3">Identité du propriétaire de l'étalon</h5>
+
+      <label class="label has-text-weight-semibold has-text-grey">Qui est le propriétaire de l'étalon?</label>
+
+      <div class="control">
+        <div class="select" [ngClass]="{
+          'is-success': !['Moi', 'Sélectionner'].includes(getValueInStallionForm('stallionOwner')) && 'UserError' == stallionFormStatus['status'],
+          'is-danger': ['Moi', 'Sélectionner'].includes(getValueInStallionForm('stallionOwner')) && 'UserError' == stallionFormStatus['status']
+          }">
+          <select formControlName="stallionOwner">
+            <option>Sélectionner</option>
+            <option>Moi</option>
+            <option *ngFor="let stallionOwnerId of availableStallionOwnerIds" [ngValue]="stallionOwnerId">{{stallionOwnerIdToName[stallionOwnerId]}}</option>
+            <option>Ajouter un propriétaire</option>
+          </select>
+        </div>
+      </div>
+
+      <form class="box mt-6" style="background-color: #f7faf7;" [formGroup]="stallionOwnersForm" *ngIf="displayStallionOwnerForm">
+
+        <div class="columns is-align-items-center">
+          <div class="column is-3 has-text-right">
+            <label class="label">Le propriétaire est un *</label>
+          </div>
+  
+          <div class="column">
+            <div class="field">
+              <div class="control">
+                <label class="radio has-text-weight-semibold">
+                  <input type="radio" value="company" formControlName="companyOrIndividualRadio">
+                  Professionel
+                </label>
+  
+                <label class="radio has-text-weight-semibold">
+                  <input type="radio" value="individual" formControlName="companyOrIndividualRadio">
+                  Particulier
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="selectedStallionOwnerBusinessType == 'company'">
+          <div class="columns is-align-items-end">
+            <div class="column is-3 has-text-right">
+              <label class="label pb-4">Immatriculation de l'entreprise</label>
+            </div>
+  
+            <div class="column">
+              <label class="label has-text-grey-light has-text-weight-semibold">Nom légal *</label>
+              <div class="field">
+                <p class="control is-expanded">
+                  <input class="input" type="text" placeholder="Élevage de ..." formControlName="companyName"
+                    [readonly]="!stallionOwnersFormIsBeingModified && !aStallionOwnerIsBeingCreated">
+                </p>
+              </div>
+            </div>
+  
+            <div class="column">
+              <label class="label has-text-grey-light has-text-weight-semibold">Forme juridique *</label>
+              <div class="field">
+                <p class="control is-expanded">
+                  <input class="input" type="text" placeholder="SARL" formControlName="companyStructure"
+                  [readonly]="!stallionOwnersFormIsBeingModified && !aStallionOwnerIsBeingCreated">
+                </p>
+              </div>
+            </div>
+  
+            <div class="column">
+              <label class="label has-text-grey-light has-text-weight-semibold">Capital *</label>
+              <div class="field has-addons">
+                <p class="control is-expanded">
+                  <input class="input" type="text" placeholder="10000" formControlName="capital"
+                  [readonly]="!stallionOwnersFormIsBeingModified && !aStallionOwnerIsBeingCreated">
+                </p>
+                <p class="control">
+                  <a class="button is-static">
+                    €
+                  </a>
+                </p>
+              </div>
+            </div>
+          </div>
+  
+          <div class="columns is-align-items-center">
+            <div class="column is-3 has-text-right">
+              <label class="label"></label>
+            </div>
+  
+            <div class="column">
+              <label class="label has-text-grey-light has-text-weight-semibold">SIREN *</label>
+              <div class="field">
+                <p class="control is-expanded">
+                  <input class="input" type="text" placeholder="123456789" formControlName="siren"
+                  [readonly]="!stallionOwnersFormIsBeingModified && !aStallionOwnerIsBeingCreated">
+                </p>
+              </div>
+            </div>
+  
+            <div class="column">
+              <label class="label has-text-grey-light has-text-weight-semibold">RCS d'immatriculation</label>
+              <div class="field">
+                <p class="control is-expanded">
+                  <input class="input" type="text" placeholder="Toulouse" formControlName="rcs"
+                  [readonly]="!stallionOwnersFormIsBeingModified && !aStallionOwnerIsBeingCreated">
+                </p>
+              </div>
+            </div>
+          </div>
+  
+          <div class="columns is-align-items-center">
+            <div class="column is-3 has-text-right">
+              <label class="label">Adresse du siège social</label>
+            </div>
+  
+            <div class="column">
+              <label class="label has-text-grey-light has-text-weight-semibold">Nom et numéro de la voie *</label>
+              <div class="field">
+                <p class="control is-expanded">
+                  <input class="input" type="text" placeholder="5 allée des Platanes" formControlName="headOfficeAddressLine1"
+                  [readonly]="!stallionOwnersFormIsBeingModified && !aStallionOwnerIsBeingCreated">
+                </p>
+              </div>
+            </div>
+            <div class="column">
+              <label class="label has-text-grey-light has-text-weight-semibold">Complément d'adresse</label>
+              <div class="field">
+                <p class="control is-expanded">
+                  <input class="input" type="text" placeholder="Appartement 13, Bâtiment K" formControlName="headOfficeAddressLine2"
+                  [readonly]="!stallionOwnersFormIsBeingModified && !aStallionOwnerIsBeingCreated">
+                </p>
+              </div>
+            </div>
+          </div>
+  
+          <div class="columns is-align-items-center">
+            <div class="column is-3 has-text-right">
+              <label class="label"></label>
+            </div>
+  
+            <div class="column">
+              <label class="label has-text-grey-light has-text-weight-semibold">Ville *</label>
+              <div class="field">
+                <p class="control is-expanded">
+                  <input class="input" type="text" placeholder="Toulouse" formControlName="headOfficeAddressCity"
+                  [readonly]="!stallionOwnersFormIsBeingModified && !aStallionOwnerIsBeingCreated">
+                </p>
+              </div>
+            </div>
+  
+            <div class="column">
+              <label class="label has-text-grey-light has-text-weight-semibold">Code postal *</label>
+              <div class="field">
+                <p class="control is-expanded">
+                  <input class="input" type="text" placeholder="31000" formControlName="headOfficeAddressPostalCode"
+                  [readonly]="!stallionOwnersFormIsBeingModified && !aStallionOwnerIsBeingCreated">
+                </p>
+              </div>
+            </div>
+          </div>
+  
+          <div class="columns is-align-items-center">
+            <div class="column is-3 has-text-right">
+              <label class="label">Informations du propriétaire</label>
+            </div>
+  
+            <div class="column">
+              <label class="label has-text-grey-light has-text-weight-semibold">Prénom *</label>
+              <div class="field">
+                <p class="control is-expanded">
+                  <input class="input" type="text" placeholder="Philibert" formControlName="firstname"
+                  [readonly]="!stallionOwnersFormIsBeingModified && !aStallionOwnerIsBeingCreated">
+                </p>
+              </div>
+            </div>
+  
+            <div class="column">
+              <label class="label has-text-grey-light has-text-weight-semibold">Nom *</label>
+              <div class="field">
+                <p class="control is-expanded">
+                  <input class="input" type="text" placeholder="Miquet" formControlName="lastname"
+                  [readonly]="!stallionOwnersFormIsBeingModified && !aStallionOwnerIsBeingCreated">
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="columns is-align-items-center">
+            <div class="column is-3 has-text-right">
+              <label class="label"></label>
+            </div>
+  
+            <div class="column">
+              <label class="label has-text-grey-light has-text-weight-semibold">Titre de civilité *</label>
+              <div class="field">
+                <div class="control is-expanded">
+                  <div class="select is-fullwidth">
+                    <select formControlName="gender">
+                      <option>Titre de civilité</option>
+                      <option value="Monsieur">Monsieur</option>
+                      <option value="Madame">Madame</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+  
+            <div class="column">
+              <label class="label has-text-grey-light has-text-weight-semibold">Rôle dans l'entreprise *</label>
+              <div class="field">
+                <p class="control is-expanded">
+                  <input class="input" type="text" placeholder="Président" formControlName="roleInCompany"
+                  [readonly]="!stallionOwnersFormIsBeingModified && !aStallionOwnerIsBeingCreated">
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <div *ngIf="selectedStallionOwnerBusinessType == 'individual'">
+          <div class="columns is-align-items-center">
+            <div class="column is-3 has-text-right">
+              <label class="label">Informations du propriétaire</label>
+            </div>
+  
+            <div class="column">
+              <label class="label has-text-grey-light has-text-weight-semibold">Prénom *</label>
+              <div class="field">
+                <p class="control is-expanded">
+                  <input class="input" type="text" placeholder="Philibert" formControlName="firstname"
+                  [readonly]="!stallionOwnersFormIsBeingModified && !aStallionOwnerIsBeingCreated">
+                </p>
+              </div>
+            </div>
+  
+            <div class="column">
+              <label class="label has-text-grey-light has-text-weight-semibold">Nom *</label>
+              <div class="field">
+                <p class="control is-expanded">
+                  <input class="input" type="text" placeholder="Miquet" formControlName="lastname"
+                  [readonly]="!stallionOwnersFormIsBeingModified && !aStallionOwnerIsBeingCreated">
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="columns is-align-items-end">
+            <div class="column is-3 has-text-right">
+              <label class="label pb-4"></label>
+            </div>
+  
+            <div class="column">
+              <label class="label has-text-grey-light has-text-weight-semibold">Titre de civilité *</label>
+              <div class="field">
+                <div class="control is-expanded">
+                  <div class="select is-fullwidth">
+                    <select formControlName="gender">
+                      <option>Titre de civilité</option>
+                      <option value="Monsieur">Monsieur</option>
+                      <option value="Madame">Madame</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+  
+            <div class="column">
+              <label class="label has-text-grey-light has-text-weight-semibold">Nationalité *</label>
+              <div class="field">
+                <p class="control is-expanded">
+                  <input class="input" type="text" placeholder="Française" formControlName="citizenship"
+                  [readonly]="!stallionOwnersFormIsBeingModified && !aStallionOwnerIsBeingCreated">
+                </p>
+              </div>
+            </div>
+  
+          </div>
+  
+          <div class="columns is-align-items-center">
+            <div class="column is-3 has-text-right">
+              <label class="label"></label>
+            </div>
+  
+            <div class="column">
+              <label class="label has-text-grey-light has-text-weight-semibold">Date de naissance <small>(JJ/MM/AAAA)</small>*</label>
+              <div class="field">
+                <p class="control is-expanded">
+                  <input class="input" type="text" placeholder="01/01/2000" formControlName="birthdate"
+                    [readonly]="!stallionOwnersFormIsBeingModified && !aStallionOwnerIsBeingCreated">
+                </p>
+              </div>
+            </div>
+  
+            <div class="column">
+              <label class="label has-text-grey-light has-text-weight-semibold">Lieu de naissance *</label>
+              <div class="field">
+                <p class="control is-expanded">
+                  <input class="input" type="text" placeholder="Toulouse" formControlName="birthplace"
+                    [readonly]="!stallionOwnersFormIsBeingModified && !aStallionOwnerIsBeingCreated">
+                </p>
+              </div>
+            </div>
+  
+          </div>
+  
+          <div class="columns is-align-items-center">
+            <div class="column is-3 has-text-right">
+              <label class="label">Adresse</label>
+            </div>
+  
+            <div class="column">
+              <label class="label has-text-grey-light has-text-weight-semibold">Nom et numéro de la voie *</label>
+              <div class="field">
+                <p class="control is-expanded">
+                  <input class="input" type="text" placeholder="5 allée des Platanes" formControlName="addressLine1"
+                    [readonly]="!stallionOwnersFormIsBeingModified && !aStallionOwnerIsBeingCreated">
+                </p>
+              </div>
+            </div>
+            <div class="column">
+              <label class="label has-text-grey-light has-text-weight-semibold">Complément d'adresse</label>
+              <div class="field">
+                <p class="control is-expanded">
+                  <input class="input" type="text" placeholder="Appartement 13, Bâtiment K" formControlName="addressLine2"
+                    [readonly]="!stallionOwnersFormIsBeingModified && !aStallionOwnerIsBeingCreated">
+                </p>
+              </div>
+            </div>
+          </div>
+  
+          <div class="columns is-align-items-center">
+            <div class="column is-3 has-text-right">
+              <label class="label"></label>
+            </div>
+  
+            <div class="column">
+              <label class="label has-text-grey-light has-text-weight-semibold">Ville *</label>
+              <div class="field">
+                <p class="control is-expanded">
+                  <input class="input" type="text" placeholder="Toulouse" formControlName="addressCity"
+                    [readonly]="!stallionOwnersFormIsBeingModified && !aStallionOwnerIsBeingCreated">
+                </p>
+              </div>
+            </div>
+  
+            <div class="column">
+              <label class="label has-text-grey-light has-text-weight-semibold">Code postal *</label>
+              <div class="field">
+                <p class="control is-expanded">
+                  <input class="input" type="text" placeholder="31000" formControlName="addressPostalCode"
+                    [readonly]="!stallionOwnersFormIsBeingModified && !aStallionOwnerIsBeingCreated">
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+  
+  
+        <div class="columns is-align-items-center">
+          <div class="column is-3 has-text-right">
+  
+          </div>
+  
+          <div class="column">
+  
+            <p class="help pb-3" [ngClass]="{
+              'has-text-success': stallionOwnersFormPostPutStatus['status'] == 'Success',
+              'has-text-danger': ['UserError', 'BackendError'].includes(stallionOwnersFormPostPutStatus['status'])
+            }">{{
+              stallionOwnersFormHelper.value }}</p>
+  
+            <div class="control">
+              <button class="button is-primary is-outlined"
+                *ngIf="!stallionOwnersFormIsBeingModified && !aStallionOwnerIsBeingCreated" (click)="askForStallionOwnersFormEdit()">
+                <span class="icon">
+                  <i class="fas fa-pen-to-square"></i>
+                </span>
+                <span>Éditer</span>
+              </button>
+
+              <button class="button is-danger is-outlined ml-2"
+              *ngIf="!stallionOwnersFormIsBeingModified && !aStallionOwnerIsBeingCreated" (click)="triggerStallionOwnerDeletionModal()">
+              <span class="icon">
+                <i class="fas fa-pen-to-square"></i>
+              </span>
+              <span>Supprimer ce propriétaire</span>
+            </button>
+            </div>
+  
+            <div class="field is-grouped py-2">
+              <p class="control">
+                <button class="button is-primary" [ngClass]="stallionOwnersFormPostPutStatus['status'] == 'Loading' ? 'is-loading': ''"
+                  (click)="handleStallionOwnersValidation()"
+                  *ngIf="stallionOwnersFormIsBeingModified || aStallionOwnerIsBeingCreated">
+                  <span class="icon">
+                    <i class="fas fa-check"></i>
+                  </span>
+                  <span>{{!aStallionOwnerIsBeingCreated? 'Enregistrer les changements' : 'Enregistrer les
+                    informations'}}</span>
+                </button>
+              </p>
+              <p class="control">
+                <button class="button is-danger is-outlined" [ngClass]="stallionOwnersFormDeleteStatus['status'] == 'Loading' ? 'is-loading': ''"
+                (click)="cancelStallionOwnersFormEdition()"
+                *ngIf="stallionOwnersFormIsBeingModified && stallionOwnersFormPostPutStatus['status'] != 'Loading'">
+                  <span class="icon">
+                    <i class="fas fa-xmark"></i>
+                  </span>
+                  <span>Annuler</span>
+                </button>
+              </p>
+            </div>
+  
+          </div>
+
+        </div>  
+
+      </form>
+    </div>
+
+    <div class="field py-3">
       <h5 class="subtitle is-5 has-text-weight-bold mb-3">Photos</h5>
       <label class="label has-text-weight-normal has-text-grey-light">La première photo ajoutée, celle à l'extrémité gauche de la liste, sera considérée comme la photo principale.</label>
 
@@ -638,4 +1060,24 @@
       'is-danger': ['UserError', 'BackendError'].includes(stallionFormStatus['status'])
       }">{{ submitHelper.value }}</p>
   </form>
+
+  <div class="modal" [ngClass]="deleteStallionOwnerModalIsActive? 'is-active': ''">
+    <div class="modal-background" (click)="closeStallionOwnerDeletionModal()">
+    </div>
+    <div class="modal-content">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Êtes-vous sûr de vouloir supprimer ce propriétaire?</p>
+            <button class="delete" aria-label="close" (click)="closeStallionOwnerDeletionModal()"></button>
+        </header>
+        <section class="modal-card-body">
+            <p>Si vous souhaitez utiliser ce propriétaire à l'avenir, il faudra l'ajouter à nouveau.</p>
+        </section>
+        <footer class="modal-card-foot is-justify-content-center">
+            <div class="buttons">
+                <a class="button is-danger" (click)="confirmStallionOwnerDeletion()">Supprimer ce propriétaire</a>
+                <a class="button" (click)="closeStallionOwnerDeletionModal()">Annuler</a>
+            </div>
+        </footer>
+    </div>
+  </div>
 </section>

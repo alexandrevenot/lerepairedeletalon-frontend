@@ -8,7 +8,7 @@ export interface UserScore {
     lastname: string;
     score: number;
     nb_reviews: number;
-    owner_has_other_reviews: boolean;
+    handler_has_other_reviews: boolean;
 }
 
 @Injectable({"providedIn": "root"})

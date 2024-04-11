@@ -7,7 +7,7 @@
                     <h5 class="subtitle is-5 has-text-grey-light pb-0 mb-0">{{breed}}</h5>
                 </div>
                 <div class="column has-text-right">
-                    <p class="has-text-weight-semibold has-text-grey-light">Responsable: <span class="has-text-weight-semibold has-text-black">{{ownerName}}</span></p>
+                    <p class="has-text-weight-semibold has-text-grey-light">Responsable: <span class="has-text-weight-semibold has-text-black">{{handlerName}}</span></p>
                     <div class="is-flex is-align-items-center is-justify-content-flex-end">
                         <div class="ml-3 has-text-weight-bold" *ngIf="nbReviewsAsSeller === 0">
                             Aucune évaluation
@@ -18,13 +18,13 @@
                         <div class="ml-3 has-text-weight-bold is-underlined is-clickable" (click)="openReviewsForStallion()" *ngIf="nbReviewsAsSeller >= 2">
                             Voir {{nbReviewsAsSeller}} évaluations
                         </div>
-                        <div class="has-text-weight-bold ml-3" *ngIf="ownerHasOtherReviews || nbReviewsAsSeller > 0">
+                        <div class="has-text-weight-bold ml-3" *ngIf="handlerHasOtherReviews || nbReviewsAsSeller > 0">
                             ·
                         </div>
                         <span class="tag is-medium is-rounded has-text-weight-semibold has-text-white ml-3" style="background-color: #3B7C35;" *ngIf="nbReviewsAsSeller > 0">
                             {{score}}/5
                         </span>
-                        <div class="ml-3 has-text-weight-bold is-clickable is-underlined" *ngIf="nbReviewsAsSeller === 0 && ownerHasOtherReviews" (click)="openAllReviews()">
+                        <div class="ml-3 has-text-weight-bold is-clickable is-underlined" *ngIf="nbReviewsAsSeller === 0 && handlerHasOtherReviews" (click)="openAllReviews()">
                             Voir les évaluations de ce responsable avec d'autres étalons
                         </div>
                     </div>
