@@ -7,8 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "css-build": "node-sass --omit-source-map-url src/app/styles/sass/bulma-custom.scss src/app/styles/css/bulma-custom.css",
-    "css-watch": "npm run css-build -- --watch"
+    "build-bulma": "sass --load-path=node_modules src/app/styles/bulma-custom/custom.scss src/app/styles/bulma-custom/custom.css"
   },
   "private": true,
   "dependencies": {
@@ -21,8 +20,9 @@
     "@angular/platform-browser-dynamic": "^15.1.0",
     "@angular/router": "^15.1.0",
     "@stripe/stripe-js": "^3.0.6",
-    "bulma": "^0.9.4",
+    "bulma": "1.0.0",
     "rxjs": "~7.8.0",
+    "sass": "^1.75.0",
     "tslib": "^2.3.0",
     "webpack": "^5.88.1",
     "zone.js": "~0.12.0"

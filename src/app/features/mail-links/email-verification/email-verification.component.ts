@@ -22,12 +22,10 @@ export class EmailVerificationComponent implements OnInit{
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       this.code = params['code'];
-      console.log(this.code);
       if (this.code) {
         const body = {
           code: this.code
         }
-        console.log("j'appelle la route PUT");
         this.http.put(
           `${backendBaseUrl}/mailing/verify-email-address`,
           body

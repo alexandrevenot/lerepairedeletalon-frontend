@@ -6,6 +6,10 @@
 }
   
 .progress::-ms-fill {
-    background-color: #f7faf7 !important;
+    background-color: #ffffff !important;
     border: none;
+}
+
+.notification:hover {
+    background-color: #8f8586;
 }

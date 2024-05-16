@@ -25,7 +25,7 @@ export class LoginService {
     return throwError(() => new Error());
   }
 
-  postLogin(form: Record<string, string | null>, message: any, status: Record<string, backendInteractionStatus>) {
+  postLogin(form: Record<string, string | boolean | null>, message: any, status: Record<string, backendInteractionStatus>) {
     const body = {
       "email": form["email"],
       "password": form["password"]

@@ -18,12 +18,12 @@ export class RegisterService {
     return throwError(() => new Error());
   }
 
-  postRegister(form: Record<string, string | null>, message: FormControl, status: Record<string, backendInteractionStatus>) {
+  postRegister(form: Record<string, string | boolean | null>, message: FormControl, status: Record<string, backendInteractionStatus>) {
     const body = {
       "firstname": form["firstname"],
       "lastname": form["lastname"],
       "email": form["email"],
-      "phone_number": form["phoneNumber"]?.replace(/\s/g, ''),
+      "phone_number": form["phoneNumber"]?.toString().replace(/\s/g, ''),
       "password": form["password"]
     }
     return this.http.post(

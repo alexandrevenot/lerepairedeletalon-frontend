@@ -1,7 +1,6 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { CoverPageActionService, GetCheckout, GetSignUrl } from './cover-page-action.service';
+import { CoverPageActionService } from './cover-page-action.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { Router } from '@angular/router';
 import { Stripe, StripeEmbeddedCheckout, loadStripe } from '@stripe/stripe-js';
 import { stripePK } from 'src/environments/environment';
 import { firstValueFrom } from 'rxjs';
@@ -15,6 +14,8 @@ import { firstValueFrom } from 'rxjs';
 export class CoverPageActionComponent implements OnInit, OnDestroy {
   @Input() coverId: string = "";
   @Input() coverActionType: string = "";
+  @Input() signUrl: string = "";
+  @Input() paymentPart: string = "";
 
   // signature data
   public iframe_url: SafeUrl = "";
@@ -34,20 +35,13 @@ export class CoverPageActionComponent implements OnInit, OnDestroy {
 
   constructor(
     private coverPageActionService: CoverPageActionService,
-    private sanitizer: DomSanitizer,
-    private router: Router
+    private sanitizer: DomSanitizer
   ) {}
 
   async ngOnInit() {
     if (this.coverActionType == "signature") {
-      this.coverPageActionService.getSignUrl(this.coverId)
-      .subscribe({
-        next: (data: GetSignUrl) => {
-          this.iframe_url = this.sanitizer.bypassSecurityTrustResourceUrl(data.url);
-        },
-        error: () => {}
-      })
-    } else if (this.coverActionType == "payment") {
+      this.iframe_url = this.sanitizer.bypassSecurityTrustResourceUrl(this.signUrl + '?embedded=yes');
+    } else if (this.coverActionType == "payment" && ["advance", "balance"].includes(this.paymentPart)) {
       try {
         this.stripe = await loadStripe(stripePK);
       } catch {
@@ -55,26 +49,13 @@ export class CoverPageActionComponent implements OnInit, OnDestroy {
       }
 
       const fetchClientSecret = async () => {
-        const response = await firstValueFrom(this.coverPageActionService.getCheckout(this.coverId));
+        const response = await firstValueFrom(this.coverPageActionService.getCheckout(this.coverId, this.paymentPart));
         return response.client_secret;
       }
 
       this.checkout = await this.stripe?.initEmbeddedCheckout({fetchClientSecret});
       this.checkout?.mount('#checkout');
     }
-  }
-
-  pay() {
-    this.coverPageActionService.stepForwardPayment(this.coverId)
-    .subscribe({
-      next: () => {
-        this.router.navigate(
-          ['/dashboard'],
-          { queryParams: { coverId: this.coverId } }
-          );
-      },
-      error: () => {}
-    })
   }
 
   async ngOnDestroy() {

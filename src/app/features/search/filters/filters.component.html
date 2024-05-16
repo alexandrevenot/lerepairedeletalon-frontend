@@ -164,7 +164,7 @@
 
                 <div class="dropdown is-active" *ngIf="displayGeolocDd">
                     <div class="dropdown-menu" id="dropdown-menu" role="menu">
-                        <div class="dropdown-content" style="background-color: #f7faf7;">
+                        <div class="dropdown-content">
                             <a class="dropdown-item" *ngFor="let index of getNumberArrayF(locationTagValues.length)"
                             (click)="confirmLocationValue(index)">
                                 {{locationTagValues[index]}}

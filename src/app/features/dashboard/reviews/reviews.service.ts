@@ -1,6 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { catchError, throwError } from "rxjs";
+import { backendBaseUrl } from "src/environments/environment";
 
 export interface Review {
     stallion_name: string;
@@ -34,7 +35,7 @@ export class ReviewsService {
         .set('cover_pov', coverPov);
 
         return this.http.get<Reviews>(
-            `http://localhost:3001/users/reviews/${userId}`,
+            `${backendBaseUrl}/users/reviews/${userId}`,
             { params }
         ).pipe(
             catchError(() => {

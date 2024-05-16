@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { catchError, throwError } from 'rxjs';
+import { backendBaseUrl } from 'src/environments/environment';
 
 export interface coverItem {
     id: string;
@@ -20,7 +21,6 @@ export class MyCoversService {
     constructor(private http: HttpClient) {}
 
     handleError(error: HttpErrorResponse) {
-        console.log(error);
         return throwError(() => new Error());
       }
 
@@ -30,7 +30,7 @@ export class MyCoversService {
         .set('point_of_view', pov)
 
         return this.http.get<coversData>(
-            "http://localhost:3001/covers/cover-group",
+            `${backendBaseUrl}/covers/cover-group`,
             { params }
         ).pipe(
             catchError((error: HttpErrorResponse) => {

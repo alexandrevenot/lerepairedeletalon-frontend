@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { throwError, catchError } from 'rxjs';
+import { backendBaseUrl } from 'src/environments/environment';
 
 interface getStallionsListItem {
     id: string;
@@ -25,7 +26,7 @@ export class MyStallionsListService {
 
     getStallionsList() {
         return this.http.get<getStallionsListArray>(
-            "http://localhost:3001/stallions/my-stallions"
+            `${backendBaseUrl}/stallions/my-stallions`
         ).pipe(
             catchError((error: HttpErrorResponse) => {
                 return this.handleError(error);

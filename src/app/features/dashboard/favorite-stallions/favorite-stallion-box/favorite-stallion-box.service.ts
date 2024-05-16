@@ -1,6 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { catchError, throwError } from "rxjs";
+import { backendBaseUrl } from "src/environments/environment";
 
 export interface FavoriteStallionprofile {
     name: string;
@@ -22,7 +23,7 @@ export class FavoriteStallionBoxService {
         .set('mode', 'for_favorite');
 
         return this.http.get<FavoriteStallionprofile>(
-            `http://localhost:3001/stallions/stallion/${stallionId}`,
+            `${backendBaseUrl}/stallions/stallion/${stallionId}`,
             {params}
         ).pipe(
             catchError((error: HttpErrorResponse) => {

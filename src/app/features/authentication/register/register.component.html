@@ -68,6 +68,10 @@
       </div>
 
       <div class="field">
+        <label class="checkbox mb-4">
+          <input type="checkbox" formControlName="cgu"/>
+          En cochant cette case, j'accepte les <a (click)="navigateTo('cgu')">Conditions Générales d'Utilisation</a>.
+        </label>
         <div class="control">
           <button class="button is-primary" type="submit"
             [ngClass]="status['status'] == 'Loading' ? 'is-loading' : ''">

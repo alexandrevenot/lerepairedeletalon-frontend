@@ -3,12 +3,17 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { RegisterService } from './register.service';
 import { Router } from "@angular/router";
 import { backendInteractionStatus } from 'src/environments/environment';
+import { LoginService, loginData } from '../login/login.service';
+import { NavbarService } from 'src/app/layout/navbar/navbar.service';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css'],
-  providers: [RegisterService]
+  providers: [
+    RegisterService,
+    LoginService
+  ]
 })
 
 export class RegisterComponent {
@@ -18,6 +23,7 @@ export class RegisterComponent {
     email: new FormControl('', Validators.required),
     phoneNumber: new FormControl('', Validators.required),
     password: new FormControl('', Validators.required),
+    cgu: new FormControl(false)
   });
 
   public message = new FormControl('');
@@ -25,6 +31,8 @@ export class RegisterComponent {
 
   constructor(
     private registerService: RegisterService,
+    private loginService: LoginService,
+    private navbarService: NavbarService,
     private router: Router
   ) {}
 
@@ -57,18 +65,39 @@ export class RegisterComponent {
       return
     }
 
+    const cguValue = this.registerForm.value.cgu;
+    if (!cguValue) {
+      this.message.setValue("Vous devez accepter les Conditions Générales d'Utilisation.")
+      this.status['status'] = backendInteractionStatus.UserError;
+      return
+    }
+
+    const registerFormRawValue = this.registerForm.getRawValue();
     this.status['status'] = backendInteractionStatus.Loading;
     this.registerService.postRegister(
-      this.registerForm.getRawValue(),
+      registerFormRawValue,
       this.message,
       this.status
     )
     .subscribe({
       next: () => {
         this.message.setValue('Compte créé avec succès.');
-        setTimeout(() => {this.router.navigate(['/login'])}, 2000);
+        this.loginService.postLogin(registerFormRawValue, this.message, this.status)
+        .subscribe({
+          next: (data: loginData) => {
+            localStorage.setItem("accessToken", data.accessToken);
+            localStorage.setItem("refreshToken", data.refreshToken);
+            this.message.setValue('Connexion réussie.');
+            this.navbarService.loadNavbar();
+            setTimeout(() => {this.router.navigate(['/search'])}, 1000);
+          }
+        })
       },
       error: () => {}
     })
+  }
+
+  navigateTo(path: string) {
+    this.router.navigate([`/${path}`]);
   }
 }

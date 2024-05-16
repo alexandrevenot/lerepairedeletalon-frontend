@@ -123,7 +123,7 @@
         </div>
       </div>
 
-      <form class="box mt-6" style="background-color: #f7faf7;" [formGroup]="stallionOwnersForm" *ngIf="displayStallionOwnerForm">
+      <form class="box mt-6" [formGroup]="stallionOwnersForm" *ngIf="displayStallionOwnerForm">
 
         <div class="columns is-align-items-center">
           <div class="column is-3 has-text-right">
@@ -617,7 +617,7 @@
       </div>
       <div class="dropdown is-active" *ngIf="displayGeolocDd">
         <div class="dropdown-menu" id="dropdown-menu" role="menu">
-          <div class="dropdown-content" style="background-color: #f7faf7;">
+          <div class="dropdown-content">
             <a class="dropdown-item" *ngFor="let index of getNumberArray(locationTagValues.length)"
               (click)="confirmLocationValue(index)">
               {{locationTagValues[index]}}
@@ -633,64 +633,78 @@
 
     <div class="columns is-flex is-align-items-center">
       <div class="column">
+        <label class="label has-text-weight-semibold has-text-grey-light">Père</label>
         <div class="control">
-          <input type="text" class="input" placeholder="Père" formControlName="p1">
+          <input type="text" class="input" placeholder="Adolbert" formControlName="p1">
         </div>
       </div>
 
       <div class="column">
-        <div class="control my-3">
-          <input type="text" class="input" placeholder="Grand-père" formControlName="p3">
+        <label class="label has-text-weight-semibold has-text-grey-light">Père</label>
+        <div class="control mb-6 pb-5">
+          <input type="text" class="input" placeholder="Chlodomir" formControlName="p3">
         </div>
-        <div class="control my-3">
-          <input type="text" class="input" placeholder="Grand-mère" formControlName="p4">
+        <label class="label has-text-weight-semibold has-text-grey-light mt-6 pt-5">Mère</label>
+        <div class="control">
+          <input type="text" class="input" placeholder="Donaldine" formControlName="p4">
         </div>
       </div>
 
       <div class="column">
-        <div class="control my-3">
-          <input type="text" class="input" placeholder="Arrière-grand-père" formControlName="p7">
+        <label class="label has-text-weight-semibold has-text-grey-light">Père</label>
+        <div class="control mb-2">
+          <input type="text" class="input" placeholder="Gondolfus" formControlName="p7">
         </div>
-        <div class="control my-3">
-          <input type="text" class="input" placeholder="Arrière-grand-mère" formControlName="p8">
+        <label class="label has-text-weight-semibold has-text-grey-light">Mère</label>
+        <div class="control mb-3">
+          <input type="text" class="input" placeholder="Hildégonde" formControlName="p8">
         </div>
-        <div class="control my-3">
-          <input type="text" class="input" placeholder="Arrière-grand-père" formControlName="p9">
+        <label class="label has-text-weight-semibold has-text-grey-light">Père</label>
+        <div class="control mb-2">
+          <input type="text" class="input" placeholder="Imeldard" formControlName="p9">
         </div>
-        <div class="control my-3">
-          <input type="text" class="input" placeholder="Arrière-grand-mère" formControlName="p10">
+        <label class="label has-text-weight-semibold has-text-grey-light">Mère</label>
+        <div class="control">
+          <input type="text" class="input" placeholder="Jausmonde" formControlName="p10">
         </div>
       </div>
     </div>
 
     <div class="columns is-flex is-align-items-center">
       <div class="column">
+        <label class="label has-text-weight-semibold has-text-grey-light">Mère</label>
         <div class="control">
-          <input type="text" class="input" placeholder="Mère" formControlName="p2">
+          <input type="text" class="input" placeholder="Berthilde" formControlName="p2">
         </div>
       </div>
 
       <div class="column">
-        <div class="control my-3">
-          <input type="text" class="input" placeholder="Grand-père" formControlName="p5">
+        <label class="label has-text-weight-semibold has-text-grey-light">Père</label>
+        <div class="control mb-6 pb-5">
+          <input type="text" class="input" placeholder="Ephanuel" formControlName="p5">
         </div>
-        <div class="control my-3">
-          <input type="text" class="input" placeholder="Grand-mère" formControlName="p6">
+        <label class="label has-text-weight-semibold has-text-grey-light mt-6 pt-5">Mère</label>
+        <div class="control">
+          <input type="text" class="input" placeholder="Florenciette" formControlName="p6">
         </div>
       </div>
 
       <div class="column">
-        <div class="control my-3">
-          <input type="text" class="input" placeholder="Arrière-grand-père" formControlName="p11">
+        <label class="label has-text-weight-semibold has-text-grey-light">Père</label>
+        <div class="control mb-2">
+          <input type="text" class="input" placeholder="Kléber" formControlName="p11">
         </div>
-        <div class="control my-3">
-          <input type="text" class="input" placeholder="Arrière-grand-mère" formControlName="p12">
+        <label class="label has-text-weight-semibold has-text-grey-light">Mère</label>
+        <div class="control mb-3">
+          <input type="text" class="input" placeholder="Lézéanne" formControlName="p12">
         </div>
-          <div class="control my-3">
-          <input type="text" class="input" placeholder="Arrière-grand-père" formControlName="p13">
+        <label class="label has-text-weight-semibold has-text-grey-light">Père</label>
+        <div class="control mb-2">
+          <input type="text" class="input" placeholder="Méricius" formControlName="p13">
         </div>
-          <div class="control my-3">
-          <input type="text" class="input" placeholder="Arrière-grand-mère" formControlName="p14">
+        <label class="label has-text-weight-semibold has-text-grey-light">Mère</label>
+        <div class="contro">
+          <input type="text" class="input" placeholder="Néphélie" formControlName="p14">
         </div>
       </div>
     </div>
@@ -906,7 +920,7 @@
       Commencez par sélectionner un type de saillie disponible pour votre étalon.
     </label>
 
-    <div class="box py-4" style="background-color: #f7faf7;" *ngFor="let coverType of getSelectedCheckboxes('coverTypes')">
+    <div class="box py-4" *ngFor="let coverType of getSelectedCheckboxes('coverTypes')">
       <label class="label has-text-weight-bold">Si l'acheteur choisit une {{availableCoverTypes[coverType]}} :</label>
 
       <div class="field pt-4">

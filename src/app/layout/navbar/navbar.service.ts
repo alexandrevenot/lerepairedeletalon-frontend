@@ -1,6 +1,7 @@
 import { Injectable, Output, EventEmitter } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, of } from 'rxjs';
+import { backendBaseUrl } from 'src/environments/environment';
 
 interface returnUser {
     firstname: string;
@@ -23,7 +24,7 @@ export class NavbarService {
 
     public getUser() {
         return this.http.get<returnUser>(
-            'http://localhost:3001/users/user-name'
+            `${backendBaseUrl}/users/user-name`
         ).pipe(
             catchError(() => {
                 return of<returnUser>({firstname: "", lastname: ""});

@@ -2,7 +2,7 @@
 
 <section class="section">
   <div class="container">
-    <form [formGroup]="legalIdentity0Form"  class="box" style="background-color: #f7faf7;">
+    <form [formGroup]="legalIdentity0Form"  class="box">
       <h4 class="subtitle is-4 has-text-weight-bold pb-4 has-text-centered">Identité, mot de passe et coordonnées</h4>
 
       <div class="columns">
@@ -57,7 +57,7 @@
 
     </form>
 
-    <form [formGroup]="legalIdentity1Form" class="box" style="background-color: #f7faf7;">
+    <form [formGroup]="legalIdentity1Form" class="box">
       <h4 class="subtitle is-4 has-text-weight-bold pb-1 mb-1 has-text-centered">Complément d'identité: niveau 1
         <span class="tag has-text-weight-normal is-medium mb-1 ml-3" [ngClass]="(legalIdentityLevel > 0)? 'is-success':''">
           {{(legalIdentityLevel > 0)? 'Terminé': 'Non renseigné'}}
@@ -402,7 +402,7 @@
       </div>
     </form>
 
-    <form [formGroup]="legalIdentity2Form" class="box" style="background-color: #f7faf7;">
+    <form [formGroup]="legalIdentity2Form" class="box">
       <h4 class="subtitle is-4 has-text-weight-bold pb-1 mb-1 has-text-centered">Complément d'identité: niveau 2
         <span class="tag has-text-weight-normal is-medium mb-1 ml-3" [ngClass]="{
           '': userLegalIdentity2Status == 'none',
@@ -741,55 +741,59 @@
 
     </form>
 
-    <div class="box" style="background-color: #f7faf7;">
+    <div class="box">
       <h4 class="subtitle is-4 has-text-weight-bold pb-4 has-text-centered">Évaluations</h4>
-      <div class="tile is-ancestor">
-        <div class="tile">
-          <div class="tile is-parent is-vertical is-8">
-            <article class="tile is-child notification is-clickable" style="color: #ffffff; background-color: #3B7C35;"
-            (click)="handleClickReviews('received', 'buyer')">
-              <div class="columns">
-                <div class="column">
-                  <p class="title">Reçues</p>
-                  <p class="subtitle">en tant qu'acheteur</p>
-                </div>
-                <div class="column has-text-right">
-                  <span class="tag is-large is-rounded has-text-weight-semibold">{{buyerScore? buyerScore: "-"}}/5</span>
-                  <p class="subtitle">{{nbReviewsAsBuyer > 0? nbReviewsAsBuyer: 'Aucune'}} évaluation{{nbReviewsAsBuyer >= 2? "s": ""}}</p>
-                </div>
+      <div class="grid">
+        <div class="cell">
+          <article class="notification is-clickable"
+          (click)="handleClickReviews('received', 'buyer')">
+            <div class="columns">
+              <div class="column">
+                <p class="title has-text-weight-bold">Reçues</p>
+                <p class="subtitle">en tant qu'acheteur</p>
               </div>
-            </article>
-            <article class="tile is-child notification is-clickable is-items-align-end" style="color: #ffffff; background-color: #3B7C35;"
-            (click)="handleClickReviews('received', 'seller')">
-              <div class="columns">
-                <div class="column">
-                  <p class="title">Reçues</p>
-                  <p class="subtitle">en tant que vendeur</p>
-                </div>
-                <div class="column has-text-right">
-                  <span class="tag is-large is-rounded has-text-weight-semibold">{{sellerScore? sellerScore: "-"}}/5</span>
-                  <p class="subtitle">{{nbReviewsAsSeller > 0? nbReviewsAsSeller: 'Aucune'}} évaluation{{nbReviewsAsSeller >= 2? "s": ""}}</p>
-                </div>
+              <div class="column has-text-right">
+                <span class="tag is-large is-rounded has-text-weight-semibold">{{buyerScore? buyerScore: "-"}}/5</span>
+                <p class="subtitle">{{nbReviewsAsBuyer > 0? nbReviewsAsBuyer: 'Aucune'}} évaluation{{nbReviewsAsBuyer >= 2? "s": ""}}</p>
               </div>
-            </article>
-          </div>
-          <div class="tile is-parent is-vertical">
-            <article class="tile is-child notification is-clickable" style="color: #ffffff; background-color: #7c5135;"
-            (click)="handleClickReviews('given', 'buyer')">
-              <p class="title">Données</p>
-              <p class="subtitle">en tant qu'acheteur</p>
-            </article>
-            <article class="tile is-child notification is-clickable" style="color: #ffffff; background-color: #7c5135;"
-            (click)="handleClickReviews('given', 'seller')">
-              <p class="title">Données</p>
-              <p class="subtitle">en tant que vendeur</p>
-            </article>
-          </div>
+            </div>
+          </article>
+        </div>
+        <div class="cell">
+          <article class="notification is-clickable is-items-align-end"
+          (click)="handleClickReviews('received', 'seller')">
+            <div class="columns">
+              <div class="column">
+                <p class="title has-text-weight-bold">Reçues</p>
+                <p class="subtitle">en tant que vendeur</p>
+              </div>
+              <div class="column has-text-right">
+                <span class="tag is-large is-rounded has-text-weight-semibold">{{sellerScore? sellerScore: "-"}}/5</span>
+                <p class="subtitle">{{nbReviewsAsSeller > 0? nbReviewsAsSeller: 'Aucune'}} évaluation{{nbReviewsAsSeller >= 2? "s": ""}}</p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+      <div class="grid">
+        <div class="cell">
+          <article class="notification is-clickable"
+          (click)="handleClickReviews('given', 'buyer')">
+            <p class="title has-text-weight-bold">Données</p>
+            <p class="subtitle">en tant qu'acheteur</p>
+          </article>
+        </div>
+        <div class="cell">
+          <article class="notification is-clickable"
+          (click)="handleClickReviews('given', 'seller')">
+            <p class="title has-text-weight-bold">Données</p>
+            <p class="subtitle">en tant que vendeur</p>
+          </article>
         </div>
       </div>
     </div>
 
-    <div class="box is-flex is-flex-direction-column is-align-items-center" style="background-color: #f7faf7;">
+    <div class="box is-flex is-flex-direction-column is-align-items-center">
       <h4 class="subtitle is-4 has-text-weight-bold pb-4">Suppression du compte</h4>
 
       <button class="button is-danger" [ngClass]="accountDeletionStatus['status'] == 'Loading'? 'is-loading': ''"
