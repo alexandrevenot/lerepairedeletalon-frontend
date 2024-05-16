@@ -100,28 +100,26 @@ export class StallionProfileComponent implements OnInit{
       mareNSIRE: ['', Validators.required],
       mareBreed: ['', Validators.required],
       selectedCoverType: ['', Validators.required],
-      messageToVendor: ['', Validators.required]
+      messageToSeller: ['', Validators.required],
+      marePregnancyHistory: ['', Validators.required]
     });
 
     this.sendFormMessage = new FormControl('');
 
-    let sCTCtrl = this.askForMatingForm.get('selectedCoverType')
+    this.askForMatingForm.get('selectedCoverType')?.valueChanges.subscribe(value => {
+      this.selectedCoverTypeValue = value;
 
-    if (sCTCtrl) {
-      sCTCtrl.valueChanges.subscribe(value => {
-        this.selectedCoverTypeValue = value;
+      this.pricingService.getCheckout(this.getPriceOfCoverType(value))
+      .subscribe({
+        next: (data: checkoutResponse) => {
+          this.subtotal = data.subtotal;
+          this.serviceFees = data.service_fees;
+          this.total = data.total;
+        },
+        error: () => {}
+      })
+    });
 
-        this.pricingService.getCheckout(this.getPriceOfCoverType(value))
-        .subscribe({
-          next: (data: checkoutResponse) => {
-            this.subtotal = data.subtotal;
-            this.serviceFees = data.service_fees;
-            this.total = data.total;
-          },
-          error: () => {}
-        })
-      });
-    }
 
     this.route.queryParams.subscribe(params => {
       const stallionId = params['id'];
@@ -166,6 +164,9 @@ export class StallionProfileComponent implements OnInit{
             if (value) {
               this.coverTypes.push(key);
             }
+          }
+          if (this.coverTypes.length === 1) {
+            this.askForMatingForm.get('selectedCoverType')?.setValue(this.coverTypes[0]);
           }
           for (const parent of this.pedigree) {
             if (parent != "") {
@@ -282,7 +283,7 @@ export class StallionProfileComponent implements OnInit{
   }
 
   checkFieldsAndOpenModal() {
-    if (!this.askForMatingForm.valid || (['iart', 'iac'].includes(this.selectedCoverTypeValue) && this.askForMatingForm.get('providedCoverPlace')?.getRawValue() == '')) {
+    if (!this.askForMatingForm.valid) {
       this.demandStatus['status'] = backendInteractionStatus.UserError;
       this.sendFormMessage.setValue("Remplissez s'il vous plaît tous les champs du formulaire de demande.");
       return
@@ -292,9 +293,13 @@ export class StallionProfileComponent implements OnInit{
 
   sendDemandClick() {
     this.closeModal();
+    if (this.itemId === null) {
+      return
+    }
     this.demandStatus['status'] = backendInteractionStatus.Loading;
-    this.stallionProfileService.sendDemandToVendor(
+    this.stallionProfileService.sendDemandToSeller(
       this.askForMatingForm.getRawValue(),
+      this.itemId,
       this.handlerId,
       this.nSire,
       this.demandStatus,

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, throwError } from 'rxjs';
+import { backendBaseUrl } from 'src/environments/environment';
 
 export interface FavoriteStallions {
     favorite_stallions: Array<string>
@@ -18,7 +19,7 @@ export class FavoriteStallionsService {
 
     getFavorites() {
         return this.http.get<FavoriteStallions>(
-            "http://localhost:3001/stallions/favorites"
+            `${backendBaseUrl}/stallions/favorites`
         ).pipe(
             catchError((error: HttpErrorResponse) => {
                 return this.handleError(error);
@@ -28,7 +29,7 @@ export class FavoriteStallionsService {
 
     addToFavorites(stallionId: string) {
         return this.http.post(
-            `http://localhost:3001/stallions/favorites/${stallionId}`,
+            `${backendBaseUrl}/stallions/favorites/${stallionId}`,
             {}
         ).pipe(
             catchError((error: HttpErrorResponse) => {
@@ -39,7 +40,7 @@ export class FavoriteStallionsService {
 
     removeFromFavorites(stallionId: string) {
         return this.http.delete(
-            `http://localhost:3001/stallions/favorites/${stallionId}`
+            `${backendBaseUrl}/stallions/favorites/${stallionId}`
         ).pipe(
             catchError((error: HttpErrorResponse) => {
                 return this.handleError(error);

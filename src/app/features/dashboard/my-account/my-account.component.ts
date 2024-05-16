@@ -616,6 +616,7 @@ export class MyAccountComponent implements OnInit{
       // account, with proof of company id
       try {
         const accountResult = await this.myAccountService.createStripeAccountTokenForCompany(
+          legalIdentity0FormValue,
           legalIdentity1FormValue,
           proofOfCompanyId
         );

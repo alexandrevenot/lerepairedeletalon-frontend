@@ -203,12 +203,13 @@ export class MyAccountService {
     }
 
     // POST STRIPE ACCOUNT
-    createStripeAccountTokenForCompany(form1: Record<any, any>, documentFrontId: any) {
+    createStripeAccountTokenForCompany(form0: Record<any, any>, form1: Record<any, any>, documentFrontId: any) {
         let body: any = {
             business_type: "company",
             tos_shown_and_accepted: true,
             company: {
                 name: form1['companyName'],
+                phone: '+33' + form0['phoneNumber'].slice(1),
                 tax_id: form1['siren'],
                 address: {
                   line1: form1['headOfficeAddressLine1'],
@@ -248,6 +249,8 @@ export class MyAccountService {
             individual: {
                 first_name: form0["firstname"],
                 last_name: form0["lastname"],
+                phone: '+33' + form0['phoneNumber'].slice(1),
+                email: form0['email'],
                 dob: {
                     day: day,
                     month: month,
@@ -288,6 +291,8 @@ export class MyAccountService {
             person: {
                 first_name: form0['firstname'],
                 last_name: form0['lastname'],
+                phone: '+33' + form0['phoneNumber'].slice(1),
+                email: form0['email'],
                 address: {
                     line1: form2['addressLine1'],
                     city: form2['addressCity'],

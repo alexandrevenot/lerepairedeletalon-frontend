@@ -4,7 +4,7 @@
             <div class="columns">
                 <div class="column is-4">
                     <h4 class="subtitle is-4 has-text-weight-bold mb-3">{{name}}</h4>
-                    <h5 class="subtitle is-5 has-text-grey-light pb-0 mb-0">{{breed}}</h5>
+                    <h5 class="subtitle is-5 has-text-grey-light has-text-weight-semibold pb-0 mb-0">{{breed}}</h5>
                 </div>
                 <div class="column has-text-right">
                     <p class="has-text-weight-semibold has-text-grey-light">Responsable: <span class="has-text-weight-semibold has-text-black">{{handlerName}}</span></p>
@@ -83,40 +83,78 @@
             <h5 class="subtitle is-5 has-text-weight-bold">Pedigree</h5>
             <div class="columns is-flex is-align-items-center">
                 <div class="column">
-                    <div class="control my-3">
+                    <label class="label has-text-weight-semibold has-text-grey-light">Père</label>
+                    <div class="control">
                         <input class="input" value="{{pedigree[0]}}" readonly>
                     </div>
                 </div>
           
                 <div class="column">
-                    <div class="control py-5" *ngFor="let x of getNumberArray(2)">
-                        <input class="input" value="{{pedigree[2+x]}}" readonly>
+                    <label class="label has-text-weight-semibold has-text-grey-light">Père</label>
+                    <div class="control mb-6 pb-5">
+                        <input class="input" value="{{pedigree[2]}}" readonly>
+                    </div>
+                    <label class="label has-text-weight-semibold has-text-grey-light mt-6 pt-5">Mère</label>
+                    <div class="control">
+                        <input class="input" value="{{pedigree[3]}}" readonly>
                     </div>
                 </div>
           
                 <div class="column">
-                    <div class="control my-3" *ngFor="let x of getNumberArray(4)">
-                        <input class="input" value="{{pedigree[6+x]}}" readonly>
+                    <label class="label has-text-weight-semibold has-text-grey-light">Père</label>
+                    <div class="control mb-2">
+                        <input class="input" value="{{pedigree[6]}}" readonly>
+                    </div>
+                    <label class="label has-text-weight-semibold has-text-grey-light">Mère</label>
+                    <div class="control mb-3">
+                        <input class="input" value="{{pedigree[7]}}" readonly>
+                    </div>
+                    <label class="label has-text-weight-semibold has-text-grey-light">Père</label>
+                    <div class="control mb-2">
+                        <input class="input" value="{{pedigree[8]}}" readonly>
+                    </div>
+                    <label class="label has-text-weight-semibold has-text-grey-light">Mère</label>
+                    <div class="control">
+                        <input class="input" value="{{pedigree[9]}}" readonly>
                     </div>
                 </div>
               </div>
 
             <div class="columns is-flex is-align-items-center">
               <div class="column">
-                <div class="control my-3">
+                <label class="label has-text-weight-semibold has-text-grey-light">Mère</label>
+                <div class="control">
                     <input class="input" value="{{pedigree[1]}}" readonly>
                 </div>
             </div>
       
             <div class="column">
-                <div class="control py-5" *ngFor="let x of getNumberArray(2)">
-                    <input class="input" value="{{pedigree[4+x]}}" readonly>
+                <label class="label has-text-weight-semibold has-text-grey-light">Père</label>
+                <div class="control mb-6 pb-5">
+                    <input class="input" value="{{pedigree[4]}}" readonly>
+                </div>
+                <label class="label has-text-weight-semibold has-text-grey-light mt-6 pt-5">Mère</label>
+                <div class="control">
+                    <input class="input" value="{{pedigree[5]}}" readonly>
                 </div>
             </div>
       
             <div class="column">
-                <div class="control my-3" *ngFor="let x of getNumberArray(4)">
-                    <input class="input" value="{{pedigree[10+x]}}" readonly>
+                <label class="label has-text-weight-semibold has-text-grey-light">Père</label>
+                <div class="control mb-2">
+                    <input class="input" value="{{pedigree[10]}}" readonly>
+                </div>
+                <label class="label has-text-weight-semibold has-text-grey-light">Mère</label>
+                <div class="control mb-3">
+                    <input class="input" value="{{pedigree[11]}}" readonly>
+                </div>
+                <label class="label has-text-weight-semibold has-text-grey-light">Père</label>
+                <div class="control mb-2">
+                    <input class="input" value="{{pedigree[12]}}" readonly>
+                </div>
+                <label class="label has-text-weight-semibold has-text-grey-light">Mère</label>
+                <div class="control">
+                    <input class="input" value="{{pedigree[13]}}" readonly>
                 </div>
             </div>
           </div>
@@ -194,7 +232,7 @@
 
         <div class="content py-4">
             <h5 class="subtitle is-5 has-text-weight-bold">Types de saillies proposés et conditions</h5>
-            <div class="box" style="background-color: #f7faf7;" *ngFor="let coverType of coverTypes">
+            <div class="box" *ngFor="let coverType of coverTypes">
                 <div class="content">
                     <span class="tag is-success is-medium">{{availableCoverTypes[coverType]}}</span>
                 </div>
@@ -247,7 +285,7 @@
 
 <section class="section">
     <div class="container">
-        <form [formGroup]="askForMatingForm" class="box" style="background-color: #f7faf7;">
+        <form [formGroup]="askForMatingForm" class="box">
             <h4 class="subtitle is-4 has-text-weight-bold pb-4 has-text-centered">Formulaire de demande de saillie</h4>
 
             <div class="columns is-align-items-end">
@@ -283,6 +321,20 @@
                 </div>
             </div>
 
+            <div class="columns is-align-items-start">
+                <div class="column is-2 has-text-right">
+                    <label class="label">Antécédents de gestations</label>
+                </div>
+
+                <div class="column">
+                    <div class="field">
+                        <div class="control">
+                          <textarea class="textarea" placeholder="Nombre de saillies antérieures, fertilité, antécédents de gestations gémellaires..." formControlName="marePregnancyHistory"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="columns is-align-items-center">
                 <div class="column is-2 has-text-right">
                     <label class="label">Type de saillie souhaité</label>
@@ -308,7 +360,7 @@
                 <div class="column">
                     <div class="field">
                         <div class="control">
-                          <textarea class="textarea" placeholder="Bonjour, cet étalon m'intéresse..." formControlName="messageToVendor"></textarea>
+                          <textarea class="textarea" placeholder="Bonjour, cet étalon m'intéresse..." formControlName="messageToSeller"></textarea>
                         </div>
                     </div>
                 </div>
@@ -378,7 +430,7 @@
             <button class="delete" aria-label="close" (click)="closeModal()"></button>
         </header>
         <section class="modal-card-body">
-            <p>Le nom de la jument, son numéro SIRE ainsi que ses origines apparaîtront dans le contrat tels que vous les avez rentrés.</p>
+            <p>Le nom de la jument, son numéro SIRE, ses origines ainsi que ses antécédents de gestations apparaîtront dans le contrat tels que vous les avez rentrés.</p>
             <p>Vérifiez bien leur orthographe, ils ne seront plus modifiables par la suite, ou bien il faudra refaire une demande de saillie.</p>
         </section>
         <footer class="modal-card-foot is-justify-content-center">

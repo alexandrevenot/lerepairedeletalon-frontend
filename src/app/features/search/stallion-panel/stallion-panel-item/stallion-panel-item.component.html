@@ -7,7 +7,7 @@
           [style]="item.id && isFavorite? 'color: #DC143C;': 'color: #ffffff;'"></i>
       </span>
 </div>
-<div class="card-content px-0 pt-2 is-clickable" style="background-color: #f7faf7;" (click)="handleClick()">
+<div class="card-content px-0 pt-2 is-clickable" (click)="handleClick()">
   <p class="has-text-weight-bold py-0 my-0">{{item.name}}</p>
 
   <div class="columns py-0 my-0">

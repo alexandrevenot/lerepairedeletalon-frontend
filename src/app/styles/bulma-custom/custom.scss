@@ -1,0 +1,15 @@
+$primary: #3B7C35;
+
+@use "bulma/sass" with (
+    $primary: $primary,
+    $link: $primary,
+    $success: #82c47c,
+    $danger: #964446,
+    $warning: #ccca68,
+    $navbar-item-img-max-height: 80px,
+    $text: #3a3637,
+    $navbar-tab-hover-background-color: #ffffff,
+    $family-primary: "Oxygen"
+);
+
+@import url('https://fonts.googleapis.com/css2?family=Oxygen:wght@300;400;700&display=swap');

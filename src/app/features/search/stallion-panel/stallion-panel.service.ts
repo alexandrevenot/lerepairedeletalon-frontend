@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { catchError, throwError } from 'rxjs';
 import { updateFilterData } from '../filters/filters.component'
+import { backendBaseUrl } from 'src/environments/environment';
 
 export interface searchItem {
     id: string;
@@ -91,7 +92,7 @@ export class StallionPanelService {
     }
 
     return this.http.get<searchData>(
-        "http://localhost:3001/stallions/search",
+        `${backendBaseUrl}/stallions/search`,
         { params }
     ).pipe(
         catchError((error: HttpErrorResponse) => {

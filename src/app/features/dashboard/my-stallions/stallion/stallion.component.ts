@@ -5,6 +5,7 @@ import { getAvailableBreeds, breedsRecord, availableCoverTypes, coverPlaceNames,
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { GeolocationService, getCityData, getCityItem } from 'src/app/core/geolocation/geolocation.service';
 import { Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 
 export interface StallionComponentInput {
   mode: 'edition' | 'creation';
@@ -119,7 +120,7 @@ export class StallionComponent implements OnInit {
     private router: Router
     ) {}
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.stallionComponentInput.mode === 'edition' ? this.title = "Éditer le profil d'un étalon" : this.title = "Ajouter un nouvel étalon";
 
     this.stallionForm = this.formBuilder.group({
@@ -237,7 +238,7 @@ export class StallionComponent implements OnInit {
       error: () => {}
     });
 
-    this.getStallionOwners();
+    await this.getStallionOwners();
 
     if (this.stallionComponentInput.mode === 'edition') {
       this.fetchStallionProfile();
@@ -342,19 +343,18 @@ export class StallionComponent implements OnInit {
   }
 
   // stallion owners
-  getStallionOwners() {
-    this.stallionService.getStallionOwners()
-    .subscribe({
-      next: (data: StallionOwners) => {
-        for (let item of data.stallion_owners) {
-          const nameInSelect = item.firstname + ' ' + item.lastname;
-          this.availableStallionOwnerIds.push(item.id);
-          this.stallionOwnerIdToName[item.id] = nameInSelect;
-          this.availableStallionOwners[item.id] = item;
-        }
-      },
-      error: () => {}
-    })
+  async getStallionOwners() {
+    try {
+      const data: StallionOwners = await firstValueFrom(this.stallionService.getStallionOwners())
+      for (let item of data.stallion_owners) {
+        const nameInSelect = item.firstname + ' ' + item.lastname;
+        this.availableStallionOwnerIds.push(item.id);
+        this.stallionOwnerIdToName[item.id] = nameInSelect;
+        this.availableStallionOwners[item.id] = item;
+      }
+    } catch {
+
+    }
   }
 
   createStallionOwnerItemFromForm(id: string, formValue: any, businessType: string) {

@@ -23,6 +23,25 @@
 
         </div>
 
+        <div class="columns content is-align-items-end">
+
+            <div class="column">
+                <label class="label has-text-weight-semibold has-text-grey-light">Robe </label>
+                <input class="input is-primary" [value]="stallionColor" readonly>
+            </div>
+
+            <div class="column">
+                <label class="label has-text-weight-semibold has-text-grey-light">Taille au garrot</label>
+                <input class="input is-primary" [value]="stallionHeight + ' cm'" readonly>
+            </div>
+
+            <div class="column">
+                <label class="label has-text-weight-semibold has-text-grey-light">Date de naissance</label>
+                <input class="input is-primary" [value]="stallionBirthdate" readonly>
+            </div>
+
+        </div>
+
         <div class="content">
             <label class="label has-text-weight-semibold has-text-grey-light">Races de production</label>
             <input class="input is-primary" [value]="stallionProductionBreeds" readonly>
@@ -39,6 +58,102 @@
             <div [ngClass]="i+1 == stallionSTDNegativeTests.length? '' : 'pb-2'" *ngFor="let std of stallionSTDNegativeTests; let i = index">
                 <input class="input is-primary" [value]="std" readonly>
             </div>
+        </div>
+
+        <div class="content" *ngIf="stallionOffspring">
+            <label class="label has-text-weight-semibold has-text-grey-light">Produits de l'étalon</label>
+            <p class="textarea is-primary" [innerHTML]="stallionOffspring"></p>
+        </div>
+
+        <div class="content" *ngIf="stallionPerformance">
+            <label class="label has-text-weight-semibold has-text-grey-light">Performances de l'étalon</label>
+            <p class="textarea is-primary" [innerHTML]="stallionPerformance"></p>
+        </div>
+
+        <div class="content" *ngIf="stallionPedigree.length > 0">
+            <label class="label has-text-weight-semibold has-text-grey-light">Pedigree de l'étalon</label>
+            <div class="columns is-flex is-align-items-center">
+                <div class="column">
+                    <label class="label has-text-weight-normal has-text-grey-light">Père</label>
+                    <div class="control">
+                        <input class="input is-primary" value="{{stallionPedigree[0]}}" readonly>
+                    </div>
+                </div>
+          
+                <div class="column">
+                    <label class="label has-text-weight-normal has-text-grey-light">Père</label>
+                    <div class="control mb-6 pb-5">
+                        <input class="input is-primary" value="{{stallionPedigree[2]}}" readonly>
+                    </div>
+                    <label class="label has-text-weight-normal has-text-grey-light mt-6 pt-5">Mère</label>
+                    <div class="control">
+                        <input class="input is-primary" value="{{stallionPedigree[3]}}" readonly>
+                    </div>
+                </div>
+          
+                <div class="column">
+                    <label class="label has-text-weight-normal has-text-grey-light">Père</label>
+                    <div class="control mb-2">
+                        <input class="input is-primary" value="{{stallionPedigree[6]}}" readonly>
+                    </div>
+                    <label class="label has-text-weight-normal has-text-grey-light">Mère</label>
+                    <div class="control mb-3">
+                        <input class="input is-primary" value="{{stallionPedigree[7]}}" readonly>
+                    </div>
+                    <label class="label has-text-weight-normal has-text-grey-light">Père</label>
+                    <div class="control mb-2">
+                        <input class="input is-primary" value="{{stallionPedigree[8]}}" readonly>
+                    </div>
+                    <label class="label has-text-weight-normal has-text-grey-light">Mère</label>
+                    <div class="control">
+                        <input class="input is-primary" value="{{stallionPedigree[9]}}" readonly>
+                    </div>
+                </div>
+              </div>
+
+            <div class="columns is-flex is-align-items-center">
+              <div class="column">
+                <label class="label has-text-weight-normal has-text-grey-light">Mère</label>
+                <div class="control">
+                    <input class="input is-primary" value="{{stallionPedigree[1]}}" readonly>
+                </div>
+            </div>
+      
+            <div class="column">
+                <label class="label has-text-weight-normal has-text-grey-light">Père</label>
+                <div class="control mb-6 pb-5">
+                    <input class="input is-primary" value="{{stallionPedigree[4]}}" readonly>
+                </div>
+                <label class="label has-text-weight-normal has-text-grey-light mt-6 pt-5">Mère</label>
+                <div class="control">
+                    <input class="input is-primary" value="{{stallionPedigree[5]}}" readonly>
+                </div>
+            </div>
+      
+            <div class="column">
+                <label class="label has-text-weight-normal has-text-grey-light">Père</label>
+                <div class="control mb-2">
+                    <input class="input is-primary" value="{{stallionPedigree[10]}}" readonly>
+                </div>
+                <label class="label has-text-weight-normal has-text-grey-light">Mère</label>
+                <div class="control mb-3">
+                    <input class="input is-primary" value="{{stallionPedigree[11]}}" readonly>
+                </div>
+                <label class="label has-text-weight-normal has-text-grey-light">Père</label>
+                <div class="control mb-2">
+                    <input class="input is-primary" value="{{stallionPedigree[12]}}" readonly>
+                </div>
+                <label class="label has-text-weight-normal has-text-grey-light">Mère</label>
+                <div class="control">
+                    <input class="input is-primary" value="{{stallionPedigree[13]}}" readonly>
+                </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content" *ngIf="stallionPedigreePO">
+            <label class="label has-text-weight-semibold has-text-grey-light">Performances et produits du pedigree de l'étalon</label>
+            <p class="textarea is-primary" [innerHTML]="stallionPedigreePO"></p>
         </div>
 
         <h4 class="subtitle is-4 has-text-weight-bold pt-4">Jument</h4>
@@ -59,6 +174,10 @@
             </div>
         </div>
 
+        <div class="content">
+            <label class="label has-text-weight-semibold has-text-grey-light">Antécédents de gestation</label>
+            <p class="textarea is-primary" [innerHTML]="marePregnancyHistory"></p>
+        </div>
 
         <h4 class="subtitle is-4 has-text-weight-bold pt-4">{{pov == 'seller'? 'Acheteur': 'Vendeur'}}</h4>
 
@@ -147,7 +266,7 @@
         </div>
 
         <div class="content">
-            <label class="label has-text-weight-semibold has-text-grey-light">Nombre maximum de tentatives de saillie</label>
+            <label class="label has-text-weight-semibold has-text-grey-light">Nombre maximal de chaleurs pour saillir</label>
             <input class="input is-primary" [value]="maxNbOfAttempts" readonly>
         </div>
 
@@ -177,18 +296,18 @@
 
         <h4 class="subtitle is-4 has-text-weight-bold pt-4">Historique des actions</h4>
         <div class="content">
-            <table>
+            <table class="table is-fullwidth">
                 <thead>
-                <tr>
-                    <th>Étape</th>
-                    <th>Date</th>
-                </tr>
+                    <tr>
+                        <th>Étape</th>
+                        <th>Date</th>
+                    </tr>
                 </thead>
                 <tbody>
-                <tr *ngFor="let timestamp of timestamps">
-                    <td>{{statusMappingObject[timestamp['status']]}}</td>
-                    <td>{{timestamp['timestamp']}}</td>
-                </tr>
+                    <tr *ngFor="let timestamp of timestamps">
+                        <td>{{statusMappingObject[timestamp['status']]}}</td>
+                        <td>{{timestamp['timestamp']}}</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -232,7 +351,7 @@
 
 <section class="section" *ngIf="pov == 'seller' && status == 'requested'">
     <div class="container">
-        <div class="box is-flex is-flex-direction-column is-align-items-center" style="background-color: #f7faf7;">
+        <div class="box is-flex is-flex-direction-column is-align-items-center">
             <h4 class="subtitle is-4 has-text-weight-bold">Mettre à jour la date d'arrivée de la jument</h4>
             <label class="label has-text-weight-semibold has-text-grey-light">Date d'arrivée enregistrée</label>
             <div class="content control has-icons-right">
@@ -253,14 +372,13 @@
                       </a>
                     </div>
                 </div>
-                <p class="help is-danger pb-6" *ngIf='arrivalDateChangeFailed["value"] && displayArrivalDateHelper["value"]'>
-                    Erreur dans le format de la date, veuillez s'il vous plaît utiliser le format JJ/MM/AAAA, exemple: 15/02/2024</p>    
-                <p class="help is-success pb-6" *ngIf='!arrivalDateChangeFailed["value"] && displayArrivalDateHelper["value"]'>
-                    Parfait!</p>   
+                <p class="help pb-6" [ngClass]="['UserError', 'BackendError'].includes(arrivalDateStatus['status'])? 'is-danger': 'is-success'">
+                    {{displayArrivalDateHelper.value}}
+                </p>    
             </div>
 
             <h4 class="subtitle is-4 has-text-weight-bold">Augmenter ou baisser le prix</h4>
-            <label class="label has-text-weight-semibold has-text-grey-light">Prix de base actuellement utilisé</label>
+            <label class="label has-text-weight-semibold has-text-grey-light">Prix HT actuellement utilisé</label>
             <div class="content control has-icons-right">
                 <input class="input is-success" [value]="basePrice" readonly>
                 <span class="icon is-small is-right">
@@ -282,10 +400,9 @@
                       </a>
                     </div>
                 </div>
-                <p class="help is-danger pb-6" *ngIf='basePriceChangeFailed["value"] && displayBasePriceHelper["value"]'>
-                    Le prix ne peut pas être inférieur à 10€.</p>    
-                <p class="help is-success pb-6" *ngIf='!basePriceChangeFailed["value"] && displayBasePriceHelper["value"]'>
-                    Parfait!</p>   
+                <p class="help pb-6" [ngClass]="['UserError', 'BackendError'].includes(basePriceStatus['status'])? 'is-danger': 'is-success'">
+                    {{displayBasePriceHelper.value}}
+                </p>    
             </div>
         </div>
     </div>
@@ -293,7 +410,7 @@
 
 <section class="section" *ngIf="['downpaid', 'fullypaid'].includes(status)">
     <div class="container">
-        <div class="box" style="background-color: #f7faf7;">
+        <div class="box">
             <div class="is-flex is-flex-direction-column is-align-items-center">
                 <h4 class="subtitle is-4 has-text-weight-bold is-centered">Rédiger l'évaluation de cette saillie</h4>
                 <label class="label has-text-weight-semibold has-text-success pt-4" *ngIf="alreadyReviewed">
@@ -340,7 +457,7 @@
 
 <section class="section">
     <div class="container">
-        <div class="box is-flex is-flex-direction-column is-align-items-center" style="background-color: #f7faf7;">
+        <div class="box is-flex is-flex-direction-column is-align-items-center">
             <h4 class="subtitle is-4 has-text-weight-bold">Statut de la saillie</h4>
  
             <div class="block">
@@ -374,7 +491,9 @@
             *ngIf="pov == 'seller' && !arrivalDate && status == 'requested'">
             Vous devez indiquer une date d'arrivée de la jument au centre avant d'accepter la saillie (juste au-dessus).
             </label>
-            <label class="label has-text-weight-semibold has-text-danger">{{greenAndRedButtonFormControl.value}}</label>
+            <p class="help" [ngClass]="['UserError', 'BackendError'].includes(greenButtonStatus['status']) || ['UserError', 'BackendError'].includes(redButtonStatus['status'])? 'has-text-danger': 'has-text-success'">
+                {{greenAndRedButtonFormControl.value}}
+            </p>
         </div>
     </div>
 </section>

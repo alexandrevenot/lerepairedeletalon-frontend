@@ -13,7 +13,7 @@ import { AuthService } from 'src/app/core/auth/auth.service';
 export class DashboardComponent implements OnInit{
 
   // mapping group to name
-  mappingGroupToName: Record<any, Record<any, any>> = {
+  public mappingGroupToName: Record<any, Record<any, any>> = {
     'buyer': {
       'pendingApproval': 'Demandées',
       'pendingSignature': 'En cours de signature',
@@ -31,19 +31,21 @@ export class DashboardComponent implements OnInit{
   }
 
   // common variables
-  selectedComponentKey: string = "";
-  highlightedLabel: string = "";
-  selectedCategory: string = "";
+  public selectedComponentKey: string = "";
+  public highlightedLabel: string = "";
+  public selectedCategory: string = "";
 
   // specific variables
-  selectedCoverId: string = "";
-  selectedCoverActionType: string = "";
-  stallionComponentInput: StallionComponentInput = {
+  public selectedCoverId: string = "";
+  public selectedCoverActionType: string = "";
+  public signUrl: string = "";
+  public paymentPart: string = "";
+  public stallionComponentInput: StallionComponentInput = {
     mode: 'creation',
     stallionId: null
   };
 
-  isExpandable: Record<string, Record<string, boolean>> = {
+  public isExpandable: Record<string, Record<string, boolean>> = {
     seller: {
       MyCoversComponent: true,
       myStallionsComponent: true
@@ -58,7 +60,7 @@ export class DashboardComponent implements OnInit{
     }
   };
 
-  isExpanded: Record<string, Record<string, boolean>> = {
+  public isExpanded: Record<string, Record<string, boolean>> = {
     seller: {
       MyCoversComponent: false,
       myStallionsComponent: false
@@ -166,9 +168,11 @@ export class DashboardComponent implements OnInit{
     this.selectedComponentKey = "CoverPageComponent";
   }
 
-  goToCoverPageAction(params: {coverId: string, coverActionType: string}) {
+  goToCoverPageAction(params: {coverId: string, coverActionType: string, signUrl: string, paymentPart: string}) {
     this.selectedCoverId = params.coverId;
     this.selectedCoverActionType = params.coverActionType;
+    this.signUrl = params.signUrl;
+    this.paymentPart = params.paymentPart;
     this.selectedComponentKey = "CoverPageActionComponent";
   }
 

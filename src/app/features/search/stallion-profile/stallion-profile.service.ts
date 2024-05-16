@@ -42,7 +42,6 @@ export class StallionProfileService {
     constructor(private http: HttpClient) {}
 
     handleError(error: HttpErrorResponse) {
-        console.log(error);
         return throwError(() => new Error());
     }
     
@@ -60,21 +59,24 @@ export class StallionProfileService {
         )
     }
 
-    sendDemandToVendor(
+    sendDemandToSeller(
         form: Record<string, string>,
+        stallionId: string,
         handlerId: string,
         nSire: string,
         demandStatus: Record<string, backendInteractionStatus>,
         messageFormControl: FormControl,
         ) {
         const body: Record<string, string> = {
+            stallion_id: stallionId,
             seller_id: handlerId,
             stallion_nsire: nSire,
             mare_nsire: form['mareNSIRE'],
             mare_name: form['mareName'],
             mare_breed: form['mareBreed'],
             cover_type: form['selectedCoverType'],
-            message: form['messageToVendor']
+            message: form['messageToSeller'],
+            mare_pregnancy_history: form['marePregnancyHistory']
         }
 
         return this.http.post(

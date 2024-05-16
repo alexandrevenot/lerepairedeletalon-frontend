@@ -1,10 +1,10 @@
 import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
-import { CoverPageService, GetCoverInfo } from './cover-page.service';
+import { CoverPageService, GetCoverInfo, SignUrlData } from './cover-page.service';
 import { availableCoverTypes, coverPlaceNames, statusCommentaryMapping, statusHelper,
   statusMapping, vaccines, shortBalancePaymentConditions, stds, getNumberArray, backendInteractionStatus } from 'src/environments/environment';
-import { FormControl } from '@angular/forms';
+import { Form, FormControl } from '@angular/forms';
 import { UserScore, UserScoreService } from 'src/app/core/user-score/user-score.service';
-import { Observable } from 'rxjs';
+import { Observable, first, firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-cover-page',
@@ -31,12 +31,20 @@ export class CoverPageComponent implements OnInit{
   public stallionName: string = "";
   public stallionBreed: string = "";
   public stallionNSIRE: string = "";
-  public stallionProductionBreeds: string = "";
-  public stallionVaccines: string = "";
+  public stallionColor: string = "";
+  public stallionHeight: number = 0;
+  public stallionBirthdate: string = "";
+  public stallionOffspring: string = "";
+  public stallionPerformance: string = "";
+  public stallionPedigree: Array<string> = [];
+  public stallionPedigreePO: string = "";
   public stallionSTDNegativeTests: Array<string> = [];
+  public stallionVaccines: string = "";
+  public stallionProductionBreeds: string = "";
   public mareName: string = "";
   public mareBreed: string = "";
   public mareNSIRE: string = "";
+  public marePregnancyHistory: string = "";
   public contactId: string = "";
   public contactFirstname: string = "";
   public contactLastname: string = "";
@@ -83,13 +91,13 @@ export class CoverPageComponent implements OnInit{
   public greenAndRedButtonFormControl = new FormControl('');
 
   public newArrivalDate: FormControl = new FormControl('');
-  public arrivalDateChangeFailed: Record<string, boolean> = {"value": false};
-  public displayArrivalDateHelper: Record<string, boolean> = {"value": false};
+  public arrivalDateStatus: Record<string, backendInteractionStatus> = {"status": backendInteractionStatus.Init};
+  public displayArrivalDateHelper: FormControl = new FormControl('');
   public newArrivalDateModalIsActive: boolean = false;
 
   public newBasePrice: FormControl = new FormControl('');
-  public basePriceChangeFailed: Record<string, boolean> = {"value": false};
-  public displayBasePriceHelper: Record<string, boolean> = {"value": false};
+  public basePriceStatus: Record<string, backendInteractionStatus> = {"status": backendInteractionStatus.Init};
+  public displayBasePriceHelper: FormControl = new FormControl('');
   public newBasePriceModalIsActive: boolean = false;
 
   public valueForPutCover: string | number = "";
@@ -159,124 +167,128 @@ export class CoverPageComponent implements OnInit{
     this.loadCoverInfo();
   }
 
-  loadCoverInfo() {
-    this.coverPageService.getCoverInfo(this.coverId)
-    .subscribe({
-      next: (data: GetCoverInfo) => {
-        this.stallionName = data.stallion_name;
-        this.stallionBreed = data.stallion_breed;
-        this.stallionNSIRE = data.stallion_nsire;
-  
-        let stallionProductionBreedsString = "";
-        data.stallion_production_breeds.forEach(
-          (value: string) => {
-            stallionProductionBreedsString += (value + ", ");
-          }
-        );
-        this.stallionProductionBreeds = stallionProductionBreedsString.slice(0, -2);
-  
-        let stallionVaccinesString = "";
-        data.stallion_vaccines.forEach(
-          (value: string) => {
-            stallionVaccinesString += (vaccines[value] + ", ");
-          }
+  async loadCoverInfo() {
+    try {
+      const data: GetCoverInfo = await firstValueFrom(this.coverPageService.getCoverInfo(this.coverId));
+      this.stallionName = data.stallion_name;
+      this.stallionBreed = data.stallion_breed;
+      this.stallionNSIRE = data.stallion_nsire;
+      this.stallionColor = data.stallion_color;
+      this.stallionHeight = data.stallion_height;
+      this.stallionBirthdate = data.stallion_birthdate;
+      this.stallionOffspring = data.stallion_offspring.replace(/(\r\n|\r|\n)/g, '<br>');
+      this.stallionPerformance = data.stallion_performance.replace(/(\r\n|\r|\n)/g, '<br>');
+      this.stallionPedigree = data.stallion_pedigree;
+      this.stallionPedigreePO = data.stallion_pedigree_po.replace(/(\r\n|\r|\n)/g, '<br>');
+      let stallionProductionBreedsString = "";
+      data.stallion_production_breeds.forEach(
+        (value: string) => {
+          stallionProductionBreedsString += (value + ", ");
+        }
+      );
+      this.stallionProductionBreeds = stallionProductionBreedsString.slice(0, -2);
+
+      let stallionVaccinesString = "";
+      data.stallion_vaccines.forEach(
+        (value: string) => {
+          stallionVaccinesString += (vaccines[value] + ", ");
+        }
+      )
+      this.stallionVaccines = stallionVaccinesString.slice(0, -2);
+
+      this.stallionSTDNegativeTests = [];
+      for (let std of this.availableSTDS) {
+        if (Object.keys(data.stallion_std_negative_tests).includes(std)
+        && data.stallion_std_negative_tests[std]) {
+          this.stallionSTDNegativeTests.push(this.stdsMapping[std] + ", testé le " + data.stallion_std_negative_tests[std]['test_date']);
+        }
+      }
+      this.mareName = data.mare_name;
+      this.mareBreed = data.mare_breed;
+      this.mareNSIRE = data.mare_nsire;
+      this.marePregnancyHistory = data.mare_pregnancy_history.replace(/(\r\n|\r|\n)/g, '<br>');
+      this.contactId = data.contact_id;
+      this.contactFirstname = data.contact_firstname;
+      this.contactLastname = data.contact_lastname;
+      this.contactPhoneNumber = data.contact_phone_number;
+      this.contactEmail = data.contact_email;
+      this.coverType = data.cover_type;
+      this.price = data.price;
+      this.basePrice = data.base_price;
+      this.coverPlace = data.cover_specs.cover_place;
+
+      this.balancePaymentCondition = shortBalancePaymentConditions[data.cover_specs.balance_payment_condition];
+
+      this.advancePercentage = data.cover_specs.advance_percentage.toString() + '% du prix total';
+
+      this.maxNbOfAttempts = data.cover_specs.maximum_nb_of_attempts;
+
+      this.demandedSTDNegativeTests = [];
+      for (let std of this.availableSTDS) {
+        if (Object.keys(data.cover_specs.demanded_std_negative_tests).includes(std)
+        && data.cover_specs.demanded_std_negative_tests[std]) {
+          this.demandedSTDNegativeTests.push(this.stdsMapping[std] + ", " + data.cover_specs.demanded_std_negative_tests[std]['test_oldness'] + ' jours avant la saillie');
+        }
+      }
+
+      let demandedVaccinesString = "";
+      data.cover_specs.demanded_vaccines.forEach(
+        (value: string) => {
+          demandedVaccinesString += (vaccines[value] + ", ");
+        }
+      )
+      this.demandedVaccines = demandedVaccinesString.slice(0, -2);
+
+      this.arrivalDate = data.arrival_date;
+
+      this.messageFromBuyer = data.buyer_message.replace(/(\r\n|\r|\n)/g, '<br>');
+      this.timestamps = data.timestamps;
+      this.status = data.status;
+      this.pov = data.pov;
+
+      this.alreadyReviewed = (this.pov == "seller" && data.reviewed_by_seller) || (this.pov == "buyer" && data.reviewed_by_buyer);
+
+      this.notesFormControl.setValue(data.notes);
+      this.lastSavedNotesValue = data.notes;
+      this.notesFormControl.value;
+
+      this.reviewPlaceholder = "Donnez votre avis sur le déroulement de cette saillie, ";
+      if (this.pov == "seller") {
+        this.reviewPlaceholder += "et sur l'acheteur.";
+      } else {
+        this.reviewPlaceholder += "sur l'étalon et sur le vendeur."
+      }
+
+      let userScoreObservable: Observable<UserScore>;
+      if (this.pov == "seller") {
+        userScoreObservable = this.userScoreService.getUserScore(
+          this.contactId,
+          null,
+          "buyer"
         )
-        this.stallionVaccines = stallionVaccinesString.slice(0, -2);
-  
-        this.stallionSTDNegativeTests = [];
-        for (let std of this.availableSTDS) {
-          if (Object.keys(data.stallion_std_negative_tests).includes(std)
-          && data.stallion_std_negative_tests[std]) {
-            this.stallionSTDNegativeTests.push(this.stdsMapping[std] + ", testé le " + data.stallion_std_negative_tests[std]['test_date']);
-          }
-        }
-        this.mareName = data.mare_name;
-        this.mareBreed = data.mare_breed;
-        this.mareNSIRE = data.mare_nsire;
-        this.contactId = data.contact_id;
-        this.contactFirstname = data.contact_firstname;
-        this.contactLastname = data.contact_lastname;
-        this.contactPhoneNumber = data.contact_phone_number;
-        this.contactEmail = data.contact_email;
-        this.coverType = data.cover_type;
-        this.price = data.price;
-        this.basePrice = data.base_price;
-        this.coverPlace = data.cover_specs.cover_place;
-  
-        this.balancePaymentCondition = shortBalancePaymentConditions[data.cover_specs.balance_payment_condition];
-  
-        this.advancePercentage = data.cover_specs.advance_percentage.toString() + '% du prix total';
-  
-        this.maxNbOfAttempts = data.cover_specs.maximum_nb_of_attempts;
-  
-        this.demandedSTDNegativeTests = [];
-        for (let std of this.availableSTDS) {
-          if (Object.keys(data.cover_specs.demanded_std_negative_tests).includes(std)
-          && data.cover_specs.demanded_std_negative_tests[std]) {
-            this.demandedSTDNegativeTests.push(this.stdsMapping[std] + ", " + data.cover_specs.demanded_std_negative_tests[std]['test_oldness'] + ' jours avant la saillie');
-          }
-        }
-  
-        let demandedVaccinesString = "";
-        data.cover_specs.demanded_vaccines.forEach(
-          (value: string) => {
-            demandedVaccinesString += (vaccines[value] + ", ");
-          }
+      } else {
+        userScoreObservable = this.userScoreService.getUserScore(
+          this.contactId,
+          this.stallionNSIRE,
+          "seller"
         )
-        this.demandedVaccines = demandedVaccinesString.slice(0, -2);
-  
-        this.arrivalDate = data.arrival_date;
-  
-        this.messageFromBuyer = data.buyer_message.replace(/(\r\n|\r|\n)/g, '<br>');
-        this.timestamps = data.timestamps;
-        this.status = data.status;
-        this.pov = data.pov;
-  
-        this.alreadyReviewed = (this.pov == "seller" && data.reviewed_by_seller) || (this.pov == "buyer" && data.reviewed_by_buyer);
-  
-        this.notesFormControl.setValue(data.notes);
-        this.lastSavedNotesValue = data.notes;
-        this.notesFormControl.value;
-  
-        this.reviewPlaceholder = "Donnez votre avis sur le déroulement de cette saillie, ";
-        if (this.pov == "seller") {
-          this.reviewPlaceholder += "et sur l'acheteur.";
-        } else {
-          this.reviewPlaceholder += "sur l'étalon et sur le vendeur."
-        }
-  
-        let userScoreObservable: Observable<UserScore>;
-        if (this.pov == "seller") {
-          userScoreObservable = this.userScoreService.getUserScore(
-            this.contactId,
-            null,
-            "buyer"
-          )
-        } else {
-          userScoreObservable = this.userScoreService.getUserScore(
-            this.contactId,
-            this.stallionNSIRE,
-            "seller"
-          )
-        }
-  
-        userScoreObservable.subscribe({
-          next: (userScore: UserScore) => {
-            if (userScore.score) {
-              this.contactScoreString = userScore.score.toString() + "/5";
+      }
+
+      userScoreObservable.subscribe({
+        next: (userScore: UserScore) => {
+          if (userScore.score) {
+            this.contactScoreString = userScore.score.toString() + "/5";
+          }
+          if (userScore.nb_reviews) {
+            this.contactNbReviewsString = userScore.nb_reviews.toString() + " évaluation";
+            if (userScore.nb_reviews > 1) {
+              this.contactNbReviewsString += "s";
             }
-            if (userScore.nb_reviews) {
-              this.contactNbReviewsString = userScore.nb_reviews.toString() + " évaluation";
-              if (userScore.nb_reviews > 1) {
-                this.contactNbReviewsString += "s";
-              }
-            }
-          },
-          error: () => {}
-        })
-      },
-      error: () => {}
-    })
+          }
+        },
+        error: () => {}
+      })
+    } catch {}
   }
 
   openReviews(contactPov: "buyer" | "seller") {
@@ -296,41 +308,56 @@ export class CoverPageComponent implements OnInit{
     )
   }
 
-  saveNewArrivalDate() {
+  async saveNewArrivalDate() {
+    this.displayArrivalDateHelper.setValue("");
     this.closeModal("arrivalDate");
-    this.coverPageService.putCover(this.coverId, "arrivalDate", this.valueForPutCover,
-      this.arrivalDateChangeFailed, this.displayArrivalDateHelper)
-    .subscribe({
-      next: () => {
-        this.loadCoverInfo();
-        if (!this.arrivalDateChangeFailed["value"]) {
-          this.displayArrivalDateHelper["value"] = false;
-        }
-        this.arrivalDateChangeFailed["value"] = false;
-        this.newArrivalDate.setValue("");
-      },
-      error: () => {}
-    });
-
+    try {
+      await firstValueFrom(
+        this.coverPageService.putCover(
+          this.coverId,
+          "arrivalDate",
+          this.valueForPutCover,
+          this.arrivalDateStatus,
+          this.displayArrivalDateHelper
+        )
+      )
+      await this.loadCoverInfo();
+      this.newArrivalDate.setValue("");
+    } catch {}
   }
 
-  saveNewBasePrice() {
+  async saveNewBasePrice() {
+    this.displayBasePriceHelper.setValue("");
     this.closeModal("basePrice");
-    this.coverPageService.putCover(this.coverId, "basePrice", this.valueForPutCover,
-      this.basePriceChangeFailed, this.displayBasePriceHelper)
+    try {
+      await firstValueFrom(
+        this.coverPageService.putCover(
+          this.coverId,
+          "basePrice",
+          this.valueForPutCover,
+          this.basePriceStatus,
+          this.displayBasePriceHelper
+        )
+      )
+      await this.loadCoverInfo();
+      this.newBasePrice.setValue("");
+    } catch {}
+  }
+
+  getSignUrl() {
+    this.greenAndRedButtonFormControl.setValue('');
+    this.greenButtonStatus['status'] = backendInteractionStatus.Loading;
+    this.coverPageService.getSignUrl(this.coverId, this.greenButtonStatus, this.greenAndRedButtonFormControl)
     .subscribe({
-      next: () => {
-        this.loadCoverInfo();
-        if (!this.basePriceChangeFailed["value"]) {
-          this.displayBasePriceHelper["value"] = false;
-        }
-        this.basePriceChangeFailed["value"] = false;
-        this.newBasePrice.setValue("");
+      next: (data: SignUrlData) => {
+        this.greenAndRedButtonFormControl.setValue('Redirection vers la page de signature en cours ...')
+        this.greenButtonStatus['status'] = backendInteractionStatus.Success;
+        this.goToCoverPageActionEvent.emit({coverId: this.coverId, coverActionType: "signature", signUrl: data.url});
       },
       error: () => {}
-    });
-
+    })
   }
+
 
   triggerModal(modalType: "arrivalDate" | "basePrice" | "review") {
     if (modalType == "arrivalDate") {
@@ -338,8 +365,10 @@ export class CoverPageComponent implements OnInit{
       if (value) {
         const dateFormatRegex = /^\d{2}\/\d{2}\/\d{4}$/;
         if (!dateFormatRegex.test(value)) {
-          this.arrivalDateChangeFailed["value"] = true;
-          this.displayArrivalDateHelper["value"] = true;
+          this.arrivalDateStatus["status"] = backendInteractionStatus.UserError;
+          this.displayArrivalDateHelper.setValue(
+            "Erreur dans le format de la date, veuillez s'il vous plaît utiliser le format JJ/MM/AAAA, exemple: 15/02/2024"
+          );
           return
         }
         this.valueForPutCover = value
@@ -349,9 +378,9 @@ export class CoverPageComponent implements OnInit{
       const value = this.newBasePrice.getRawValue();
       if (value) {
         const newSubtotal = parseInt(value);
-        if (isNaN(newSubtotal)) {
-            this.basePriceChangeFailed["value"] = true;
-            this.displayBasePriceHelper["value"] = true;
+        if (isNaN(newSubtotal) || newSubtotal < 10) {
+            this.basePriceStatus['status'] = backendInteractionStatus.UserError;
+            this.displayBasePriceHelper.setValue("Le prix ne peut pas être inférieur à 10€.");
             return
         }
         this.valueForPutCover = newSubtotal;
@@ -443,26 +472,35 @@ export class CoverPageComponent implements OnInit{
   }
 
   // common cover management methods
-  stepForwardCover(nextStatus: string, buttonStatus: Record<string, backendInteractionStatus>) {
+  async stepForwardCover(nextStatus: string, buttonStatus: Record<string, backendInteractionStatus>) {
     buttonStatus["status"] = backendInteractionStatus.Loading;
     this.greenAndRedButtonFormControl.setValue("");
-    this.coverPageService.stepForwardCover(this.coverId, nextStatus, buttonStatus, this.greenAndRedButtonFormControl)
-    .subscribe({
-      next: () => {
-        this.loadCoverInfo();
-        buttonStatus["status"] = backendInteractionStatus.Success;
-      },
-      error: () => {}
-    })
+    try {
+      await firstValueFrom(
+        this.coverPageService.stepForwardCover(
+          this.coverId,
+          nextStatus,
+          buttonStatus,
+          this.greenAndRedButtonFormControl
+        )
+      )
+      await this.loadCoverInfo();
+      buttonStatus["status"] = backendInteractionStatus.Success;
+    } catch {}
   }
 
   green(status: string, pov: string) {
     if (status == "requested" && pov == "seller") {
       this.stepForwardCover('approved', this.greenButtonStatus);
     } else if ((["signingstarted", "approved"].includes(status) && pov == "buyer") || (status == "buyersigned" && pov == "seller")) {
-      this.goToCoverPageActionEvent.emit({coverId: this.coverId, coverActionType: "signature"});
+      this.getSignUrl();
     } else if (["sellersigned", "downpaid"].includes(status) && pov == "buyer") {
-      this.goToCoverPageActionEvent.emit({coverId: this.coverId, coverActionType: "payment"});
+      this.goToCoverPageActionEvent.emit({
+        coverId: this.coverId,
+        coverActionType: "payment",
+        signUrl: "",
+        paymentPart: status === "sellersigned" ? "advance": "balance"
+      });
     }
   }
 

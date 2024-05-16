@@ -1,0 +1,1 @@
+sudo docker run -d --name web_container -p 4200:80 web:0.0.0

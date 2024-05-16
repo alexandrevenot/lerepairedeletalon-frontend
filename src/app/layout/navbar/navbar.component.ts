@@ -54,4 +54,8 @@ export class NavbarComponent implements OnInit {
   navigateToSearch() {
     this.router.navigate(['/search'], {queryParams: { reload: 'true' }});
   }
+
+  navigateToThisWebsite() {
+    this.router.navigate(['/this-website']);
+  }
 }

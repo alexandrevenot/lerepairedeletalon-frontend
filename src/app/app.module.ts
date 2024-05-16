@@ -29,6 +29,10 @@ import { ReviewsComponent } from './features/dashboard/reviews/reviews.component
 import { PasswordUpdateComponent } from './features/mail-links/password-update/password-update.component';
 import { FooterComponent } from './layout/footer/footer.component';
 import { EmailVerificationComponent } from './features/mail-links/email-verification/email-verification.component';
+import { CgvComponent } from './layout/static-pages/cgv/cgv.component';
+import { CguComponent } from './layout/static-pages/cgu/cgu.component';
+import { MentionsLegalesComponent } from './layout/static-pages/mentions-legales/mentions-legales.component';
+import { ThisWebsiteComponent } from './layout/static-pages/this-website/this-website.component';
 
 @NgModule({
   declarations: [
@@ -55,7 +59,11 @@ import { EmailVerificationComponent } from './features/mail-links/email-verifica
     ReviewsComponent,
     PasswordUpdateComponent,
     FooterComponent,
-    EmailVerificationComponent
+    EmailVerificationComponent,
+    CgvComponent,
+    CguComponent,
+    MentionsLegalesComponent,
+    ThisWebsiteComponent
   ],
   imports: [
     BrowserModule,

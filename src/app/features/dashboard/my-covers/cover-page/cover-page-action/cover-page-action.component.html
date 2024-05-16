@@ -1,10 +1,7 @@
 <h3 class="subtitle is-3 has-text-weight-semibold">{{coverActionType == 'signature' ? 'Signature du contrat de saillie': paymentTitle}}</h3>
 
-<section class="section" *ngIf="coverActionType == 'signature' && iframe_url">
-    <div class="container">
-        <iframe title="Signature du du contrat de saillie" [src]="iframe_url" [style]="'width: 100%; height: ' + nativeHeight + 'px;'"></iframe>
-    </div>
-</section>
+<iframe title="Signature du du contrat de saillie" [src]="iframe_url" [style]="'width: 100%; height: ' + nativeHeight + 'px;'"
+*ngIf="coverActionType == 'signature' && iframe_url"></iframe>
 
 <section class="section" *ngIf="coverActionType == 'payment'">
     <div class="container">

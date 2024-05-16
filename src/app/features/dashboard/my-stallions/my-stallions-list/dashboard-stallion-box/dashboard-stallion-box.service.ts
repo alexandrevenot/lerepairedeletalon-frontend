@@ -1,6 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
+import { backendBaseUrl } from 'src/environments/environment';
 
 @Injectable()
 export class DashboardStallionBoxService {
@@ -12,7 +13,7 @@ export class DashboardStallionBoxService {
 
     deleteStallion(stallionId: string) {
         return this.http.delete(
-            `http://localhost:3001/stallions/stallion/${stallionId}`
+            `${backendBaseUrl}/stallions/stallion/${stallionId}`
         ).pipe(
             catchError((error: HttpErrorResponse) => {
                 return this.handleError(error);
@@ -25,7 +26,7 @@ export class DashboardStallionBoxService {
         .set('new_status', newStatus);
 
         return this.http.put(
-            `http://localhost:3001/stallions/stallion-profile-status/${stallionId}`,
+            `${backendBaseUrl}/stallions/stallion-profile-status/${stallionId}`,
             {},
             {params}
         ).pipe(
