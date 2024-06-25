@@ -19,6 +19,8 @@ export class MyCoversComponent implements OnInit{
   covers: coverItem[] = [];
   title: Record<string, string> = {};
 
+  public coversHaveBeenFetched: boolean = false;
+
   constructor(private myCoversService: MyCoversService) {}
 
   ngOnInit(): void {
@@ -44,6 +46,7 @@ export class MyCoversComponent implements OnInit{
               pov: this.pointOfView
             });
           }
+          this.coversHaveBeenFetched = true;
         },
         error: () => {}
       })

@@ -41,7 +41,7 @@
     </div>
 
     <div class="field">
-        <button class="button is-fullwidth is-justify-content-flex-start" [ngClass]="filterIsSelected['breed'] ? 'is-active' : ''" (click)="swapFilter('breed')">
+        <button class="button is-fullwidth is-justify-content-flex-start" [ngClass]="filterIsSelected['breed'] ? 'is-active' : ''" (click)="swapFilter('breed'); initializeAvailableBreeds('breeds')">
             <span class="icon">
                 <i class="fa fa-chevron-up" [ngClass]="filterIsSelected['breed'] ? 'fa-rotate-180' : 'fa-rotate-90'"></i>
             </span>
@@ -49,21 +49,18 @@
         </button>
         <div class="content py-2 pl-4">
             <div *ngIf="filterIsSelected['breed']">
-                <div *ngFor="let key of availableBreedTypes">
-                    <p class="has-text-weight-bold pt-4">{{key}}</p>
-                    <div *ngFor="let breed of breedsRecord[key]">
-                        <label class="checkbox">
-                            <input type="checkbox" id={{breed}} (change)="updateCheckbox('breed', $event)" [checked]="selectedBreeds[breed]">
-                            {{ breed }}
-                        </label>
-                    </div>
+                <div *ngFor="let breed of availableBreeds">
+                    <label class="checkbox">
+                        <input type="checkbox" id={{breed}} (change)="updateCheckbox('breed', $event)" [checked]="selectedBreeds[breed]">
+                        {{ breed }}
+                    </label>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="field">
-        <button class="button is-fullwidth is-justify-content-flex-start" [ngClass]="filterIsSelected['productionBreed'] ? 'is-active' : ''" (click)="swapFilter('productionBreed')">
+        <button class="button is-fullwidth is-justify-content-flex-start" [ngClass]="filterIsSelected['productionBreed'] ? 'is-active' : ''" (click)="swapFilter('productionBreed'); initializeAvailableBreeds('production-breeds')">
             <span class="icon">
                 <i class="fa fa-chevron-up" [ngClass]="filterIsSelected['productionBreed'] ? 'fa-rotate-180' : 'fa-rotate-90'"></i>
             </span>
@@ -71,14 +68,11 @@
         </button>
         <div class="content py-2 pl-4">
             <div *ngIf="filterIsSelected['productionBreed']">
-                <div *ngFor="let key of availableBreedTypes">
-                    <p class="has-text-weight-bold pt-4">{{key}}</p>
-                    <div *ngFor="let productionBreed of breedsRecord[key]">
-                        <label class="checkbox">
-                            <input type="checkbox" id={{productionBreed}} (change)="updateCheckbox('productionBreed', $event)" [checked]="selectedProductionBreeds[productionBreed]">
-                            {{ productionBreed }}
-                        </label>
-                    </div>
+                <div *ngFor="let productionBreed of availableProductionBreeds">
+                    <label class="checkbox">
+                        <input type="checkbox" id={{productionBreed}} (change)="updateCheckbox('productionBreed', $event)" [checked]="selectedProductionBreeds[productionBreed]">
+                        {{ productionBreed }}
+                    </label>
                 </div>
             </div>
         </div>

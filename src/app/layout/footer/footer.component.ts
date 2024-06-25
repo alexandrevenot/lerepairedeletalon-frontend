@@ -26,6 +26,8 @@ export class FooterComponent implements OnInit {
   }
 
   navigateTo(path: string) {
-    this.router.navigate([`/${path}`]);
+    this.router.navigate([`/${path}`]).then(() => {
+      window.scrollTo(0, 0);
+    });
   }
 }

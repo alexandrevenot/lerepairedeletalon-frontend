@@ -1,21 +1,37 @@
 <section class="section">
   <nav class="navbar is-fixed-top px-5" role="navigation" aria-label="main navigation" >
     <div class="navbar-brand">
-      <a class="navbar-item" (click)="navigateToSearch()">
+      <a class="navbar-item" (click)="navigateTo('search', true)">
         <img [src]="objectStorageBaseUrl + photosPrefix + '/logo-black.png'" width="260" height="65">
       </a>
 
-      <a class="navbar-item is-size-6" (click)="navigateToThisWebsite()">
-        <span class="icon-text">
-          <span>Qu'est-ce que c'est que ce site?</span>
-        </span>
+      <a role="button" class="navbar-burger" [ngClass]="burgerMenuIsActive? 'is-active': ''" aria-label="menu" aria-expanded="false" (click)="swapBurgerMenuActivation()">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
       </a>
     </div>
 
-    <div class="navbar-menu">
+    <div class="navbar-menu" [ngClass]="burgerMenuIsActive? 'is-active': ''" id="navMenu">
 
       <div class="navbar-end">
-        <a class="navbar-item is-size-6" (click)="navigateToSearch()">
+        <a class="navbar-item is-size-6" (click)="navigateTo('this-website', false)">
+          <span class="icon-text">
+            <span>Qu'est-ce que c'est que ce site?</span>
+          </span>
+        </a>
+
+        <a class="navbar-item is-size-6" (click)="navigateTo('contact', false)">
+          <span class="icon-text">
+            <span class="icon">
+              <img [src]="objectStorageBaseUrl + photosPrefix + '/contact.png'">
+            </span>
+            <span>Contact</span>
+          </span>
+        </a>
+
+        <a class="navbar-item is-size-6" (click)="navigateTo('search', true)">
           <span class="icon-text">
             <span class="icon">
               <img [src]="objectStorageBaseUrl + photosPrefix + '/glass.png'">
@@ -24,7 +40,7 @@
           </span>
         </a>
 
-        <a class="navbar-item is-size-6" (click)="navigateToDashboard()" *ngIf="userIsLoggedIn">
+        <a class="navbar-item is-size-6" (click)="navigateTo('dashboard', true)" *ngIf="userIsLoggedIn">
           <span class="icon-text">
             <span class="icon">
               <img [src]="objectStorageBaseUrl + photosPrefix + '/monitor.png'">
@@ -33,7 +49,7 @@
           </span>
         </a>
 
-        <a class="navbar-item" *ngIf="userIsLoggedIn">
+        <a class="navbar-item is-not-clickable" *ngIf="userIsLoggedIn">
           <span class="icon-text has-text-weight-semibold">
             <span class="icon pr-1">
               <img [src]="objectStorageBaseUrl + photosPrefix + '/user.png'">

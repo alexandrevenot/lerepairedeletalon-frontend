@@ -2,8 +2,9 @@
 
 <section class="section">
     <div class="container">
+        <h4 class="subtitle is-4 " *ngIf="covers.length == 0 && coversHaveBeenFetched">Aucune saillie ici pour le moment.</h4>
         <div class="box has-text-centered" *ngFor="let i of getNumberArrayF(covers.length)">
-        <app-cover-box [item]="covers[i]" (goToCoverPageEvent)="goToCoverPage($event)"></app-cover-box>
+            <app-cover-box [item]="covers[i]" (goToCoverPageEvent)="goToCoverPage($event)"></app-cover-box>
         </div>
     </div>
 </section>

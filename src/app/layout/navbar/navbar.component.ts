@@ -21,6 +21,8 @@ export class NavbarComponent implements OnInit {
   public lastname: string = "";
   public userIsLoggedIn: boolean = false;
 
+  public burgerMenuIsActive: boolean = false;
+
   constructor (
     private navbarService: NavbarService,
     private authService: AuthService,
@@ -47,15 +49,20 @@ export class NavbarComponent implements OnInit {
     this.authService.disconnectUser();
   }
 
-  navigateToDashboard() {
-    this.router.navigate(['/dashboard'], {queryParams: { reload: 'true' }});
+  navigateTo(path: string, reload: boolean) {
+    this.burgerMenuIsActive = false;
+    if (reload) {
+      this.router.navigate([`/${path}`], {queryParams: { reload: 'true' }}).then(() => {
+        window.scrollTo(0, 0);
+      });
+    } else {
+      this.router.navigate([`/${path}`], ).then(() => {
+        window.scrollTo(0, 0);
+      });
+    }
   }
 
-  navigateToSearch() {
-    this.router.navigate(['/search'], {queryParams: { reload: 'true' }});
-  }
-
-  navigateToThisWebsite() {
-    this.router.navigate(['/this-website']);
+  swapBurgerMenuActivation() {
+    this.burgerMenuIsActive = !this.burgerMenuIsActive;
   }
 }

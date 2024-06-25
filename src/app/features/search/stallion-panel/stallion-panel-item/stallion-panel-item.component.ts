@@ -36,7 +36,7 @@ export class StallionPanelItemComponent implements OnInit{
 
   ngOnInit() {
     this.location = (this.item.city + ", " + this.item.dep_name + ", " + this.item.reg_name).slice(0, 14) + '...';
-    this.height = (this.item.height/100).toString().replace(".", "m");
+    this.height = (this.item.height/100).toFixed(2).toString().replace(".", "m");
   }
 
   handleClick(){

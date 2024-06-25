@@ -12,9 +12,9 @@ import { CgvComponent } from './layout/static-pages/cgv/cgv.component';
 import { CguComponent } from './layout/static-pages/cgu/cgu.component';
 import { MentionsLegalesComponent } from './layout/static-pages/mentions-legales/mentions-legales.component';
 import { ThisWebsiteComponent } from './layout/static-pages/this-website/this-website.component';
+import { ContactComponent } from './layout/static-pages/contact/contact.component';
 
 const routes: Routes = [
-  {path: '', redirectTo: '/search', pathMatch: 'full'},
   {path: 'register', component: RegisterComponent},
   {path: 'login', component: LoginComponent},
   {path: 'dashboard', component: DashboardComponent},
@@ -26,7 +26,9 @@ const routes: Routes = [
   {path: 'cgv', component: CgvComponent},
   {path: 'cgu', component: CguComponent},
   {path: 'mentions-legales', component: MentionsLegalesComponent},
-  {path: 'this-website', component: ThisWebsiteComponent}
+  {path: 'this-website', component: ThisWebsiteComponent},
+  {path: 'contact', component: ContactComponent},
+  {path: '**', redirectTo: '/search', pathMatch: 'full'}
 ];
 
 @NgModule({
