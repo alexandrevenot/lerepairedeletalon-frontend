@@ -1,7 +1,8 @@
-import { Component, Input, EventEmitter, Output, OnInit, HostListener } from '@angular/core';
+import { Component, Input, EventEmitter, Output, OnInit } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
-import { breedsRecord, getAvailableBreeds, availableCoverTypes, getNumberArray, backendInteractionStatus } from '../../../../environments/environment';
+import { availableCoverTypes, getNumberArray, backendInteractionStatus } from '../../../../environments/environment';
 import { GeolocationService, getCityData, getCityItem } from 'src/app/core/geolocation/geolocation.service';
+import { FiltersService, breeds } from './filters.service';
 
 interface distanceData {
   max: number,
@@ -21,7 +22,10 @@ export interface updateFilterData {
   selector: 'app-filters',
   templateUrl: './filters.component.html',
   styleUrls: ['./filters.component.css'],
-  providers: [GeolocationService]
+  providers: [
+    GeolocationService,
+    FiltersService
+  ]
 })
 export class FiltersComponent implements OnInit {
 
@@ -29,9 +33,8 @@ export class FiltersComponent implements OnInit {
   @Output() updateFiltersEvent = new EventEmitter<updateFilterData>();
 
   // imports
-  breedsRecord = breedsRecord;
-  availableBreedTypes = Object.keys(breedsRecord);
-  availableBreeds = getAvailableBreeds();
+  public availableBreeds: Array<string> = [];
+  public availableProductionBreeds: Array<string> = [];
   availableCoverTypes = availableCoverTypes;
   public getNumberArrayF = getNumberArray;
 
@@ -63,6 +66,9 @@ export class FiltersComponent implements OnInit {
   public geolocStatus: Record<string, backendInteractionStatus> = {"status": backendInteractionStatus.Init};
   public displayGeolocDd: boolean = false;
 
+  public availableBreedsHasBeenInitialized: boolean = false;
+  public availableProductionBreedsHasBeenInitialized: boolean = false;
+
   filterIsSelected: { [key: string]: boolean } = {
     'breed': false,
     'productionBreed': false,
@@ -74,6 +80,7 @@ export class FiltersComponent implements OnInit {
 
   constructor(
     private geolocationService: GeolocationService,
+    private filtersService: FiltersService,
     private formBuilder: FormBuilder
     ) {
     this.availableBreeds.forEach((elt) => {
@@ -189,6 +196,29 @@ export class FiltersComponent implements OnInit {
     this.selectedLocation = this.locations[index];
     this.locationTagValues.splice(0, this.locationTagValues.length);
     this.locationIsValidated = true;
+  }
+
+  // breeds and production breeds
+  initializeAvailableBreeds(type: 'breeds' | 'production-breeds') {
+    if (
+      type === 'breeds' && this.availableBreedsHasBeenInitialized
+      || type === 'production-breeds' && this.availableProductionBreedsHasBeenInitialized
+    ) {
+      return
+    }
+
+    this.filtersService.getAvailableBreeds(type).subscribe({
+      next: (data: breeds) => {
+        if (type === 'breeds') {
+          this.availableBreeds = data.breeds;
+          this.availableBreedsHasBeenInitialized = true;
+        } else {
+          this.availableProductionBreeds = data.breeds;
+          this.availableProductionBreedsHasBeenInitialized = true;
+        }
+      },
+      error: () => {}
+    })
   }
 
   resetFilters() {

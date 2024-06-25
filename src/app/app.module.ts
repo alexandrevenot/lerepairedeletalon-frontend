@@ -33,6 +33,7 @@ import { CgvComponent } from './layout/static-pages/cgv/cgv.component';
 import { CguComponent } from './layout/static-pages/cgu/cgu.component';
 import { MentionsLegalesComponent } from './layout/static-pages/mentions-legales/mentions-legales.component';
 import { ThisWebsiteComponent } from './layout/static-pages/this-website/this-website.component';
+import { ContactComponent } from './layout/static-pages/contact/contact.component';
 
 @NgModule({
   declarations: [
@@ -63,7 +64,8 @@ import { ThisWebsiteComponent } from './layout/static-pages/this-website/this-we
     CgvComponent,
     CguComponent,
     MentionsLegalesComponent,
-    ThisWebsiteComponent
+    ThisWebsiteComponent,
+    ContactComponent
   ],
   imports: [
     BrowserModule,

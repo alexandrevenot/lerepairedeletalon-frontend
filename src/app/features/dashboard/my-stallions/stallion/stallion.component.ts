@@ -682,10 +682,11 @@ export class StallionComponent implements OnInit {
     img.src = URL.createObjectURL(file);
 
     img.onload = () => {
-      URL.revokeObjectURL(img.src);
-
       this.photosURLs.push(this.sanitizer.bypassSecurityTrustUrl(img.src));
       this.photosHelper.setValue('');
+      setTimeout(() => {
+        URL.revokeObjectURL(img.src);
+      }, 1000)
     };
   }
 
@@ -857,7 +858,7 @@ export class StallionComponent implements OnInit {
       shouldThrowError = true;
     }
 
-    if (["Moi", "Sélectionner"].includes(this.stallionForm.get('stallionOwner')?.getRawValue())) {
+    if ("Sélectionner" == this.stallionForm.get('stallionOwner')?.getRawValue()) {
       shouldThrowError = true;
     }
 

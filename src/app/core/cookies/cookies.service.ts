@@ -9,7 +9,6 @@ export class CookiesService {
 
   cookiesAreAccepted() {
     let value: string | null = localStorage.getItem(`cookiesAreAccepted`);
-    console.log(value)
     return value? true: false;
   }
 }

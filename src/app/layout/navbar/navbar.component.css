@@ -1,3 +1,7 @@
 .navbar-item:hover {
     background-color: #ffffff;
 }
+
+.is-not-clickable {
+    cursor: default !important;
+  }
