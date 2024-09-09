@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FavoriteStallionsService } from 'src/app/features/dashboard/favorite-stallions/favorite-stallions.service';
 import { searchItem } from '../stallion-panel.service';
 import { objectStorageBaseUrl, photosPrefix } from 'src/environments/environment';
 

@@ -1,6 +1,9 @@
 <div class="card-image is-clickable is-overflow-hidden" (click)="handleClick()">
     <figure class="image is-4by3">
-      <img [src]="objectStorageBaseUrl + photosPrefix + '/' + item.photo_url" style="object-fit: cover; width: 100%; height: 100%;">
+      <img
+      [src]="objectStorageBaseUrl + photosPrefix + '/' + item.photo_url"
+      style="object-fit: cover; width: 100%; height: 100%;"
+      [alt]="'Miniature de l\'étalon ' + item.name">
     </figure>
     <span class="icon is-small" (click)="updateFavorite($event)">
         <i class="fa-heart fa-xl" [ngClass]="item.id && isFavorite? 'fas': 'far'"
