@@ -532,7 +532,7 @@
 
       <div class="photo-container">
         <figure class="image" *ngFor="let i of getNumberArray(photosURLs.length)">
-          <img [src]="photosURLs[i]" alt="Photo" class="is-fullwidth">
+          <img [src]="photosURLs[i]" [alt]="'Photo numéro ' + i + 'de l\'étalon'" class="is-fullwidth">
           <button class="delete is-large" (click)="deletePhoto(i)"></button>
         </figure>
 

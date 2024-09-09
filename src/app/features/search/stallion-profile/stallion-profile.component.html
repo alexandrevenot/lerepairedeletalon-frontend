@@ -52,7 +52,7 @@
         </div>
 
         <figure class="image py-4">
-            <img [src]="photos[0]" alt="Photo">
+            <img [src]="photos[0]" [alt]="'Photo principale de l\'étalon ' + name">
         </figure>
 
         <div class="content has-text-weight-semibold is-size-6 has-text-justified">
@@ -278,7 +278,7 @@
         </div>
 
         <figure class="image py-4" *ngFor="let i of getNumberArray(getNbOfPhotos() - 1)">
-            <img [src]="photos[i+1]" alt="Photo numéro {{i}} de l'étalon">
+            <img [src]="photos[i+1]" alt="Photo numéro {{i+1}} de l'étalon {{name}}">
         </figure>
     </div>
 </section>

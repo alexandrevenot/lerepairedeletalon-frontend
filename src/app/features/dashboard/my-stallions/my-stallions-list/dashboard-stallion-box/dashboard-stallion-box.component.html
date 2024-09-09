@@ -55,7 +55,7 @@
     </div>
     <div class="column">
         <figure class="image is-16by9">
-            <img [src]="objectStorageBaseUrl + photosPrefix + '/' + item.profilePicture" alt="Image">
+            <img [src]="objectStorageBaseUrl + photosPrefix + '/' + item.profilePicture" [alt]="'Photo principale de l\'étalon ' + item.name">
             </figure>                        
     </div>
     <div class="column">
