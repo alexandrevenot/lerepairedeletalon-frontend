@@ -580,6 +580,7 @@ export class MyAccountComponent implements OnInit{
 
     let accountToken = null;
     let personToken = null;
+    let companyRemainingInfoAccountToken = null;
 
     this.legalIdentity2ProgressBarValue = 0;
 
@@ -686,6 +687,19 @@ export class MyAccountComponent implements OnInit{
       }
       this.legalIdentity2ProgressBarValue = 30;
 
+      // create company remaining info account token
+      try {
+        const accountResult = await this.myAccountService.createStripeAccountTokenForCompanyRemainingInfo();
+        const companyRemainingInfoAccountTokenValue = accountResult?.token?.id;
+        if (companyRemainingInfoAccountTokenValue) {
+          companyRemainingInfoAccountToken = companyRemainingInfoAccountTokenValue;
+        }
+      } catch {
+        this.triggerBackendError("2");
+        return
+      }
+      this.legalIdentity2ProgressBarValue = 30;
+
       // INDIVIDUAL ====================================
     } else if (this.selectedBusinessType == "individual") {
 
@@ -760,7 +774,9 @@ export class MyAccountComponent implements OnInit{
     }
     this.legalIdentity2ProgressBarValue = 33;
 
-    if (!accountToken || (!personToken && this.selectedBusinessType == "company") || !bankAccountToken) {
+    if (!accountToken
+      || ((!personToken || !companyRemainingInfoAccountToken) && this.selectedBusinessType == "company")
+      || !bankAccountToken) {
       this.triggerBackendError("2");
       return
     }
@@ -776,7 +792,12 @@ export class MyAccountComponent implements OnInit{
     }
 
     this.myAccountService.createStripeAccount(
-      accountToken, personToken, bankAccountToken, this.selectedBusinessType, this.legalIdentity2Status,
+      accountToken,
+      personToken,
+      companyRemainingInfoAccountToken,
+      bankAccountToken,
+      this.selectedBusinessType,
+      this.legalIdentity2Status,
       this.updateLegalIdentity2FormMessage
     ).subscribe({
       error: () => {},
