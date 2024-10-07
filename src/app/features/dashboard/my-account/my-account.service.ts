@@ -231,6 +231,18 @@ export class MyAccountService {
         return this.stripe?.createToken('account', body);
     }
 
+    createStripeAccountTokenForCompanyRemainingInfo() {
+        let body: any = {
+            company: {
+                directors_provided: true,
+                owners_provided: true,
+                executives_provided: true
+            }
+        }
+
+        return this.stripe?.createToken('account', body);
+    }
+
     createStripeAccountTokenForIndividual(
         form0: Record<any, any>,
         form1: Record<any, any>,
@@ -354,6 +366,7 @@ export class MyAccountService {
     createStripeAccount(
         accountToken: string,
         personToken: string | null,
+        companyRemainingInfoAccountToken: string | null,
         bankAccountToken: string,
         businessType: string,
         status: Record<string, backendInteractionStatus>,
@@ -367,6 +380,10 @@ export class MyAccountService {
 
         if (personToken) {
             body["person_token"] = personToken;
+        }
+
+        if (companyRemainingInfoAccountToken) {
+            body["additional_account_token"] = companyRemainingInfoAccountToken;
         }
 
         return this.http.post(
