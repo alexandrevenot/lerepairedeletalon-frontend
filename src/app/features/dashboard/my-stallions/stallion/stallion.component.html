@@ -78,32 +78,6 @@
       </div>
     </div>
 
-    <div class="field py-4" *ngIf="stallionComponentInput.mode === 'creation'">
-      <label class="label has-text-weight-semibold has-text-grey">Test négatif de l'étalon pour métrite, artérite ou anémie <small>(Formats acceptés: PNG, PDF, JPEG, JPG)</small></label>
-      <div class="file is-primary">
-        <label class="file-label">
-          <div class="control">
-            <input class="file-input" type="file" name="resume" (change)="fetchVerificationFile($event)" accept=".png,.pdf,.jpeg,.jpg">
-          </div>
-          <span class="file-cta">
-            <span class="file-icon">
-              <i class="fas fa-cloud-upload-alt"></i>
-            </span>
-            <span class="file-label" *ngIf="!verificationFile">
-              Sélectionner un fichier 
-            </span>
-            <span class="file-label" *ngIf="verificationFile">
-              Fichier sélectionné
-            </span>
-          </span>
-          <span class="file-name" *ngIf="verificationFile">
-            {{verificationFile.name}}
-          </span>
-        </label>
-      </div>
-      <p class="help has-text-danger">{{ verificationFileHelper.value }}</p>
-    </div>
-
     <div class="field py-3">
       <h5 class="subtitle is-5 has-text-weight-bold mb-3">Identité du propriétaire de l'étalon</h5>
 

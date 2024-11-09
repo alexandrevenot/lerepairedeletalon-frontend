@@ -184,7 +184,7 @@ les évaluations que vous avez reçues et laissées.`
     path: 'this-website',
     component: ThisWebsiteComponent,
     data: {
-      title: "Qu'est-ce que c'est que ce site ? | Le Repaire de l'Étalon",
+      title: "Fonctionnement du site | Le Repaire de l'Étalon",
       meta: [
         {
           name: 'description',
