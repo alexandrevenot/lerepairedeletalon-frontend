@@ -18,7 +18,10 @@
       <div class="navbar-end">
         <a class="navbar-item is-size-6" (click)="navigateTo('this-website', false)">
           <span class="icon-text">
-            <span>Qu'est-ce que c'est que ce site?</span>
+            <span class="icon">
+              <img [src]="objectStorageBaseUrl + photosPrefix + '/question-mark.png'">
+            </span>
+            <span>Fonctionnement du site</span>
           </span>
         </a>
 
@@ -31,7 +34,7 @@
           </span>
         </a>
 
-        <a class="navbar-item is-size-6" (click)="navigateTo('search', true)">
+        <a class="navbar-item is-size-6" (click)="navigateTo('search', false)">
           <span class="icon-text">
             <span class="icon">
               <img [src]="objectStorageBaseUrl + photosPrefix + '/glass.png'">
@@ -60,10 +63,10 @@
       
         <div class="navbar-item" *ngIf="!userIsLoggedIn">
           <div class="buttons">
-            <a class="button is-primary" routerLink="/register">
+            <a class="button is-primary" (click)="navigateTo('register', false)">
               <strong>Créer un compte</strong>
             </a>
-            <a class="button is-light" routerLink="/login">
+            <a class="button is-light" (click)="navigateTo('login', false)">
               Se connecter
             </a>
           </div>

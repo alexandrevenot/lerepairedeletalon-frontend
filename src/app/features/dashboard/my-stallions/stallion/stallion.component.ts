@@ -1,7 +1,7 @@
 import { Component, Input, OnInit  } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { PostStallionOwnerResponse, PostStallionResponse, StallionOwnerItem, StallionOwners, StallionService } from './stallion.service';
-import { getAvailableBreeds, breedsRecord, availableCoverTypes, coverPlaceNames, getNumberArray, photosMaxSizeInBytes, splitListOrKeysList, balancePaymentConditions, stds, vaccines, objectStorageBaseUrl, photosPrefix, backendInteractionStatus, backendBaseUrl, verificationFileMaxSizeInBytes } from 'src/environments/environment';
+import { getAvailableBreeds, breedsRecord, availableCoverTypes, coverPlaceNames, getNumberArray, photosMaxSizeInBytes, splitListOrKeysList, balancePaymentConditions, stds, vaccines, objectStorageBaseUrl, photosPrefix, backendInteractionStatus } from 'src/environments/environment';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { GeolocationService, getCityData, getCityItem } from 'src/app/core/geolocation/geolocation.service';
 import { Router } from '@angular/router';
@@ -35,7 +35,6 @@ export class StallionComponent implements OnInit {
   public availableCoverTypes = availableCoverTypes;
   public coverPlaceNames = coverPlaceNames;
   public photosMaxSizeInBytes = photosMaxSizeInBytes;
-  public verificationFileMaxSizeInBytes = verificationFileMaxSizeInBytes;
   public getNumberArray = getNumberArray;
   public splitListOrKeysList = splitListOrKeysList;
   public balancePaymentConditions = balancePaymentConditions;
@@ -49,7 +48,6 @@ export class StallionComponent implements OnInit {
   // helpers
   public submitHelper: FormControl = new FormControl('');
   public photosHelper: FormControl= new FormControl('');
-  public verificationFileHelper: FormControl= new FormControl('');
   public locationHelper: FormControl = new FormControl('');
   public birthdateHelper: FormControl = new FormControl('');
   public stallionOwnersFormHelper: FormControl = new FormControl('');
@@ -72,7 +70,6 @@ export class StallionComponent implements OnInit {
   public productionBreeds: Record<string, boolean> = {};
   public stallionStdNegativeTests: Record<string, boolean> = {};
   public stallionVaccines: Record<string, boolean> = {};
-  public verificationFile!: File;
   public photos: Array<File | null> = [];
   public mareSTDs: Record<string, Record<string, boolean>> = {};
   public mareVaccines: Record<string, Record<string, boolean>> = {};
@@ -650,21 +647,6 @@ export class StallionComponent implements OnInit {
   }
 
   // files
-  fetchVerificationFile(event: any) {
-    const file: File = event.target.files[0];
-    if (!file) {
-      return
-    }
-
-    if (file.size > verificationFileMaxSizeInBytes) {
-      this.verificationFileHelper.setValue('La taille du fichier doit être inférieure à 10 Mo. Celle du fichier sélectionné les dépasse.');
-      return
-    }
-
-    this.verificationFile = event.target.files[0];
-    this.verificationFileHelper.setValue('');
-  }
-
   fetchPhotos(event: any) {
     const file: File = event.target.files[0];
     if (!file) {
@@ -834,11 +816,6 @@ export class StallionComponent implements OnInit {
       shouldThrowError = true;
     }
 
-    if (!this.verificationFile) {
-      this.verificationFileHelper.setValue("Une photo de test négatif est obligatoire.");
-      shouldThrowError = true;
-    }
-
     if (!this.birthdateFormatIsCorrect()) {
       shouldThrowError = true;
       if (this.getValueInStallionForm('birthdate')) {
@@ -910,7 +887,6 @@ export class StallionComponent implements OnInit {
       ).subscribe({
         next: (response: PostStallionResponse) => {
           return this.stallionService.uploadFiles(
-            this.verificationFile,
             this.photos,
             response['stallion_id'],
             this.stallionFormStatus,

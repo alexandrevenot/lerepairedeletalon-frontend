@@ -111,7 +111,6 @@ export class StallionService {
   }
 
   uploadFiles(
-    verificationFile: File,
     photos: Array<File | null>,
     stallionId: string,
     stallionFormStatus: Record<string, backendInteractionStatus>,
@@ -123,8 +122,6 @@ export class StallionService {
         formData.append('photos', file);
       }
     });
-    formData.append('verification_file', verificationFile);
-
     let headers = new HttpHeaders();
     headers.append('Content-Type', 'multipart/form-data');
 
