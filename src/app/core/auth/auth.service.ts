@@ -54,8 +54,7 @@ export class AuthService {
     }
 
     disconnectUser() {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
+        localStorage.clear();
         this.router.navigate(['/login']);
     }
 
