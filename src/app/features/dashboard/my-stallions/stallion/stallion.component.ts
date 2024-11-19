@@ -5,7 +5,7 @@ import { getAvailableBreeds, breedsRecord, availableCoverTypes, coverPlaceNames,
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { GeolocationService, getCityData, getCityItem } from 'src/app/core/geolocation/geolocation.service';
 import { Router } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
+import { debounceTime, firstValueFrom } from 'rxjs';
 
 export interface StallionComponentInput {
   mode: 'edition' | 'creation';
@@ -51,6 +51,7 @@ export class StallionComponent implements OnInit {
   public locationHelper: FormControl = new FormControl('');
   public birthdateHelper: FormControl = new FormControl('');
   public stallionOwnersFormHelper: FormControl = new FormControl('');
+  public stallionStdNegativeTestsDatesHelper: Record<string, FormControl> = {};
 
   // form validation status
   public stallionFormStatus: Record<string, backendInteractionStatus> = {"status": backendInteractionStatus.Init};
@@ -92,6 +93,7 @@ export class StallionComponent implements OnInit {
     lng: 0
   };
   public geolocationInputTimer: any;
+  public geolocationCacheTimer: any;
   public geolocStatus: Record<string, backendInteractionStatus> = {"status": backendInteractionStatus.Init};
   public displayGeolocDd: boolean = false;
   public productionBreedsAddedByHand: Array<string> = [];
@@ -180,6 +182,7 @@ export class StallionComponent implements OnInit {
     for (const std of this.availableStds) {
       this.stallionForm.addControl(std + 'StallionTestDate', new FormControl(''));
       this.stallionForm.get(std + 'StallionTestDate')?.disable();
+      this.stallionStdNegativeTestsDatesHelper[std] = new FormControl('');
     }
 
     for (const coverType of Object.keys(this.availableCoverTypes)) {
@@ -197,8 +200,9 @@ export class StallionComponent implements OnInit {
         this.mareSTDs[coverType][std] = false;
       }
 
+      this.mareVaccines[coverType] = {}
       for (const vaccine of this.availableVaccines) {
-        this.mareVaccines[coverType] = {vaccine: false};
+        this.mareVaccines[coverType][vaccine] = false;
       }
 
       this.coverTypes[coverType] = false;
@@ -236,6 +240,11 @@ export class StallionComponent implements OnInit {
     });
 
     await this.getStallionOwners();
+
+    if (this.stallionComponentInput.mode === 'creation') {
+      this.fetchFormFieldsFromCache();
+      this.subscribeToFormValueChangesForCache();
+    }
 
     if (this.stallionComponentInput.mode === 'edition') {
       this.fetchStallionProfile();
@@ -337,6 +346,190 @@ export class StallionComponent implements OnInit {
         error: () => {}
       })
     }
+  }
+
+  // cache
+  fetchFormFieldsFromCache() {
+    let value: string | null;
+    let value2: string | null;
+    let value3: string | null;
+
+    for (let key of ['name', 'breed', 'nSIRE', 'mainDesc', 'color',
+    'height', 'birthdate', 'crossbreedingAdvice', 'offspring', 'performance',
+    'pedigreePO', 'stallionAdditionalInfo', 'coverAdditionalInfo']) {
+      value = localStorage.getItem(`rns_${key}`);
+      value && this.stallionForm.get(key)?.setValue(value);
+    }
+
+    const stallionOwner = localStorage.getItem('rns_stallionOwner');
+    stallionOwner && this.stallionForm.get('stallionOwner')?.setValue(stallionOwner);
+    if (stallionOwner && !['Ajouter un propriétaire', 'Sélectionner', 'Moi'].includes(stallionOwner)) {
+      this.stallionOwnersForm.get('gender')?.disable();
+    }
+
+    for (let index = 1; index <= 14; index++) {
+      value = localStorage.getItem(`rns_p${index}`);
+      value && this.stallionForm.get(`p${index}`)?.setValue(value);
+    }
+
+    const locationIsValidated = localStorage.getItem('rns_locationIsValidated');
+    if (locationIsValidated === "true") {
+      const city = localStorage.getItem('rns_city');
+      const postalCode = localStorage.getItem('rns_postalCode');
+      const lat = localStorage.getItem('rns_lat');
+      const lng = localStorage.getItem('rns_lng');
+
+      if (city && postalCode && lat && lng) {
+        this.locationSearchSuccess['status'] = true;
+        this.stallionForm.get('location')?.setValue(city + ' (' + postalCode + ')');
+        this.locationIsValidated = true;
+        this.selectedLocation.city = city;
+        this.selectedLocation.postal_code = postalCode;
+        this.selectedLocation.lat = Number(lat);
+        this.selectedLocation.lng = Number(lng);
+      }
+    }
+
+    for (let vaccine of this.availableVaccines) {
+      value = localStorage.getItem(`rns_stallionVaccines_${vaccine}`);
+      if (value === "true") {
+        this.stallionVaccines[vaccine] = true;
+      }
+    }
+
+    for (let std of this.availableStds) {
+      value = localStorage.getItem(`rns_stallionStdNegativeTests_${std}`)
+      if (value === "true") {
+        this.stallionStdNegativeTests[std] = true;
+        this.stallionForm.get(std + 'StallionTestDate')?.enable();
+
+        value2 = localStorage.getItem(`rns_stallionStdNegativeTests_${std}_testDate`);
+        value2 && this.stallionForm.get(std + 'StallionTestDate')?.setValue(value2);
+      }
+    }
+
+    const productionBreeds = localStorage.getItem('rns_productionBreeds');
+    let result = null;
+    if (productionBreeds) {
+      try {
+        result = JSON.parse(productionBreeds);
+      } catch (error) {
+        if (!(error instanceof SyntaxError)) {
+          throw error;
+        }
+      }
+    }
+
+    if (result && result instanceof Array) {
+      for (let productionBreed of result) {
+        if (typeof productionBreed === "string") {
+          if (this.availableBreeds.includes(productionBreed)) {
+            this.productionBreeds[productionBreed] = true;
+          } else {
+            this.triggerOtherProductionBreeds();
+            this.productionBreedsAddedByHand.push(productionBreed);
+          }
+        }
+      }
+    }
+
+    for (let coverType of Object.keys(this.availableCoverTypes)) {
+      value = localStorage.getItem(`rns_coverTypes_${coverType}`);
+      if (value === "true") {
+        this.coverTypes[coverType] = true;
+        for (let key of ['Price', 'BalancePaymentCondition', 'AdvancePercentage',
+        'CoverPlace', 'MaximumNumberOfAttempts']) {
+          value2 = localStorage.getItem(`rns_${coverType}_${key}`);
+          value2 && this.stallionForm.get(coverType + key)?.setValue(value2);
+        }
+
+        for (let vaccine of this.availableVaccines) {
+          value2 = localStorage.getItem(`rns_mareVaccines_${coverType}_${vaccine}`);
+          if (value2 === "true") {
+            this.mareVaccines[coverType][vaccine] = true;
+          }
+        }
+
+        for (let std of this.availableStds) {
+          value2 = localStorage.getItem(`rns_mareSTDs_${coverType}_${std}`);
+          if (value2 === "true") {
+            this.mareSTDs[coverType][std] = true;
+            this.stallionForm.get(coverType + std + 'MareTestOldness')?.enable();
+
+            value3 = localStorage.getItem(`rns_${coverType}_${std}_MareTestOldness`);
+            value3 && this.stallionForm.get(coverType + std + 'MareTestOldness')?.setValue(value3);
+          }
+        }
+      }
+    }
+  }
+
+  subscribeToFormValueChangesForCache() {
+    for (let key of ['name', 'breed', 'nSIRE', 'mainDesc', 'color',
+    'height', 'birthdate', 'crossbreedingAdvice', 'offspring', 'performance',
+    'pedigreePO', 'stallionAdditionalInfo', 'coverAdditionalInfo', 'stallionOwner'
+    ].concat(Array.from({length: 14}, (_, index) => `p${index+1}`))) {
+      this.stallionForm.get(key)?.valueChanges.pipe(debounceTime(1000)).subscribe((value) => {
+        localStorage.setItem(`rns_${key}`, value);
+      })
+    }
+
+    for (let std of this.availableStds) {
+      this.stallionForm.get(std + 'StallionTestDate')?.valueChanges.pipe(debounceTime(1000)).subscribe((value) => {
+        localStorage.setItem(`rns_stallionStdNegativeTests_${std}_testDate`, value);
+      })
+    }
+
+    for (let coverType of Object.keys(this.availableCoverTypes)) {
+      for (let key of ['Price', 'BalancePaymentCondition', 'AdvancePercentage',
+        'CoverPlace', 'MaximumNumberOfAttempts'
+      ]) {
+        this.stallionForm.get(coverType + key)?.valueChanges.pipe(debounceTime(1000)).subscribe((value) => {
+          localStorage.setItem(`rns_${coverType}_${key}`, value);
+        })
+      }
+
+      for (let std of this.availableStds) {
+        this.stallionForm.get(coverType + std + 'MareTestOldness')?.valueChanges.pipe(debounceTime(1000)).subscribe((value) => {
+          localStorage.setItem(`rns_${coverType}_${std}_MareTestOldness`, value);
+        })
+      }
+    }
+  }
+
+  clearFormValuesFromCache() {
+    let toBeRemoved: Array<string> = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('rns_')) {
+        toBeRemoved.push(key);
+      }
+    }
+
+    for (let key of toBeRemoved) {
+      localStorage.removeItem(key);
+    }
+  }
+
+  setProductionBreedsInCache() {
+    const productionBreeds: Array<string> = this.getSelectedCheckboxes('productionBreeds').concat(this.productionBreedsAddedByHand);
+    localStorage.setItem('rns_productionBreeds', JSON.stringify(productionBreeds));
+  }
+
+  setLocationInCache() {
+    localStorage.setItem('rns_locationIsValidated', "true");
+    localStorage.setItem('rns_city', this.selectedLocation.city);
+    localStorage.setItem('rns_postalCode', this.selectedLocation.postal_code);
+    localStorage.setItem('rns_lat', this.selectedLocation.lat.toString());
+    localStorage.setItem('rns_lng', this.selectedLocation.lng.toString());
+  }
+
+  removeLocationFromCache() {
+    localStorage.removeItem('rns_locationIsValidated');
+    localStorage.removeItem('rns_city');
+    localStorage.removeItem('rns_postalCode');
+    localStorage.removeItem('rns_lat');
+    localStorage.removeItem('rns_lng');
   }
 
   // stallion owners
@@ -613,11 +806,18 @@ export class StallionComponent implements OnInit {
   updateCheckbox(checkboxType: 'productionBreeds' | 'coverTypes' | 'stallionStdNegativeTests' | 'stallionVaccines', event: any) {
     this[checkboxType][event.target.id] = event.target.checked;
 
+    if (this.stallionComponentInput.mode == "creation") {
+      if (checkboxType === "productionBreeds") {
+        this.setProductionBreedsInCache();
+      } else {
+        localStorage.setItem(`rns_${checkboxType}_${event.target.id}`, event.target.checked? "true": "false");
+      }
+    }
+
     if (checkboxType === 'stallionStdNegativeTests') {
       let formControl = this.stallionForm.get(event.target.id + 'StallionTestDate')
       event.target.checked? formControl?.enable(): formControl?.disable();
     }
-
   }
 
   getSelectedCheckboxes(checkboxType: 'coverTypes' | 'productionBreeds' | 'stallionStdNegativeTests' | 'stallionVaccines') {
@@ -632,6 +832,11 @@ export class StallionComponent implements OnInit {
 
   updateNestedCheckbox(coverType: string, formControlName: string, checkboxType: 'mareSTDs' | 'mareVaccines', event: any) {
     this[checkboxType][coverType][event.target.id] = event.target.checked;
+
+    if (this.stallionComponentInput.mode == "creation") {
+      localStorage.setItem(`rns_${checkboxType}_${coverType}_${event.target.id}`, event.target.checked? "true": "false");
+    }
+
     if (['mareSTDs'].includes(checkboxType)) {
       let formControl = this.stallionForm.get(formControlName)
       event.target.checked? formControl?.enable(): formControl?.disable();
@@ -696,11 +901,17 @@ export class StallionComponent implements OnInit {
     let value: string = this.stallionForm.get('newProductionBreed')?.value;
     if (!this.productionBreedsAddedByHand.includes(value)) {
       this.productionBreedsAddedByHand.push(value);
+      if (this.stallionComponentInput.mode == "creation") {
+        this.setProductionBreedsInCache();
+      }
     }
   }
 
   deleteAddedByHandProductionBreed(index: number) {
     this.productionBreedsAddedByHand.splice(index, 1);
+    if (this.stallionComponentInput.mode == "creation") {
+      this.setProductionBreedsInCache();
+    }
   }
 
   // geoloc
@@ -709,7 +920,13 @@ export class StallionComponent implements OnInit {
     this.locationIsValidated = false;
     this.geolocationInputTimer = setTimeout(() => {
       this.findCity()
-    }, 750)
+    }, 750);
+    if (this.stallionComponentInput.mode == "creation") {
+      clearTimeout(this.geolocationCacheTimer);
+      this.geolocationCacheTimer = setTimeout(() => {
+        localStorage.removeItem('rns_locationIsValidated');
+      })
+    }
   }
 
   onGeolocationFocus() {
@@ -751,6 +968,9 @@ export class StallionComponent implements OnInit {
   resetCity() {
     this.locations.splice(0, this.locations.length);
     this.locationIsValidated = false;
+    if (this.stallionComponentInput.mode == "creation") {
+      this.removeLocationFromCache();
+    }
     const locationControl = this.stallionForm.get('location');
     if (locationControl) {
       locationControl.setValue("");
@@ -767,6 +987,9 @@ export class StallionComponent implements OnInit {
     this.selectedLocation = this.locations[index];
     this.locationTagValues.splice(0, this.locationTagValues.length);
     this.locationIsValidated = true;
+    if (this.stallionComponentInput.mode == "creation") {
+      this.setLocationInCache();
+    }
   }
 
   // numbers
@@ -787,8 +1010,8 @@ export class StallionComponent implements OnInit {
     return 15 <= value && value <= 50;
   }
 
-  birthdateFormatIsCorrect() {
-    return /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/.test(this.getValueInStallionForm("birthdate"));
+  dateFormatIsCorrect(date: string) {
+    return /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/.test(date);
   }
 
   dropdownIsSelected(field: 'breed' | 'stallionOwner') {
@@ -807,36 +1030,24 @@ export class StallionComponent implements OnInit {
     }
   }
 
-  registerNewStallion() {
-    // data validation
-    let shouldThrowError = false;
-
-    if (this.photos.length === 0) {
-      this.photosHelper.setValue("Il faut au minimum une photo.");
-      shouldThrowError = true;
-    }
-
-    if (!this.birthdateFormatIsCorrect()) {
-      shouldThrowError = true;
-      if (this.getValueInStallionForm('birthdate')) {
-        this.birthdateHelper.setValue("La date de naissance doit être au format JJ/MM/AAAA.");
-      }
-    }
-
+  checkForUserErrorsForBothRegisterAndEdit(): boolean {
     if (this.getSelectedCheckboxes('productionBreeds').length <= 0) {
-      shouldThrowError = true;
+      return true;
     }
 
     if (this.getSelectedCheckboxes('coverTypes').length <= 0) {
-      shouldThrowError = true;
+      return true;
     }
 
     if (!this.stallionForm.valid) {
-      shouldThrowError = true;
+      return true;
     }
 
-    if ("Sélectionner" == this.stallionForm.get('stallionOwner')?.getRawValue()) {
-      shouldThrowError = true;
+    for (let std of this.getSelectedCheckboxes('stallionStdNegativeTests')) {
+      if (!this.getValueInStallionForm(std + 'StallionTestDate') || !this.dateFormatIsCorrect(this.getValueInStallionForm(std + 'StallionTestDate'))) {
+        this.stallionStdNegativeTestsDatesHelper[std].setValue("La date de ce test doit être au format JJ/MM/AAAA.")
+        return true;
+      }
     }
 
     for (let coverType of this.getSelectedCheckboxes('coverTypes')) {
@@ -847,20 +1058,45 @@ export class StallionComponent implements OnInit {
         || !this.getValueInStallionForm(coverType + "CoverPlace")
         || !this.getValueInStallionForm(coverType + "MaximumNumberOfAttempts")
       ) {
-        shouldThrowError = true;
+        return true;
       }
 
       if (!this.formControlValueIsBetween15and50(coverType + "AdvancePercentage")) {
-        shouldThrowError = true;
+        return true;
       }
 
       for (let [std, value] of Object.entries(this.mareSTDs[coverType])) {
         if (value) {
           if (!this.getValueInStallionForm(coverType + std + 'MareTestOldness')) {
-            shouldThrowError = true;
+            return true;
           }
         }
       }
+    }
+
+    return false;
+  }
+
+  registerNewStallion() {
+    // data validation
+    let shouldThrowError = false;
+
+    if (this.photos.length === 0) {
+      this.photosHelper.setValue("Il faut au minimum une photo.");
+      shouldThrowError = true;
+    }
+
+    if (this.getValueInStallionForm('birthdate') && !this.dateFormatIsCorrect(this.getValueInStallionForm('birthdate'))) {
+      this.birthdateHelper.setValue("La date de naissance doit être au format JJ/MM/AAAA.");
+      shouldThrowError = true;
+    }
+
+    if ("Sélectionner" == this.stallionForm.get('stallionOwner')?.getRawValue()) {
+      shouldThrowError = true;
+    }
+
+    if (this.checkForUserErrorsForBothRegisterAndEdit()) {
+      shouldThrowError = true;
     }
 
     // if data is not validated
@@ -895,6 +1131,7 @@ export class StallionComponent implements OnInit {
             next: () => {
               this.stallionFormStatus['status'] = backendInteractionStatus.Success;
               this.submitHelper.setValue('Étalon ajouté avec succès.');
+              this.clearFormValuesFromCache();
             },
             error: () => {}
           })
@@ -919,40 +1156,8 @@ export class StallionComponent implements OnInit {
       shouldThrowError = true;
     }
 
-    if (this.getSelectedCheckboxes('productionBreeds').length <= 0) {
+    if (this.checkForUserErrorsForBothRegisterAndEdit()) {
       shouldThrowError = true;
-    }
-
-    if (this.getSelectedCheckboxes('coverTypes').length <= 0) {
-      shouldThrowError = true;
-    }
-
-    if (!this.stallionForm.valid) {
-      shouldThrowError = true;
-    }
-
-    for (let coverType of this.getSelectedCheckboxes('coverTypes')) {
-      if (
-        !this.getValueInStallionForm(coverType + "Price")
-        || !this.getValueInStallionForm(coverType + "BalancePaymentCondition")
-        || !this.getValueInStallionForm(coverType + "AdvancePercentage")
-        || !this.getValueInStallionForm(coverType + "CoverPlace")
-        || !this.getValueInStallionForm(coverType + "MaximumNumberOfAttempts")
-      ) {
-        shouldThrowError = true;
-      }
-
-      if (!this.formControlValueIsBetween15and50(coverType + "AdvancePercentage")) {
-        shouldThrowError = true;
-      }
-
-      for (let [std, value] of Object.entries(this.mareSTDs[coverType])) {
-        if (value) {
-          if (!this.getValueInStallionForm(coverType + std + 'MareTestOldness')) {
-            shouldThrowError = true;
-          }
-        }
-      }
     }
 
     // if data is not validated
