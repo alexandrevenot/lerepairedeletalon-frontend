@@ -113,13 +113,12 @@ export class StallionProfileComponent implements OnInit{
       .subscribe({
         next: (data: checkoutResponse) => {
           this.subtotal = data.subtotal;
-          this.serviceFees = data.service_fees;
+          this.serviceFees = data.fees;
           this.total = data.total;
         },
         error: () => {}
       })
     });
-
 
     this.route.queryParams.subscribe(params => {
       const stallionId = params['id'];

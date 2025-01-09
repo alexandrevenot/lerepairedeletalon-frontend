@@ -5,7 +5,7 @@ import { backendBaseUrl } from "src/environments/environment";
 
 export interface checkoutResponse {
     subtotal: number,
-    service_fees: number,
+    fees: number,
     total: number
 }
 
