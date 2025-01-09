@@ -6,6 +6,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { GeolocationService, getCityData, getCityItem } from 'src/app/core/geolocation/geolocation.service';
 import { Router } from '@angular/router';
 import { debounceTime, firstValueFrom } from 'rxjs';
+import { checkoutResponse, PricingService } from 'src/app/core/pricing/pricing.service';
 
 export interface StallionComponentInput {
   mode: 'edition' | 'creation';
@@ -18,7 +19,8 @@ export interface StallionComponentInput {
   styleUrls: ['./stallion.component.css'],
   providers: [
     StallionService,
-    GeolocationService
+    GeolocationService,
+    PricingService
   ]
 })
 export class StallionComponent implements OnInit {
@@ -103,6 +105,8 @@ export class StallionComponent implements OnInit {
   public stallionOwnersFormLastSavedValue: any;
   public savedStallionOwnerBusinessType: string = "";
   public selectedStallionOwnerBusinessType: string = "";
+  public simulatedTotalPrices: Record<string, number> = {};
+  public simulatedPriceShouldBeDisplayed: Record<string, boolean> = {};
 
   // only when editing
   public keptPhotos: Array<number> = [];
@@ -114,6 +118,7 @@ export class StallionComponent implements OnInit {
   constructor(
     private stallionService: StallionService,
     private geolocationService: GeolocationService,
+    private pricingService: PricingService,
     private formBuilder: FormBuilder,
     private sanitizer: DomSanitizer,
     private router: Router
@@ -206,6 +211,9 @@ export class StallionComponent implements OnInit {
       }
 
       this.coverTypes[coverType] = false;
+
+      this.simulatedTotalPrices[coverType] = 0;
+      this.simulatedPriceShouldBeDisplayed[coverType] = false;
     }
 
     this.stallionForm.get('stallionOwner')?.valueChanges.subscribe((value) => {
@@ -240,6 +248,19 @@ export class StallionComponent implements OnInit {
     });
 
     await this.getStallionOwners();
+
+    for (let coverType of Object.keys(this.availableCoverTypes)) {
+      this.stallionForm.get(coverType + 'Price')?.valueChanges.pipe(debounceTime(1000)).subscribe((input) => {
+        this.simulatedPriceShouldBeDisplayed[coverType] = false;
+        this.pricingService.getCheckout(input).subscribe({
+          next: (checkout: checkoutResponse) => {
+            this.simulatedTotalPrices[coverType] = checkout.total;
+            this.simulatedPriceShouldBeDisplayed[coverType] = true;
+          },
+          error: () => {}
+        })
+      })
+    }
 
     if (this.stallionComponentInput.mode === 'creation') {
       this.fetchFormFieldsFromCache();

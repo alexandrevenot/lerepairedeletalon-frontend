@@ -245,7 +245,7 @@
 
             <div class="column is-2">
                 <label class="label has-text-weight-semibold has-text-grey-light" *ngIf="pov == 'buyer'">Prix</label>
-                <label class="label has-text-weight-semibold has-text-grey-light" *ngIf="pov == 'seller'">Revenus bruts</label>
+                <label class="label has-text-weight-semibold has-text-grey-light" *ngIf="pov == 'seller'">Montant perçu</label>
                 <div class="control has-icons-right">
                     <input class="input is-primary" [value]="price.toFixed(2)" readonly>
                     <span class="icon is-right">
@@ -378,7 +378,7 @@
             </div>
 
             <h4 class="subtitle is-4 has-text-weight-bold">Augmenter ou baisser le prix</h4>
-            <label class="label has-text-weight-semibold has-text-grey-light">Prix HT actuellement utilisé</label>
+            <label class="label has-text-weight-semibold has-text-grey-light">Prix actuellement utilisé</label>
             <div class="content control has-icons-right">
                 <input class="input is-success" [value]="basePrice" readonly>
                 <span class="icon is-small is-right">
@@ -400,6 +400,9 @@
                       </a>
                     </div>
                 </div>
+                <p class="help" *ngIf="simulatedPriceShouldBeDisplayed && simulatedTotalPrice > 0 && newBasePrice.value >= 10">
+                    Avec les frais de service, l'acheteur paiera {{simulatedTotalPrice.toFixed(2)}}€ au total.
+                  </p>
                 <p class="help pb-6" [ngClass]="['UserError', 'BackendError'].includes(basePriceStatus['status'])? 'is-danger': 'is-success'">
                     {{displayBasePriceHelper.value}}
                 </p>    
@@ -506,8 +509,8 @@
             <button class="delete" aria-label="close" (click)="closeModal('basePrice')"></button>
         </header>
         <section class="modal-card-body">
-            <p>Le prix de base de la saillie passera de {{basePrice}}€ à {{valueForPutCover}}€.</p>
-            <p>Les frais de service de la plateforme seront automatiquement recalculés.</p>
+            <p>Le montant que vous percevrez pour la saillie passera de {{basePrice}}€ à {{valueForPutCover}}€.</p>
+            <p>Les frais de service passeront à {{simulatedFees}}€, amenant le prix total de la saillie à {{simulatedTotalPrice}}€</p>
         </section>
         <footer class="modal-card-foot is-justify-content-center">
             <div class="buttons">

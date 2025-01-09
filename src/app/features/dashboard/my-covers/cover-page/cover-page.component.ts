@@ -4,13 +4,17 @@ import { availableCoverTypes, coverPlaceNames, statusCommentaryMapping, statusHe
   statusMapping, vaccines, shortBalancePaymentConditions, stds, getNumberArray, backendInteractionStatus } from 'src/environments/environment';
 import { Form, FormControl } from '@angular/forms';
 import { UserScore, UserScoreService } from 'src/app/core/user-score/user-score.service';
-import { Observable, first, firstValueFrom } from 'rxjs';
+import { Observable, debounceTime, first, firstValueFrom } from 'rxjs';
+import { checkoutResponse, PricingService } from 'src/app/core/pricing/pricing.service';
 
 @Component({
   selector: 'app-cover-page',
   templateUrl: './cover-page.component.html',
   styleUrls: ['./cover-page.component.css'],
-  providers: [CoverPageService]
+  providers: [
+    CoverPageService,
+    PricingService
+  ]
 })
 export class CoverPageComponent implements OnInit{
   @Input() coverId: string = "";
@@ -99,6 +103,9 @@ export class CoverPageComponent implements OnInit{
   public basePriceStatus: Record<string, backendInteractionStatus> = {"status": backendInteractionStatus.Init};
   public displayBasePriceHelper: FormControl = new FormControl('');
   public newBasePriceModalIsActive: boolean = false;
+  public simulatedTotalPrice: number = 0;
+  public simulatedFees: number = 0;
+  public simulatedPriceShouldBeDisplayed: boolean = false;
 
   public valueForPutCover: string | number = "";
 
@@ -161,9 +168,25 @@ export class CoverPageComponent implements OnInit{
   constructor(
     private coverPageService: CoverPageService,
     private userScoreService: UserScoreService,
+    private pricingService: PricingService,
     ) {}
 
   ngOnInit(): void {
+    this.newBasePrice?.valueChanges.pipe(debounceTime(1000)).subscribe((input) => {
+      this.simulatedPriceShouldBeDisplayed = false;
+      if (input < 10) {
+        return
+      }
+      this.pricingService.getCheckout(input).subscribe({
+        next: (checkout: checkoutResponse) => {
+          this.simulatedTotalPrice = checkout.total;
+          this.simulatedFees = checkout.fees;
+          this.simulatedPriceShouldBeDisplayed = true;
+        },
+        error: () => {}
+      })
+    })
+
     this.loadCoverInfo();
   }
 
