@@ -18,6 +18,7 @@ import { checkoutResponse, PricingService } from 'src/app/core/pricing/pricing.s
 })
 export class CoverPageComponent implements OnInit{
   @Input() coverId: string = "";
+  @Input() pollCoverStatus: string = "";
 
   @Output() goToCoverPageActionEvent = new EventEmitter();
 
@@ -171,7 +172,7 @@ export class CoverPageComponent implements OnInit{
     private pricingService: PricingService,
     ) {}
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.newBasePrice?.valueChanges.pipe(debounceTime(1000)).subscribe((input) => {
       this.simulatedPriceShouldBeDisplayed = false;
       if (input < 10) {
@@ -187,7 +188,18 @@ export class CoverPageComponent implements OnInit{
       })
     })
 
-    this.loadCoverInfo();
+    await this.loadCoverInfo();
+
+    if (this.pollCoverStatus && this.status != this.pollCoverStatus) {
+      this.greenButtonStatus['status'] = backendInteractionStatus.Loading;
+      let i: number = 0;
+      while (this.pollCoverStatus != this.status && i <= 10) {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        await this.loadCoverInfo();
+        i++;
+      }
+      this.greenButtonStatus['status'] = backendInteractionStatus.Init;
+    }
   }
 
   async loadCoverInfo() {
