@@ -37,6 +37,7 @@ export class DashboardComponent implements OnInit{
 
   // specific variables
   public selectedCoverId: string = "";
+  public pollCoverStatus: string = "";
   public selectedCoverActionType: string = "";
   public signUrl: string = "";
   public paymentPart: string = "";
@@ -90,14 +91,16 @@ export class DashboardComponent implements OnInit{
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       const coverId = params['coverId'];
+      const pollCoverStatus = params['pollCoverStatus'];
       const reload = params['reload'];
       const myStallions = params['myStallions'];
-      if (coverId != undefined) {
-        if (coverId) {
-          setTimeout(() => {
-            this.router.navigate(['/dashboard']);
-            this.goToCoverPage(coverId);
-          }, 2000)
+      if (coverId) {
+        if (['buyersigned', 'sellersigned', 'downpaid', 'fullypaid'].includes(pollCoverStatus)) {
+          this.router.navigate(['/dashboard']);
+          this.goToCoverPage(coverId, pollCoverStatus);
+        } else {
+          this.router.navigate(['/dashboard']);
+          this.goToCoverPage(coverId, '');
         }
       } else if (reload != undefined) {
         this.initializeVars();
@@ -163,7 +166,8 @@ export class DashboardComponent implements OnInit{
   }
 
   // special pages
-  goToCoverPage(coverId: string) {
+  goToCoverPage(coverId: string, pollCoverStatus: '' | 'buyersigned' | 'sellersigned' | 'downpaid' | 'fullypaid') {
+    this.pollCoverStatus = pollCoverStatus;
     this.selectedCoverId = coverId;
     this.selectedComponentKey = "CoverPageComponent";
   }
