@@ -55,7 +55,7 @@ export class AuthService {
 
     disconnectUser() {
         localStorage.clear();
-        this.router.navigate(['/login']);
+        this.router.navigate(['/connexion']);
     }
 
     userIsLogged() {

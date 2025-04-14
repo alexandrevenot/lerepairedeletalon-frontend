@@ -6,6 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { PricingService, checkoutResponse } from 'src/app/core/pricing/pricing.service';
 import { FavoriteStallionsService, FavoriteStallions } from '../../dashboard/favorite-stallions/favorite-stallions.service';
 import { UserScore, UserScoreService } from 'src/app/core/user-score/user-score.service';
+import { SeoService } from 'src/app/core/seo/seo.service';
 
 @Component({
   selector: 'app-stallion-profile',
@@ -91,7 +92,8 @@ export class StallionProfileComponent implements OnInit{
     private formBuilder: FormBuilder,
     private pricingService: PricingService,
     private favoriteStallionsService: FavoriteStallionsService,
-    private userScoreService: UserScoreService
+    private userScoreService: UserScoreService,
+    private seoService: SeoService
   ) {}
 
   ngOnInit() {
@@ -120,8 +122,10 @@ export class StallionProfileComponent implements OnInit{
       })
     });
 
-    this.route.queryParams.subscribe(params => {
-      const stallionId = params['id'];
+    this.route.params.subscribe(params => {
+      const idAndName = params['idAndName'];
+      const splittedIdAndName = idAndName.split("-");
+      const stallionId = splittedIdAndName[0];
       this.itemId = stallionId;
     });
 
@@ -177,6 +181,15 @@ export class StallionProfileComponent implements OnInit{
             this.photos.push(objectStorageBaseUrl + photosPrefix + '/' + photoUrl);
           })
   
+          const seoData = {
+            title: `Profil de ${content.name} | Le Repaire de l'Étalon`,
+            meta: [{
+              name: 'description',
+              content: `Consultez le profil de l'étalon ${content.name}: sa taille, son âge, sa robe, ses races de production, son pedigree, son statut sanitaire, ses performances, entre autres.`
+            }]
+          }
+          this.seoService.initSeo(seoData);
+
           this.userScoreService.getUserScore(
             this.handlerId,
             this.nSire,
@@ -257,12 +270,12 @@ export class StallionProfileComponent implements OnInit{
   }
 
   openReviewsForStallion() {
-    const url = `/user-reviews?id=${this.handlerId}&reviewPov=received&coverPov=seller&stallionNSIRE=${this.nSire}`;
+    const url = `/evaluations?id=${this.handlerId}&reviewPov=received&coverPov=seller&stallionNSIRE=${this.nSire}`;
     window.open(url, '_blank');
   }
 
   openAllReviews() {
-    const url = `/user-reviews?id=${this.handlerId}&reviewPov=received&coverPov=seller`;
+    const url = `/evaluations?id=${this.handlerId}&reviewPov=received&coverPov=seller`;
     window.open(url, '_blank');
   }
 

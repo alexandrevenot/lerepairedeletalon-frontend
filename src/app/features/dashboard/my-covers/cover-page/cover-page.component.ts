@@ -329,9 +329,9 @@ export class CoverPageComponent implements OnInit{
   openReviews(contactPov: "buyer" | "seller") {
     let url: string;
     if (contactPov == "seller") {
-      url = `/user-reviews?id=${this.contactId}&reviewPov=received&coverPov=seller&stallionNSIRE=${this.stallionNSIRE}`;
+      url = `/evaluations?id=${this.contactId}&reviewPov=received&coverPov=seller&stallionNSIRE=${this.stallionNSIRE}`;
     } else {
-      url = `/user-reviews?id=${this.contactId}&reviewPov=received&coverPov=buyer`;
+      url = `/evaluations?id=${this.contactId}&reviewPov=received&coverPov=buyer`;
     }
 
     window.open(url, '_blank');

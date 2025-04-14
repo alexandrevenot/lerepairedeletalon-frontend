@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { searchItem } from '../stallion-panel.service';
 import { objectStorageBaseUrl, photosPrefix } from 'src/environments/environment';
+import slug from 'slug';
 
 @Component({
   selector: 'app-stallion-panel-item',
@@ -39,7 +40,7 @@ export class StallionPanelItemComponent implements OnInit{
   }
 
   handleClick(){
-    const url = `/stallion-profile?id=${this.item.id}`;
+    const url = `/etalons/${this.item.id}-${slug(this.item.name)}`;
     window.open(url, '_blank');
   }
 

@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FavoriteStallionBoxService, FavoriteStallionprofile } from './favorite-stallion-box.service';
 import { FavoriteStallionsService } from '../favorite-stallions.service';
 import { objectStorageBaseUrl, photosPrefix } from 'src/environments/environment';
+import slug from 'slug';
 
 @Component({
   selector: 'app-favorite-stallion-box',
@@ -66,7 +67,7 @@ export class FavoriteStallionBoxComponent implements OnInit{
 
   goToStallionProfile() {
     if (this.profileStatus == "visible") {
-      const url = `/stallion-profile?id=${this.stallionId}`;
+      const url = `/etalons/${this.stallionId}-${slug(this.name)}`;
       window.open(url, '_blank');
     } else {
       this.profileNotVisibleErrorIsDisplayed = true;

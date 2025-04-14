@@ -16,7 +16,7 @@ import { ContactComponent } from './layout/static-pages/contact/contact.componen
 
 const routes: Routes = [
   {
-    path: 'register',
+    path: 'inscription',
     component: RegisterComponent,
     data: {
       title: "Créez votre compte | Le Repaire de l'Étalon",
@@ -24,20 +24,12 @@ const routes: Routes = [
         {
           name: 'description',
           content: "Créez votre profil sur Le Repaire de l'Étalon pour pouvoir acheter et vendre des saillies dans la filière équine."
-        },
-        {
-          name: 'robots',
-          content: 'index, follow'
-        },
-        {
-          name: 'viewport',
-          content: 'width=device-width, initial-scale=1'
         }
       ]
     }
   },
   {
-    path: 'login',
+    path: 'connexion',
     component: LoginComponent,
     data: {
       title: "Connectez vous | Le Repaire de l'Étalon",
@@ -45,20 +37,12 @@ const routes: Routes = [
         {
           name: 'description',
           content: "Connectez vous à votre compte sur Le Repaire de l'Étalon pour pouvoir acheter et vendre des saillies dans la filière équine."
-        },
-        {
-          name: 'robots',
-          content: 'index, follow'
-        },
-        {
-          name: 'viewport',
-          content: 'width=device-width, initial-scale=1'
         }
       ]
     }
   },
   {
-    path: 'dashboard',
+    path: 'tableau-de-bord',
     component: DashboardComponent,
     data: {
       title: "Tableau de bord | Le Repaire de l'Étalon",
@@ -68,20 +52,12 @@ const routes: Routes = [
           content: `Retrouvez toutes les informations liées à votre compte Le Repaire de l'Étalon: 
 la liste de vos étalons disponibles à la saillie, vos saillies en cours d'achat, vos saillies en cours de vente, 
 les évaluations que vous avez reçues et laissées.`
-        },
-        {
-          name: 'robots',
-          content: 'index, follow'
-        },
-        {
-          name: 'viewport',
-          content: 'width=device-width, initial-scale=1'
         }
       ]
     }
   },
   {
-    path: 'search',
+    path: 'rechercher-un-etalon',
     component: SearchComponent,
     data: {
       title: "Rechercher un étalon | Le Repaire de l'Étalon",
@@ -89,24 +65,16 @@ les évaluations que vous avez reçues et laissées.`
         {
           name: 'description',
           content: "Trouvez un étalon disponible à la saillie pour votre jument parmi tous les profils d'étalons présents sur la plateforme Le Repaire de l'Étalon."
-        },
-        {
-          name: 'robots',
-          content: 'index, follow'
-        },
-        {
-          name: 'viewport',
-          content: 'width=device-width, initial-scale=1'
         }
       ]
     }
   },
-  {path: 'stallion-profile', component: StallionProfileComponent},
-  {path: 'user-reviews', component: ReviewsComponent},
+  {path: 'etalons/:idAndName', component: StallionProfileComponent},
+  {path: 'evaluations', component: ReviewsComponent},
   {path: 'password-update', component: PasswordUpdateComponent},
   {path: 'email-verification', component: EmailVerificationComponent},
   {
-    path: 'cgv',
+    path: 'conditions-generales-de-vente',
     component: CgvComponent,
     data: {
       title: "Conditions Générales de Vente | Le Repaire de l'Étalon",
@@ -116,14 +84,6 @@ les évaluations que vous avez reçues et laissées.`
           content: "Consultez les Conditions Générales de Vente de la plateforme Le Repaire de l'Étalon."
         },
         {
-          name: 'robots',
-          content: 'index, follow'
-        },
-        {
-          name: 'viewport',
-          content: 'width=device-width, initial-scale=1'
-        },
-        {
           name: 'author',
           content: 'Alexandre Venot'
         }
@@ -131,7 +91,7 @@ les évaluations que vous avez reçues et laissées.`
     }
   },
   {
-    path: 'cgu',
+    path: 'conditions-generales-d-utilisation',
     component: CguComponent,
     data: {
       title: "Conditions Générales d'Utilisation | Le Repaire de l'Étalon",
@@ -139,14 +99,6 @@ les évaluations que vous avez reçues et laissées.`
         {
           name: 'description',
           content: "Consultez les Conditions Générales d'Utilisation de la plateforme Le Repaire de l'Étalon."
-        },
-        {
-          name: 'robots',
-          content: 'index, follow'
-        },
-        {
-          name: 'viewport',
-          content: 'width=device-width, initial-scale=1'
         },
         {
           name: 'author',
@@ -166,14 +118,6 @@ les évaluations que vous avez reçues et laissées.`
           content: "Consultez les Mentions Légales de la plateforme Le Repaire de l'Étalon."
         },
         {
-          name: 'robots',
-          content: 'index, follow'
-        },
-        {
-          name: 'viewport',
-          content: 'width=device-width, initial-scale=1'
-        },
-        {
           name: 'author',
           content: 'Alexandre Venot'
         }
@@ -181,7 +125,7 @@ les évaluations que vous avez reçues et laissées.`
     }
   },
   {
-    path: 'this-website',
+    path: 'fonctionnement-du-site',
     component: ThisWebsiteComponent,
     data: {
       title: "Fonctionnement du site | Le Repaire de l'Étalon",
@@ -190,14 +134,6 @@ les évaluations que vous avez reçues et laissées.`
           name: 'description',
           content: `Obtenez des informations concernant Le Repaire de l'Étalon, une plateforme d'achat et de vente de saillies dans la filière équine, 
 telles que les fonctionnalités du site, les tarifs d'utilisation, les types de saillies disponibles, des détails sur le contrat de saillie.`
-        },
-        {
-          name: 'robots',
-          content: 'index, follow'
-        },
-        {
-          name: 'viewport',
-          content: 'width=device-width, initial-scale=1'
         },
         {
           name: 'author',
@@ -216,19 +152,11 @@ telles que les fonctionnalités du site, les tarifs d'utilisation, les types de 
         {
           name: 'description',
           content: "Trouvez un moyen de nous contacter, par exemple pour poser une question ou bien obtenir de l'aide dans l'utilisation de la plateforme."
-        },
-        {
-          name: 'robots',
-          content: 'index, follow'
-        },
-        {
-          name: 'viewport',
-          content: 'width=device-width, initial-scale=1'
         }
       ]
     }
   },
-  {path: '**', redirectTo: '/search', pathMatch: 'full'}
+  {path: '**', redirectTo: '/rechercher-un-etalon', pathMatch: 'full'}
 ];
 
 @NgModule({
