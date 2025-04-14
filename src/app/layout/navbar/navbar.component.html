@@ -1,7 +1,7 @@
 <section class="section">
   <nav class="navbar is-fixed-top px-5" role="navigation" aria-label="main navigation" >
     <div class="navbar-brand">
-      <a class="navbar-item" (click)="navigateTo('search', true)">
+      <a class="navbar-item" (click)="navigateTo('rechercher-un-etalon', true)">
         <img [src]="objectStorageBaseUrl + photosPrefix + '/logo-black.png'" width="260" height="65">
       </a>
 
@@ -16,7 +16,7 @@
     <div class="navbar-menu" [ngClass]="burgerMenuIsActive? 'is-active': ''" id="navMenu">
 
       <div class="navbar-end">
-        <a class="navbar-item is-size-6" (click)="navigateTo('this-website', false)">
+        <a class="navbar-item is-size-6" (click)="navigateTo('fonctionnement-du-site', false)">
           <span class="icon-text">
             <span class="icon">
               <img [src]="objectStorageBaseUrl + photosPrefix + '/question-mark.png'">
@@ -34,7 +34,7 @@
           </span>
         </a>
 
-        <a class="navbar-item is-size-6" (click)="navigateTo('search', false)">
+        <a class="navbar-item is-size-6" (click)="navigateTo('rechercher-un-etalon', false)">
           <span class="icon-text">
             <span class="icon">
               <img [src]="objectStorageBaseUrl + photosPrefix + '/glass.png'">
@@ -43,7 +43,7 @@
           </span>
         </a>
 
-        <a class="navbar-item is-size-6" (click)="navigateTo('dashboard', true)" *ngIf="userIsLoggedIn">
+        <a class="navbar-item is-size-6" (click)="navigateTo('tableau-de-bord', true)" *ngIf="userIsLoggedIn">
           <span class="icon-text">
             <span class="icon">
               <img [src]="objectStorageBaseUrl + photosPrefix + '/monitor.png'">
@@ -63,10 +63,10 @@
       
         <div class="navbar-item" *ngIf="!userIsLoggedIn">
           <div class="buttons">
-            <a class="button is-primary" (click)="navigateTo('register', false)">
+            <a class="button is-primary" (click)="navigateTo('inscription', false)">
               <strong>Créer un compte</strong>
             </a>
-            <a class="button is-light" (click)="navigateTo('login', false)">
+            <a class="button is-light" (click)="navigateTo('connexion', false)">
               Se connecter
             </a>
           </div>

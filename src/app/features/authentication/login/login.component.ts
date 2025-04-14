@@ -1,10 +1,11 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { LoginService } from './login.service';
 import { loginData } from './login.service';
 import { NavbarService } from 'src/app/layout/navbar/navbar.service';
 import { backendInteractionStatus } from 'src/environments/environment';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { SeoService } from 'src/app/core/seo/seo.service';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +15,7 @@ import { Router } from '@angular/router';
     LoginService
   ]
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   public loginForm = new FormGroup({
     email: new FormControl('', Validators.required),
     password: new FormControl('', Validators.required),
@@ -31,11 +32,18 @@ export class LoginComponent {
   constructor(
     private loginService: LoginService,
     private navbarService: NavbarService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute,
+    private seoService: SeoService
   ) {}
 
+ngOnInit(): void {
+  const seoData = this.route.snapshot.data;
+  this.seoService.initSeo(seoData);
+}
+
   navigateToRegister() {
-    this.router.navigate(['/register']);
+    this.router.navigate(['/inscription']);
   }
 
   triggerModal() {
@@ -101,7 +109,7 @@ export class LoginComponent {
         this.status['status'] = backendInteractionStatus.Success;
         this.navbarService.loadNavbar();
         setTimeout(() => {
-          this.router.navigate(['/search']);
+          this.router.navigate(['/rechercher-un-etalon']);
         }, 1000);
       },
       error: () => {},

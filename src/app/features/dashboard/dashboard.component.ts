@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CoverNotifications, DashboardService } from './dashboard.service';
 import { StallionComponentInput } from './my-stallions/stallion/stallion.component';
 import { AuthService } from 'src/app/core/auth/auth.service';
+import { SeoService } from 'src/app/core/seo/seo.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -85,10 +86,14 @@ export class DashboardComponent implements OnInit{
     private route: ActivatedRoute,
     private router: Router,
     private dashboardService: DashboardService,
-    private authService: AuthService
+    private authService: AuthService,
+    private seoService: SeoService
     ) {}
 
   ngOnInit(): void {
+    const seoData = this.route.snapshot.data;
+    this.seoService.initSeo(seoData);
+
     this.route.queryParams.subscribe(params => {
       const coverId = params['coverId'];
       const pollCoverStatus = params['pollCoverStatus'];
@@ -96,18 +101,18 @@ export class DashboardComponent implements OnInit{
       const myStallions = params['myStallions'];
       if (coverId) {
         if (['buyersigned', 'sellersigned', 'downpaid', 'fullypaid'].includes(pollCoverStatus)) {
-          this.router.navigate(['/dashboard']);
+          this.router.navigate(['/tableau-de-bord']);
           this.goToCoverPage(coverId, pollCoverStatus);
         } else {
-          this.router.navigate(['/dashboard']);
+          this.router.navigate(['/tableau-de-bord']);
           this.goToCoverPage(coverId, '');
         }
       } else if (reload != undefined) {
         this.initializeVars();
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/tableau-de-bord']);
       } else if (myStallions != undefined) {
         this.onClick('stallionsList', 'myStallionsComponent', 'seller');
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/tableau-de-bord']);
       } 
     });
 

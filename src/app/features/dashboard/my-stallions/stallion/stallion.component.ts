@@ -1235,6 +1235,6 @@ export class StallionComponent implements OnInit {
   }
 
   getBackToMyStallions() {
-    this.router.navigate(['/dashboard'], {queryParams: { myStallions: 'true' }});
+    this.router.navigate(['/tableau-de-bord'], {queryParams: { myStallions: 'true' }});
   }
 }

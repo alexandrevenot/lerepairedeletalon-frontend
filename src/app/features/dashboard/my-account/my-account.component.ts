@@ -363,7 +363,7 @@ export class MyAccountComponent implements OnInit{
   }
 
   handleClickReviews(reviewPov: "given" | "received", coverPov: "buyer" | "seller") {
-    const url = `/user-reviews?id=${this.userId}&reviewPov=${reviewPov}&coverPov=${coverPov}`;
+    const url = `/evaluations?id=${this.userId}&reviewPov=${reviewPov}&coverPov=${coverPov}`;
     window.open(url, '_blank');
   }
 

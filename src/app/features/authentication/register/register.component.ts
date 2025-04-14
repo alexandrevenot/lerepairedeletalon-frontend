@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { RegisterService } from './register.service';
-import { Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { backendInteractionStatus } from 'src/environments/environment';
 import { LoginService, loginData } from '../login/login.service';
 import { NavbarService } from 'src/app/layout/navbar/navbar.service';
+import { SeoService } from 'src/app/core/seo/seo.service';
 
 @Component({
   selector: 'app-register',
@@ -16,7 +17,7 @@ import { NavbarService } from 'src/app/layout/navbar/navbar.service';
   ]
 })
 
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
   public registerForm = new FormGroup({
     firstname: new FormControl('', Validators.required),
     lastname: new FormControl('', Validators.required),
@@ -33,8 +34,15 @@ export class RegisterComponent {
     private registerService: RegisterService,
     private loginService: LoginService,
     private navbarService: NavbarService,
-    private router: Router
+    private router: Router,
+    private seoService: SeoService,
+    private route: ActivatedRoute
   ) {}
+
+  ngOnInit(): void {
+    const seoData = this.route.snapshot.data;
+    this.seoService.initSeo(seoData);
+  }
 
   parsePhoneNumber() {
     let value = this.registerForm.value.phoneNumber;
@@ -89,7 +97,7 @@ export class RegisterComponent {
             localStorage.setItem("refreshToken", data.refreshToken);
             this.message.setValue('Connexion réussie.');
             this.navbarService.loadNavbar();
-            setTimeout(() => {this.router.navigate(['/search'])}, 1000);
+            setTimeout(() => {this.router.navigate(['/rechercher-un-etalon'])}, 1000);
           }
         })
       },
