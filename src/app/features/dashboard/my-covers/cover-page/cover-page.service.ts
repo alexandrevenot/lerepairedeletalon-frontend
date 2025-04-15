@@ -169,8 +169,7 @@ export class CoverPageService {
             } else if (error.error.detail === "insufficient legal identity level for seller") {
                 status['status'] = backendInteractionStatus.UserError;
                 fc.setValue(
-                    "Le profil du vendeur est incomplet, il n'est pas encore possible de signer de contrat pour ses étalons. "
-                    + "Nous l'informons que vous avez tenté de signer le contrat."
+                    "Le profil du vendeur est incomplet, il n'est pas encore possible de signer de contrat pour ses étalons."
                 );
             }
         }
