@@ -1,5 +1,4 @@
 User-agent: *
-Disallow: /
 
 Allow: /inscription
 Allow: /connexion
@@ -12,4 +11,6 @@ Allow: /conditions-generales-d-utilisation
 Allow: /conditions-generales-de-vente
 Allow: /contact
 
-Sitemap: https://lerepairedeletalon.fr/sitemap.xml
+Disallow: /
+
+Sitemap: https://www.lerepairedeletalon.fr/sitemap.xml
