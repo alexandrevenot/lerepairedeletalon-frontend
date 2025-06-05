@@ -11,6 +11,4 @@ Allow: /conditions-generales-d-utilisation
 Allow: /conditions-generales-de-vente
 Allow: /contact
 
-Disallow: /
-
 Sitemap: https://www.lerepairedeletalon.fr/sitemap.xml
