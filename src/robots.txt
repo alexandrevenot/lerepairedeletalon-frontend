@@ -1,14 +1,4 @@
 User-agent: *
+Disallow: /
 
-Allow: /inscription
-Allow: /connexion
-Allow: /rechercher-un-etalon
-Allow: /etalons/673e2eddf45ab3d79863aea8-tidjal-de-mons
-Allow: /etalons/67546424f45ab3d79863aea9-leolynx-lulufarm
-Allow: /fonctionnement-du-site
-Allow: /mentions-legales
-Allow: /conditions-generales-d-utilisation
-Allow: /conditions-generales-de-vente
-Allow: /contact
-
-Sitemap: https://www.lerepairedeletalon.fr/sitemap.xml
+Sitemap: https://lerepairedeletalon.alexandrevenot.ovh/sitemap.xml

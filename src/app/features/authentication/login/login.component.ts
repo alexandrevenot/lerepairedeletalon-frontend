@@ -17,8 +17,8 @@ import { SeoService } from 'src/app/core/seo/seo.service';
 })
 export class LoginComponent implements OnInit {
   public loginForm = new FormGroup({
-    email: new FormControl('', Validators.required),
-    password: new FormControl('', Validators.required),
+    email: new FormControl('lrdeservice@gmail.com', Validators.required),
+    password: new FormControl('ThisIsAP@ssw0rd', Validators.required),
   });
 
   public message = new FormControl('');
