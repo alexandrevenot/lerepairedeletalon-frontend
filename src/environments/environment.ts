@@ -196,7 +196,6 @@ export const objectStorageBaseUrl: string = "https://storage.googleapis.com"
 export const photosPrefix: string = "/lerepairedeletalon-public"
 
 export const backendBaseUrl: string = "http://localhost:3001";
-export const stripePK: string = "pk_test_51OvTQH2M9MS38ftifqO8oI6rggNLvDsaTNl00YUK1HQ9ZJtQ6Zl0LYy0pDiqy8bdia7co5okdM2PUAKbi5RpzMKJ00dTaTFfR2";
+export const stripePK: string = "pk_test_";
 
-// export const stripePK: string = "pk_live_51OvTQH2M9MS38ftiLY11RYZYCmXJvjDnaWXd5YE4Jt7DZ78MAoenuUog14THpZi6XJeaC1AZsfW099eBalGS2vOn00NAs7NOWQ";
-// export const backendBaseUrl: string = "https://www.lerepairedeletalon.fr/api"
+// export const backendBaseUrl: string = "https://lerepairedeletalon.alexandrevenot.ovh/api"
