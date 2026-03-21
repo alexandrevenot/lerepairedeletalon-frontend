@@ -195,5 +195,5 @@ export const stripeFilesMaxSizeInBytes: number = 10 * 1024 * 1024; // 10 Mo
 export const objectStorageBaseUrl: string = "https://storage.googleapis.com"
 export const photosPrefix: string = "/lerepairedeletalon-public"
 
-export const backendBaseUrl: string = "http://localhost:3001";
+export const backendBaseUrl: string = "https://lerepairedeletalon.alexandrevenot.ovh/api"
 export const stripePK: string = "pk_test_";
