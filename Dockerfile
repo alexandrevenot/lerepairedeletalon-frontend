@@ -1,4 +1,19 @@
-FROM httpd:2.4
+# Builder
+FROM node:18-slim AS builder
 
-COPY ./dist/client/ /usr/local/apache2/htdocs/
-COPY ./httpd.conf /usr/local/apache2/conf/httpd.conf
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+RUN npm ci
+
+COPY . .
+RUN npm run build
+
+# Runtime
+FROM nginx:alpine AS runtime
+
+COPY --from=builder /app/dist/client/ /usr/share/nginx/html/
+
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
